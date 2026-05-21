@@ -898,75 +898,75 @@
 
             function renderGirlCharacter(outfit, isRain, isSnow) {
       const c = document.getElementById('girlContainer');
-      const C = { heatwave:{t:'#FF6B6B',b:'#FFD93D',h:'#FF8E53',x:'#87CEEB'}, hot:{t:'#6BCB77',b:'#FFD93D',h:'#FF8E53',x:'#FFEAA7'}, warm:{t:'#4D96FF',b:'#6C757D',h:'#FFFFFF',x:'#FFD93D'}, mild:{t:'#845EC2',b:'#2D3436',h:'#DFE6E9',x:'#B2BEC3'}, cool:{t:'#E17055',b:'#2D3436',h:'#00B4D8',x:'#FFB347'}, cold:{t:'#4895EF',b:'#2D3436',h:'#FFFFFF',x:'#F72585'}, freezing:{t:'#2D3436',b:'#2D3436',h:'#6C757D',x:'#E63946'} };
+      const C = { heatwave:{tp:'#FF6B6B',bt:'#FFD93D',sh:'#FF9FF3'}, hot:{tp:'#6BCB77',bt:'#FFEAA7',sh:'#FF9FF3'}, warm:{tp:'#FD79A8',bt:'#A29BFE',sh:'#FFEAA7'}, mild:{tp:'#74B9FF',bt:'#2D3436',sh:'#636E72'}, cool:{tp:'#E17055',bt:'#2D3436',sh:'#FFB347'}, cold:{tp:'#4895EF',bt:'#2D3436',sh:'#F72585'}, freezing:{tp:'#2D3436',bt:'#2D3436',sh:'#E63946'} };
       const col = C[outfit] || C.warm;
-      const SK = '#F5E0C6', HK = '#3D2B1F', ST = '#333';
+      const SK = '#FDE8D0', HK = '#3D2B1F', ST = '#333';
       const sw = 1.3;
 
-      function os(o) {
+      function makeOutfit(o) {
         var tp='', bt='', am='', lg='', sh='', ac='';
         switch(o) {
           case 'heatwave':
-            tp = '<path d="M60,71 L63,68 L87,68 L90,71 L92,116 L86,116 L84,104 L66,104 L64,116 L58,116Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            bt = '<path d="M61,116 L89,116 L91,138 L84,138 L82,126 L68,126 L66,138 L59,138Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M60,71 L48,90 L46,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/><path d="M90,71 L102,90 L104,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            lg = '<path d="M67,138 L63,178" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/><path d="M83,138 L87,178" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="182" rx="8" ry="3.5" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="182" rx="8" ry="3.5" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<ellipse cx="75" cy="12" rx="9" ry="5" fill="'+HK+'"/><path d="M68,12 Q72,5 75,3 Q78,5 82,12" fill="'+HK+'"/><rect x="71" y="6" width="8" height="3" rx="1.5" fill="#FF6B9D"/><path d="M46,38 Q44,44 48,44Z" fill="'+col.x+'" opacity="0.6"/><path d="M104,35 Q102,41 106,41Z" fill="'+col.x+'" opacity="0.6"/>';
+            tp = '<rect x="53" y="73" width="44" height="28" rx="6" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            bt = '<rect x="58" y="101" width="34" height="25" rx="4" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(8,52,90)"/><ellipse cx="98" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-8,98,90)"/>';
+            lg = '<ellipse cx="65" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '<ellipse cx="75" cy="68" rx="14" ry="4" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1"/><path d="M63,68 Q60,62 75,60 Q90,62 87,68" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1"/><circle cx="61" cy="66" r="2.5" fill="#FF6B9D"/>';
             break;
           case 'hot':
-            tp = '<path d="M59,71 L64,68 L86,68 L91,71 L93,118 L86,118 L84,106 L66,106 L64,118 L57,118Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/><circle cx="75" cy="94" r="5" fill="#FFF" opacity="0.5"/>';
-            bt = '<path d="M60,118 L90,118 L92,138 L84,138 L82,126 L68,126 L66,138 L58,138Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M59,71 L47,90 L45,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/><path d="M91,71 L103,90 L105,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            lg = '<path d="M67,138 L63,178" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/><path d="M83,138 L87,178" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="182" rx="8" ry="3.5" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="182" rx="8" ry="3.5" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<ellipse cx="75" cy="14" rx="17" ry="4" fill="#FFEAA7" stroke="'+ST+'" stroke-width="'+sw+'"/><path d="M60,14 Q62,4 75,2 Q88,4 90,14" fill="#FFEAA7" stroke="'+ST+'" stroke-width="'+sw+'"/><path d="M90,10 Q92,4 100,8" fill="none" stroke="#FF8E53" stroke-width="1.5" stroke-linecap="round"/>';
+            tp = '<rect x="53" y="73" width="44" height="32" rx="6" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            bt = '<rect x="59" y="105" width="32" height="20" rx="4" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(6,52,90)"/><ellipse cx="98" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-6,98,90)"/>';
+            lg = '<ellipse cx="65" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '<rect x="56" y="67" width="38" height="3" rx="1.5" fill="#FFF" opacity="0.5"/>';
             break;
           case 'warm':
-            tp = '<path d="M59,71 L64,68 L86,68 L91,71 L93,118 L86,118 L84,106 L66,106 L64,118 L57,118Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/><rect x="70" y="92" width="10" height="12" rx="2" fill="#FFF" opacity="0.4"/>';
-            bt = '<path d="M60,118 L90,118 L92,148 L84,148 L82,138 L68,138 L66,148 L58,148Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M59,71 L47,90 L45,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/><path d="M91,71 L103,90 L105,100" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            lg = '<path d="M67,148 L63,182" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/><path d="M83,148 L87,182" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="186" rx="9" ry="4" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="186" rx="9" ry="4" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<ellipse cx="75" cy="13" rx="5" ry="3" fill="#FF6B9D" stroke="'+ST+'" stroke-width="0.8"/><circle cx="70" cy="12" r="2.5" fill="#FFF" opacity="0.8"/><circle cx="80" cy="12" r="2.5" fill="#FFF" opacity="0.8"/>';
+            tp = '<path d="M53,74 Q75,70 97,74 L99,104 Q75,108 51,104Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            bt = '';
+            lg = '<ellipse cx="65" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="146" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            am = '<ellipse cx="52" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(4,52,90)"/><ellipse cx="98" cy="90" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-4,98,90)"/>';
+            ac = '<circle cx="75" cy="66" r="3" fill="#FF6B9D"/><circle cx="75" cy="66" r="1.5" fill="#FFF"/>';
             break;
           case 'mild':
-            tp = '<path d="M59,71 L64,68 L86,68 L91,71 L93,118 L86,118 L84,108 L66,108 L64,118 L57,118Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            bt = '<path d="M60,118 L90,118 L92,150 L84,150 L82,142 L68,142 L66,150 L58,150Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M59,71 L47,90 L45,100" fill="none" stroke="'+col.t+'" stroke-width="8" stroke-linecap="round"/><path d="M91,71 L103,90 L105,100" fill="none" stroke="'+col.t+'" stroke-width="8" stroke-linecap="round"/><path d="M45,100 L44,102" fill="none" stroke="'+SK+'" stroke-width="3" stroke-linecap="round"/><path d="M105,100 L106,102" fill="none" stroke="'+SK+'" stroke-width="3" stroke-linecap="round"/>';
-            lg = '<path d="M67,150 L63,184" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/><path d="M83,150 L87,184" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="188" rx="9" ry="4" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="188" rx="9" ry="4" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<path d="M58,76 Q75,86 92,76 L94,82 Q75,92 56,82Z" fill="'+col.x+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
+            tp = '<rect x="53" y="73" width="44" height="36" rx="5" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            bt = '<rect x="60" y="109" width="30" height="18" rx="3" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="92" rx="6.5" ry="17" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(6,52,92)"/><ellipse cx="98" cy="92" rx="6.5" ry="17" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-6,98,92)"/>';
+            lg = '<ellipse cx="65" cy="129" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="129" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="147" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="147" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '';
             break;
           case 'cool':
-            tp = '<path d="M59,71 L64,68 L86,68 L91,71 L93,120 L86,120 L84,110 L66,110 L64,120 L57,120Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="75" cy="100" rx="8" ry="3" fill="#FFEAA7" opacity="0.4"/>';
-            bt = '<path d="M60,120 L90,120 L92,152 L84,152 L82,144 L68,144 L66,152 L58,152Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M59,71 L46,96 L44,104" fill="none" stroke="'+col.t+'" stroke-width="8" stroke-linecap="round"/><path d="M91,71 L104,96 L106,104" fill="none" stroke="'+col.t+'" stroke-width="8" stroke-linecap="round"/><path d="M44,104 L43,106" fill="none" stroke="'+SK+'" stroke-width="2.5" stroke-linecap="round"/><path d="M106,104 L107,106" fill="none" stroke="'+SK+'" stroke-width="2.5" stroke-linecap="round"/>';
-            lg = '<path d="M67,152 L63,186" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/><path d="M83,152 L87,186" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="190" rx="9" ry="4.5" fill="#8B4513" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="190" rx="9" ry="4.5" fill="#8B4513" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<path d="M56,72 Q75,84 94,72 L96,80 Q75,92 54,80Z" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
+            tp = '<rect x="52" y="72" width="46" height="38" rx="6" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            bt = '<rect x="60" y="110" width="30" height="18" rx="3" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="92" rx="7" ry="18" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(6,52,92)"/><ellipse cx="98" cy="92" rx="7" ry="18" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-6,98,92)"/>';
+            lg = '<ellipse cx="65" cy="130" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="130" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="148" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="148" rx="8" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '<rect x="51" y="86" width="48" height="3" rx="1.5" fill="#FFF" opacity="0.4"/>';
             break;
           case 'cold':
-            tp = '<path d="M56,70 L64,67 L86,67 L94,70 L96,124 L86,124 L84,112 L66,112 L64,124 L54,124Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/><rect x="70" y="80" width="10" height="6" rx="2" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.8"/>';
-            bt = '<path d="M59,124 L91,124 L93,156 L84,156 L82,148 L68,148 L66,156 L57,156Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M56,71 L42,98 L40,106" fill="none" stroke="'+col.t+'" stroke-width="10" stroke-linecap="round"/><path d="M94,71 L108,98 L110,106" fill="none" stroke="'+col.t+'" stroke-width="10" stroke-linecap="round"/>';
-            lg = '<path d="M67,156 L63,190" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/><path d="M83,156 L87,190" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="194" rx="9" ry="5" fill="#2D3436" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="194" rx="9" ry="5" fill="#2D3436" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<path d="M53,72 Q75,86 97,72 L99,82 Q75,96 51,82Z" fill="'+col.x+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="75" cy="14" rx="15" ry="6" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><path d="M61,14 Q63,5 75,3 Q87,5 89,14" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><circle cx="66" cy="10" r="2" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/><circle cx="75" cy="8" r="2" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/><circle cx="84" cy="10" r="2" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/>';
+            tp = '<rect x="50" y="71" width="50" height="44" rx="8" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/><rect x="50" y="76" width="50" height="6" rx="3" fill="#FFF" opacity="0.3"/>';
+            bt = '<rect x="60" y="115" width="30" height="18" rx="3" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="94" rx="7" ry="20" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(8,52,94)"/><ellipse cx="98" cy="94" rx="7" ry="20" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-8,98,94)"/>';
+            lg = '<ellipse cx="65" cy="134" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="134" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="152" rx="9" ry="5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="152" rx="9" ry="5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '<path d="M53,74 Q75,84 97,74" fill="none" stroke="'+col.sh+'" stroke-width="5" stroke-linecap="round"/>';
             break;
           case 'freezing':
-            tp = '<path d="M54,70 L64,67 L86,67 L96,70 L98,126 L86,126 L84,114 L66,114 L64,126 L52,126Z" fill="'+col.t+'" stroke="'+ST+'" stroke-width="'+sw+'"/><rect x="69" y="80" width="12" height="8" rx="2" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.8"/>';
-            bt = '<path d="M57,126 L93,126 L95,158 L84,158 L82,150 L68,150 L66,158 L55,158Z" fill="'+col.b+'" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            am = '<path d="M54,71 L38,100 L36,108" fill="none" stroke="'+col.t+'" stroke-width="12" stroke-linecap="round"/><path d="M96,71 L112,100 L114,108" fill="none" stroke="'+col.t+'" stroke-width="12" stroke-linecap="round"/>';
-            lg = '<path d="M67,158 L63,192" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/><path d="M83,158 L87,192" fill="none" stroke="'+col.b+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="63" cy="196" rx="10" ry="5.5" fill="#1A1C20" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="87" cy="196" rx="10" ry="5.5" fill="#1A1C20" stroke="'+ST+'" stroke-width="'+sw+'"/>';
-            ac = '<path d="M51,72 Q75,88 99,72 L101,84 Q75,100 49,84Z" fill="'+col.x+'" stroke="'+ST+'" stroke-width="'+sw+'"/><ellipse cx="75" cy="12" rx="17" ry="8" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><path d="M59,12 Q61,3 75,1 Q89,3 91,12" fill="'+col.h+'" stroke="'+ST+'" stroke-width="'+sw+'"/><rect x="56" y="14" width="38" height="3" rx="1.5" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/><circle cx="64" cy="8" r="2.5" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/><circle cx="75" cy="6" r="2.5" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/><circle cx="86" cy="8" r="2.5" fill="'+col.x+'" stroke="'+ST+'" stroke-width="0.5"/>';
+            tp = '<rect x="48" y="70" width="54" height="48" rx="10" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.2"/><rect x="48" y="74" width="54" height="6" rx="3" fill="#FFF" opacity="0.3"/><rect x="48" y="84" width="54" height="6" rx="3" fill="#FFF" opacity="0.3"/><rect x="48" y="94" width="54" height="6" rx="3" fill="#FFF" opacity="0.3"/>';
+            bt = '<rect x="60" y="118" width="30" height="18" rx="3" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
+            am = '<ellipse cx="52" cy="95" rx="8" ry="22" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(10,52,95)"/><ellipse cx="98" cy="95" rx="8" ry="22" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1" transform="rotate(-10,98,95)"/>';
+            lg = '<ellipse cx="65" cy="137" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/><ellipse cx="85" cy="137" rx="6" ry="16" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="0.8"/>';
+            sh = '<ellipse cx="65" cy="155" rx="9" ry="5.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><ellipse cx="85" cy="155" rx="9" ry="5.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/>';
+            ac = '<ellipse cx="75" cy="62" rx="16" ry="6" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><path d="M61,62 Q63,54 75,52 Q87,54 89,62" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1"/><circle cx="64" cy="58" r="1.5" fill="#FFF"/><circle cx="86" cy="58" r="1.5" fill="#FFF"/>';
             break;
         }
         return {tp,bt,am,lg,sh,ac};
       }
 
-      var p = os(outfit);
+      var p = makeOutfit(outfit);
       var wfx = '';
       if (isRain) {
         wfx = '<g opacity="0.75"><line x1="114" y1="16" x2="118" y2="56" stroke="#74B9FF" stroke-width="2" stroke-linecap="round"/><line x1="118" y1="56" x2="114" y2="62" stroke="#74B9FF" stroke-width="2" stroke-linecap="round"/><path d="M108,16 Q114,8 120,16 L118,56 Q116,60 114,56Z" fill="#6C5CE7" stroke="#333" stroke-width="0.8"/><line x1="34" y1="78" x2="31" y2="90" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="116" y1="78" x2="113" y2="90" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="26" y1="126" x2="23" y2="138" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="126" y1="126" x2="123" y2="138" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></g>';
@@ -976,25 +976,30 @@
       }
 
       c.innerHTML = '<svg viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">'
-        +'<g id="shadow"><ellipse cx="75" cy="264" rx="60" ry="7" fill="#E8E8E8" stroke="#CCC" stroke-width="0.5"/>'
-        +'<ellipse cx="75" cy="260" rx="26" ry="3" fill="#D0D0D0" opacity="0.5"/></g>'
+        +'<g id="shadow"><ellipse cx="75" cy="264" rx="54" ry="6" fill="#E8E8E8" stroke="#CCC" stroke-width="0.5"/>'
+        +'<ellipse cx="75" cy="260" rx="24" ry="3" fill="#D0D0D0" opacity="0.4"/></g>'
         +'<g id="torso">'
-        +'<ellipse cx="75" cy="78" rx="26" ry="50" fill="'+HK+'"/>'
-        +'<ellipse cx="53" cy="96" rx="12" ry="34" fill="'+HK+'" transform="rotate(-6,53,96)"/>'
-        +'<ellipse cx="97" cy="96" rx="12" ry="34" fill="'+HK+'" transform="rotate(6,97,96)"/>'
-        +'<ellipse cx="56" cy="126" rx="10" ry="14" fill="'+HK+'"/>'
-        +'<ellipse cx="94" cy="126" rx="10" ry="14" fill="'+HK+'"/>'
+        +'<ellipse cx="75" cy="90" rx="22" ry="30" fill="'+HK+'" opacity="0.3"/>'
+        +'<ellipse cx="52" cy="95" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8" transform="rotate(6,52,95)"/>'
+        +'<ellipse cx="98" cy="95" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8" transform="rotate(-6,98,95)"/>'
+        +'<ellipse cx="65" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
+        +'<ellipse cx="85" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
         +'</g>'
         +'<g id="head">'
-        +'<ellipse cx="75" cy="48" rx="15" ry="16" fill="'+SK+'"/>'
-        +'<path d="M62,37 Q66,30 75,32 Q84,30 88,37" fill="'+HK+'"/>'
-        +'<path d="M62,37 Q60,46 61,56" fill="none" stroke="'+HK+'" stroke-width="3"/>'
-        +'<path d="M88,37 Q90,46 89,56" fill="none" stroke="'+HK+'" stroke-width="3"/>'
-        +'<circle cx="70" cy="46" r="1.5" fill="#333"/>'
-        +'<circle cx="80" cy="46" r="1.5" fill="#333"/>'
-        +'<path d="M73,51 Q75,53 77,51" fill="none" stroke="#D4656A" stroke-width="1.2" stroke-linecap="round"/>'
+        +'<ellipse cx="75" cy="42" rx="18" ry="17" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
+        +'<path d="M57,42 Q57,28 75,26 Q93,28 93,42 Q93,35 75,33 Q57,35 57,42Z" fill="'+HK+'" opacity="0.8"/>'
+        +'<path d="M62,42 Q60,30 75,28 Q90,30 88,42" fill="none" stroke="'+HK+'" stroke-width="4" stroke-linecap="round"/>'
+        +'<path d="M62,38 Q60,48 62,56" fill="none" stroke="'+HK+'" stroke-width="3.5" stroke-linecap="round"/>'
+        +'<path d="M88,38 Q90,48 88,56" fill="none" stroke="'+HK+'" stroke-width="3.5" stroke-linecap="round"/>'
+        +'<circle cx="68" cy="40" r="2.5" fill="#333"/>'
+        +'<circle cx="67" cy="39" r="1" fill="#FFF"/>'
+        +'<circle cx="82" cy="40" r="2.5" fill="#333"/>'
+        +'<circle cx="81" cy="39" r="1" fill="#FFF"/>'
+        +'<ellipse cx="63" cy="45" rx="3" ry="1.5" fill="#FFB5C2" opacity="0.6"/>'
+        +'<ellipse cx="87" cy="45" rx="3" ry="1.5" fill="#FFB5C2" opacity="0.6"/>'
+        +'<path d="M72,47 Q75,49.5 78,47" fill="none" stroke="#D4656A" stroke-width="1.2" stroke-linecap="round"/>'
         +'</g>'
-        +'<g id="neck"><rect x="71" y="62" width="8" height="9" fill="'+SK+'"/></g>'
+        +'<g id="neck"><rect x="71" y="60" width="8" height="8" rx="2" fill="'+SK+'"/></g>'
         +'<g id="top">'+p.tp+'</g>'
         +'<g id="bottom">'+p.bt+'</g>'
         +'<g id="arms">'+p.am+'</g>'
