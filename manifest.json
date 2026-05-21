@@ -1,8 +1,9 @@
 {
   "name": "专属穿搭助手",
-  "short_name": "专属穿搭",
+  "short_name": "穿搭助手",
   "description": "专属你的每日穿搭推荐",
-  "start_url": "/",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f0f4f8",
