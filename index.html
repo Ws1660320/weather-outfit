@@ -230,114 +230,65 @@
     }
 
     /* ===== 角色动画 ===== */
-    @keyframes girl-breathe {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-1.5px); }
-    }
-    @keyframes girl-heatwave {
-      0%, 100% { transform: rotate(0); }
-      25% { transform: rotate(1deg) translateY(-1px); }
-      75% { transform: rotate(-1deg) translateY(0); }
-    }
-    @keyframes girl-hot {
-      0%, 100% { transform: rotate(0); }
-      33% { transform: rotate(1.5deg) translateX(1px); }
-      66% { transform: rotate(-1deg) translateX(-1px); }
-    }
-    @keyframes girl-warm {
-      0%, 100% { transform: translateY(0) scale(1); }
-      30% { transform: translateY(-3px) scale(1.02); }
-      60% { transform: translateY(-1px); }
-    }
-    @keyframes girl-mild {
-      0%, 100% { transform: rotate(0); }
-      50% { transform: rotate(0.8deg); }
-    }
-    @keyframes girl-cool {
-      0%, 100% { transform: translateX(0); }
-      15% { transform: translateX(-1px); }
-      30% { transform: translateX(1px); }
-      45% { transform: translateX(0); }
-    }
-    @keyframes girl-cold {
-      0%, 100% { transform: translateX(0) rotate(0); }
-      10% { transform: translateX(-1.5px) rotate(-0.5deg); }
-      20% { transform: translateX(1.5px) rotate(0.5deg); }
-      30% { transform: translateX(-1px) rotate(-0.3deg); }
-      40% { transform: translateX(1px) rotate(0.3deg); }
-      50% { transform: translateX(0); }
-    }
-    @keyframes girl-freezing {
-      0% { transform: translateX(0) translateY(0); }
-      10% { transform: translateX(-2px) translateY(-1px); }
-      20% { transform: translateX(2px) translateY(1px); }
-      30% { transform: translateX(-1.5px) translateY(-0.5px); }
-      40% { transform: translateX(1.5px) translateY(0.5px); }
-      50% { transform: translateX(0) translateY(0); }
-      60% { transform: translateX(-2px) translateY(1px); }
-      70% { transform: translateX(2px) translateY(-1px); }
-      80% { transform: translateX(-1px) translateY(0); }
-      90% { transform: translateX(1px) translateY(0); }
-    }
-    @keyframes girl-rain {
-      0%, 100% { transform: rotate(0) translateY(0); }
-      25% { transform: rotate(1.5deg) translateY(-1px); }
-      75% { transform: rotate(-1.5deg) translateY(1px); }
-    }
-    @keyframes girl-snow {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-2px); }
-    }
-    @keyframes sweat-drop {
-      0% { opacity: 0; transform: translateY(-4px); }
-      50% { opacity: 1; }
-      100% { opacity: 0; transform: translateY(8px); }
-    }
-    @keyframes shiver-line {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 0.4; }
-    }
+    @keyframes breathe { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.02); } }
+    @keyframes sway { 0%,100% { transform: rotate(0); } 25% { transform: rotate(1.5deg); } 75% { transform: rotate(-1.5deg); } }
+    @keyframes head-tilt { 0%,100% { transform: rotate(0); } 50% { transform: rotate(3deg); } }
+    @keyframes head-nod { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-2deg); } }
+    @keyframes head-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-2px); } 40% { transform: translateX(2px); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
+    @keyframes arm-swing { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-5deg); } }
+    @keyframes arm-fan { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-12deg); } }
+    @keyframes arm-hug { 0%,100% { transform: rotate(8deg); } 50% { transform: rotate(-5deg); } }
+    @keyframes step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @keyframes shiver-body { 0%,100% { transform: translateX(0); } 15% { transform: translateX(-1.5px) rotate(-0.5deg); } 30% { transform: translateX(1.5px) rotate(0.5deg); } 45% { transform: translateX(-1px); } 60% { transform: translateX(1px); } }
+    @keyframes shiver-intense { 0% { transform: translateX(-2px) rotate(-1deg); } 25% { transform: translateX(2px) rotate(1deg); } 50% { transform: translateX(-1.5px) rotate(-0.5deg); } 75% { transform: translateX(1.5px) rotate(0.5deg); } }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes stomp { 0%,100% { transform: translateY(0); } 25% { transform: translateY(-2px); } 50% { transform: translateY(0); } 75% { transform: translateY(-2px); } }
+    @keyframes sweat-drop { 0% { opacity: 0; transform: translateY(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(10px); } }
+    @keyframes rain-shake { 0%,100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
+    @keyframes snow-look { 0%,100% { transform: rotate(0); } 50% { transform: rotate(5deg) translateY(-2px); } }
 
-    .outfit-girl.anim-heatwave svg { animation: girl-heatwave 2s ease-in-out infinite; }
-    .outfit-girl.anim-heatwave::after {
-      content: '💧'; position: absolute; font-size: 10px; top: 8px; right: 8px;
-      animation: sweat-drop 1.5s ease-in-out infinite;
-    }
-    .outfit-girl.anim-hot svg { animation: girl-hot 1.8s ease-in-out infinite; }
-    .outfit-girl.anim-hot::after {
-      content: '💧'; position: absolute; font-size: 8px; top: 6px; right: 10px;
-      animation: sweat-drop 2s ease-in-out infinite; animation-delay: 0.5s;
-    }
-    .outfit-girl.anim-warm svg { animation: girl-warm 2.5s ease-in-out infinite; transform-origin: bottom center; }
-    .outfit-girl.anim-mild svg { animation: girl-mild 3s ease-in-out infinite; transform-origin: bottom center; }
-    .outfit-girl.anim-cool {
-      animation: girl-cool 0.6s ease-in-out infinite;
-    }
-    .outfit-girl.anim-cool::after {
-      content: '〰️'; position: absolute; font-size: 8px; top: 0; left: -2px;
-      animation: shiver-line 0.6s ease-in-out infinite;
-    }
-    .outfit-girl.anim-cold svg { animation: girl-cold 0.4s ease-in-out infinite; }
-    .outfit-girl.anim-cold::after {
-      content: '❄️'; position: absolute; font-size: 10px; top: -4px; right: -2px;
-      animation: shiver-line 0.4s ease-in-out infinite;
-    }
-    .outfit-girl.anim-freezing svg { animation: girl-freezing 0.3s ease-in-out infinite; }
-    .outfit-girl.anim-freezing::after {
-      content: '❄️'; position: absolute; font-size: 12px; top: -6px; right: -4px;
-      animation: shiver-line 0.3s ease-in-out infinite;
-    }
-    .outfit-girl.anim-rain svg { animation: girl-rain 1.2s ease-in-out infinite; }
-    .outfit-girl.anim-rain::after {
-      content: '🌧️'; position: absolute; font-size: 16px; top: -8px; right: -6px;
-      animation: sweat-drop 1s linear infinite;
-    }
-    .outfit-girl.anim-snow svg { animation: girl-snow 1.5s ease-in-out infinite; }
-    .outfit-girl.anim-snow::after {
-      content: '❄️'; position: absolute; font-size: 12px; top: -6px; left: 50%;
-      animation: sweat-drop 2s ease-in-out infinite;
-    }
-    .outfit-girl { position: relative; display: inline-block; }
+    /* Heatwave 35°C+ */
+    .anim-heatwave #torso { animation: sway 3s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-heatwave #head { animation: head-tilt 4s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-heatwave #arms { animation: arm-swing 2.5s ease-in-out infinite; transform-origin: 53px 96px; }
+
+    /* Hot 30-34°C */
+    .anim-hot #torso { animation: sway 3.5s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-hot #head { animation: head-tilt 5s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-hot #arms { animation: arm-fan 2s ease-in-out infinite; transform-origin: 53px 96px; }
+
+    /* Warm 25-29°C */
+    .anim-warm #torso { animation: bounce 1.5s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-warm #head { animation: head-tilt 2s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-warm #arms { animation: arm-swing 1.2s ease-in-out infinite; transform-origin: 53px 96px; }
+
+    /* Mild 15-24°C */
+    .anim-mild #torso { animation: breathe 3s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-mild #head { animation: head-nod 4s ease-in-out infinite; transform-origin: 75px 62px; }
+
+    /* Cool 10-14°C */
+    .anim-cool #torso { animation: shiver-body 0.8s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-cool #head { animation: head-nod 2s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-cool #arms { animation: arm-hug 1.5s ease-in-out infinite; transform-origin: 53px 96px; }
+
+    /* Cold 5-9°C */
+    .anim-cold #torso { animation: shiver-body 0.4s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-cold #head { animation: head-shake 0.6s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-cold #arms { animation: arm-hug 0.5s ease-in-out infinite; transform-origin: 53px 96px; }
+
+    /* Freezing <5°C */
+    .anim-freezing #torso { animation: shiver-intense 0.2s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-freezing #head { animation: head-shake 0.25s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-freezing #arms { animation: arm-hug 0.3s ease-in-out infinite; transform-origin: 53px 96px; }
+    .anim-freezing #legs { animation: stomp 0.4s ease-in-out infinite; transform-origin: 56px 126px; }
+
+    /* Rain */
+    .anim-rain #torso { animation: sway 2s ease-in-out infinite; transform-origin: 75px 128px; }
+    .anim-rain #head { animation: head-tilt 1.5s ease-in-out infinite; transform-origin: 75px 62px; }
+
+    /* Snow */
+    .anim-snow #head { animation: snow-look 3s ease-in-out infinite; transform-origin: 75px 62px; }
+    .anim-snow #torso { animation: breathe 2.5s ease-in-out infinite; transform-origin: 75px 128px; }
 
     .outfit-content {
       flex: 1;
@@ -1025,13 +976,16 @@
       }
 
       c.innerHTML = '<svg viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">'
-        +'<ellipse cx="75" cy="264" rx="60" ry="7" fill="#E8E8E8" stroke="#CCC" stroke-width="0.5"/>'
-        +'<ellipse cx="75" cy="260" rx="26" ry="3" fill="#D0D0D0" opacity="0.5"/>'
+        +'<g id="shadow"><ellipse cx="75" cy="264" rx="60" ry="7" fill="#E8E8E8" stroke="#CCC" stroke-width="0.5"/>'
+        +'<ellipse cx="75" cy="260" rx="26" ry="3" fill="#D0D0D0" opacity="0.5"/></g>'
+        +'<g id="torso">'
         +'<ellipse cx="75" cy="78" rx="26" ry="50" fill="'+HK+'"/>'
         +'<ellipse cx="53" cy="96" rx="12" ry="34" fill="'+HK+'" transform="rotate(-6,53,96)"/>'
         +'<ellipse cx="97" cy="96" rx="12" ry="34" fill="'+HK+'" transform="rotate(6,97,96)"/>'
         +'<ellipse cx="56" cy="126" rx="10" ry="14" fill="'+HK+'"/>'
         +'<ellipse cx="94" cy="126" rx="10" ry="14" fill="'+HK+'"/>'
+        +'</g>'
+        +'<g id="head">'
         +'<ellipse cx="75" cy="48" rx="15" ry="16" fill="'+SK+'"/>'
         +'<path d="M62,37 Q66,30 75,32 Q84,30 88,37" fill="'+HK+'"/>'
         +'<path d="M62,37 Q60,46 61,56" fill="none" stroke="'+HK+'" stroke-width="3"/>'
@@ -1039,9 +993,15 @@
         +'<circle cx="70" cy="46" r="1.5" fill="#333"/>'
         +'<circle cx="80" cy="46" r="1.5" fill="#333"/>'
         +'<path d="M73,51 Q75,53 77,51" fill="none" stroke="#D4656A" stroke-width="1.2" stroke-linecap="round"/>'
-        +'<rect x="71" y="62" width="8" height="9" fill="'+SK+'"/>'
-        +p.tp+p.bt+p.am+p.lg+p.sh+p.ac
-        +wfx
+        +'</g>'
+        +'<g id="neck"><rect x="71" y="62" width="8" height="9" fill="'+SK+'"/></g>'
+        +'<g id="top">'+p.tp+'</g>'
+        +'<g id="bottom">'+p.bt+'</g>'
+        +'<g id="arms">'+p.am+'</g>'
+        +'<g id="legs">'+p.lg+'</g>'
+        +'<g id="shoes">'+p.sh+'</g>'
+        +'<g id="acce">'+p.ac+'</g>'
+        +'<g id="wfx">'+wfx+'</g>'
         +'</svg>';
       // 添加角色动画类
       c.className = 'outfit-girl';
