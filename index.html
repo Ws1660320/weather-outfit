@@ -11,6 +11,7 @@
   <link rel="apple-touch-icon" href="icon-180.png">
   <link rel="icon" href="icon.png">
   <title>专属穿搭助手</title>
+  <script src="lottie-player.js"></script>
   <style>
     :root {
       --bg: #f0f4f8;
@@ -223,6 +224,36 @@
       flex-shrink: 0;
       width: 120px;
       height: 174px;
+    }
+    /* ===== 天气场景动画 ===== */
+    @keyframes rain-fall { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
+    @keyframes snow-fall { 0% { transform: translateY(-10px) rotate(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(190px) rotate(360deg); opacity: 0; } }
+    @keyframes cloud-drift { 0% { transform: translateX(-40px); } 100% { transform: translateX(40px); } }
+    @keyframes float-up { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    .weather-scene {
+      position: relative; width: 100%; height: 180px; border-radius: var(--radius);
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .weather-scene.sunny { background: linear-gradient(180deg, #87CEEB 0%, #FFF8DC 100%); }
+    .weather-scene.cloudy { background: linear-gradient(180deg, #A0B8D0 0%, #D0D8E0 100%); }
+    .weather-scene.rain { background: linear-gradient(180deg, #5A6A78 0%, #8595A6 100%); }
+    .weather-scene.snow { background: linear-gradient(180deg, #C8DDE8 0%, #E8EEF4 100%); }
+    .weather-scene.storm { background: linear-gradient(180deg, #4A5568 0%, #2D3748 100%); }
+    .weather-scene.default { background: linear-gradient(180deg, #74B9FF 0%, #DFE6E9 100%); }
+    .weather-scene lottie-player { width: 140px; height: 140px; }
+    .rain-drops {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(116,185,255,0.25) 8px, rgba(116,185,255,0.25) 10px);
+      animation: rain-fall 0.8s linear infinite;
+    }
+    .snow-flake {
+      position: absolute; top: -10px; background: #FFF; border-radius: 50%;
+      animation: snow-fall linear infinite;
+    }
+    .wx-cloud {
+      position: absolute; border-radius: 50%; background: rgba(255,255,255,0.85);
+      animation: cloud-drift 6s ease-in-out infinite alternate;
     }
     .outfit-girl svg {
       width: 100%;
@@ -504,6 +535,11 @@
           <div class="detail-value" id="detailHumidity">--</div>
         </div>
       </div>
+    </div>
+
+    <!-- Weather Scene -->
+    <div class="weather-scene" id="weatherScene" style="display:none">
+      <div id="weatherAnimContainer"></div>
     </div>
 
     <!-- Outfit Card -->
@@ -1066,6 +1102,51 @@
       document.getElementById('weatherDesc').textContent = getWeatherDesc(weatherCode);
       document.getElementById('weatherFeels').textContent = `体感 ${feelsLike > temp ? feelsLike : feelsLike}°C`;
       document.getElementById('weatherIcon').textContent = getWeatherEmoji(weatherCode);
+      // 天气场景动画
+      var scene = document.getElementById('weatherScene');
+      var sceneCont = document.getElementById('weatherAnimContainer');
+      scene.style.display = 'block';
+      // 判断天气场景类型
+      var sceneType = 'default';
+      if (weatherCode === 0 || weatherCode === 1) sceneType = 'sunny';
+      else if (weatherCode === 2 || weatherCode === 3) sceneType = 'cloudy';
+      else if (weatherCode >= 61 && weatherCode <= 67 || weatherCode >= 80 && weatherCode <= 82) sceneType = 'rain';
+      else if (weatherCode >= 71 && weatherCode <= 77 || weatherCode >= 85 && weatherCode <= 86) sceneType = 'snow';
+      else if (weatherCode >= 95) sceneType = 'storm';
+      scene.className = 'weather-scene ' + sceneType;
+
+      if (sceneType === 'sunny') {
+        sceneCont.innerHTML = '<lottie-player src="anim-sunny.json" background="transparent" speed="1" loop autoplay></lottie-player>';
+      } else {
+        // CSS 天气场景
+        var html = '';
+        if (sceneType === 'cloudy') {
+          html += '<div class="wx-cloud" style="width:60px;height:28px;left:30px;top:30px;"></div>';
+          html += '<div class="wx-cloud" style="width:50px;height:24px;left:60px;top:20px;animation-delay:2s;animation-duration:5s;"></div>';
+          html += '<div class="wx-cloud" style="width:44px;height:22px;left:80px;top:45px;animation-delay:4s;"></div>';
+          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">⛅</div>';
+        } else if (sceneType === 'rain') {
+          html += '<div class="rain-drops"></div>';
+          html += '<div style="font-size:50px;animation:float-up 1.5s ease-in-out infinite;">🌧️</div>';
+        } else if (sceneType === 'snow') {
+          var flakes = '';
+          for (var i = 0; i < 15; i++) {
+            var left = Math.random() * 90 + 5;
+            var size = Math.random() * 4 + 3;
+            var dur = Math.random() * 4 + 3;
+            var delay = Math.random() * 5;
+            flakes += '<div class="snow-flake" style="left:'+left+'%;width:'+size+'px;height:'+size+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s;"></div>';
+          }
+          html += flakes;
+          html += '<div style="font-size:50px;animation:float-up 2s ease-in-out infinite;">❄️</div>';
+        } else if (sceneType === 'storm') {
+          html += '<div class="rain-drops"></div>';
+          html += '<div style="font-size:50px;animation:float-up 1s ease-in-out infinite;">⛈️</div>';
+        } else {
+          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">'+getWeatherEmoji(weatherCode)+'</div>';
+        }
+        sceneCont.innerHTML = html;
+      }
       document.getElementById('detailRain').textContent = precip > 0 ? `${precip.toFixed(1)} mm` : '无降水';
       document.getElementById('detailWind').textContent = `${(windSpeed / 3.6).toFixed(1)} m/s`;
       document.getElementById('detailHumidity').textContent = `${humidity}%`;
