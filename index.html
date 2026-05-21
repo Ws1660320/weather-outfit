@@ -229,6 +229,116 @@
       height: 100%;
     }
 
+    /* ===== 角色动画 ===== */
+    @keyframes girl-breathe {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-1.5px); }
+    }
+    @keyframes girl-heatwave {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(1deg) translateY(-1px); }
+      75% { transform: rotate(-1deg) translateY(0); }
+    }
+    @keyframes girl-hot {
+      0%, 100% { transform: rotate(0); }
+      33% { transform: rotate(1.5deg) translateX(1px); }
+      66% { transform: rotate(-1deg) translateX(-1px); }
+    }
+    @keyframes girl-warm {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-3px) scale(1.02); }
+      60% { transform: translateY(-1px); }
+    }
+    @keyframes girl-mild {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(0.8deg); }
+    }
+    @keyframes girl-cool {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-1px); }
+      30% { transform: translateX(1px); }
+      45% { transform: translateX(0); }
+    }
+    @keyframes girl-cold {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      10% { transform: translateX(-1.5px) rotate(-0.5deg); }
+      20% { transform: translateX(1.5px) rotate(0.5deg); }
+      30% { transform: translateX(-1px) rotate(-0.3deg); }
+      40% { transform: translateX(1px) rotate(0.3deg); }
+      50% { transform: translateX(0); }
+    }
+    @keyframes girl-freezing {
+      0% { transform: translateX(0) translateY(0); }
+      10% { transform: translateX(-2px) translateY(-1px); }
+      20% { transform: translateX(2px) translateY(1px); }
+      30% { transform: translateX(-1.5px) translateY(-0.5px); }
+      40% { transform: translateX(1.5px) translateY(0.5px); }
+      50% { transform: translateX(0) translateY(0); }
+      60% { transform: translateX(-2px) translateY(1px); }
+      70% { transform: translateX(2px) translateY(-1px); }
+      80% { transform: translateX(-1px) translateY(0); }
+      90% { transform: translateX(1px) translateY(0); }
+    }
+    @keyframes girl-rain {
+      0%, 100% { transform: rotate(0) translateY(0); }
+      25% { transform: rotate(1.5deg) translateY(-1px); }
+      75% { transform: rotate(-1.5deg) translateY(1px); }
+    }
+    @keyframes girl-snow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-2px); }
+    }
+    @keyframes sweat-drop {
+      0% { opacity: 0; transform: translateY(-4px); }
+      50% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(8px); }
+    }
+    @keyframes shiver-line {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.4; }
+    }
+
+    .outfit-girl.anim-heatwave svg { animation: girl-heatwave 2s ease-in-out infinite; }
+    .outfit-girl.anim-heatwave::after {
+      content: '💧'; position: absolute; font-size: 10px; top: 8px; right: 8px;
+      animation: sweat-drop 1.5s ease-in-out infinite;
+    }
+    .outfit-girl.anim-hot svg { animation: girl-hot 1.8s ease-in-out infinite; }
+    .outfit-girl.anim-hot::after {
+      content: '💧'; position: absolute; font-size: 8px; top: 6px; right: 10px;
+      animation: sweat-drop 2s ease-in-out infinite; animation-delay: 0.5s;
+    }
+    .outfit-girl.anim-warm svg { animation: girl-warm 2.5s ease-in-out infinite; transform-origin: bottom center; }
+    .outfit-girl.anim-mild svg { animation: girl-mild 3s ease-in-out infinite; transform-origin: bottom center; }
+    .outfit-girl.anim-cool {
+      animation: girl-cool 0.6s ease-in-out infinite;
+    }
+    .outfit-girl.anim-cool::after {
+      content: '〰️'; position: absolute; font-size: 8px; top: 0; left: -2px;
+      animation: shiver-line 0.6s ease-in-out infinite;
+    }
+    .outfit-girl.anim-cold svg { animation: girl-cold 0.4s ease-in-out infinite; }
+    .outfit-girl.anim-cold::after {
+      content: '❄️'; position: absolute; font-size: 10px; top: -4px; right: -2px;
+      animation: shiver-line 0.4s ease-in-out infinite;
+    }
+    .outfit-girl.anim-freezing svg { animation: girl-freezing 0.3s ease-in-out infinite; }
+    .outfit-girl.anim-freezing::after {
+      content: '❄️'; position: absolute; font-size: 12px; top: -6px; right: -4px;
+      animation: shiver-line 0.3s ease-in-out infinite;
+    }
+    .outfit-girl.anim-rain svg { animation: girl-rain 1.2s ease-in-out infinite; }
+    .outfit-girl.anim-rain::after {
+      content: '🌧️'; position: absolute; font-size: 16px; top: -8px; right: -6px;
+      animation: sweat-drop 1s linear infinite;
+    }
+    .outfit-girl.anim-snow svg { animation: girl-snow 1.5s ease-in-out infinite; }
+    .outfit-girl.anim-snow::after {
+      content: '❄️'; position: absolute; font-size: 12px; top: -6px; left: 50%;
+      animation: sweat-drop 2s ease-in-out infinite;
+    }
+    .outfit-girl { position: relative; display: inline-block; }
+
     .outfit-content {
       flex: 1;
       min-width: 0;
@@ -933,6 +1043,17 @@
         +p.tp+p.bt+p.am+p.lg+p.sh+p.ac
         +wfx
         +'</svg>';
+      // 添加角色动画类
+      c.className = 'outfit-girl';
+      if (isRain) c.classList.add('anim-rain');
+      else if (isSnow) c.classList.add('anim-snow');
+      else if (outfit === 'heatwave') c.classList.add('anim-heatwave');
+      else if (outfit === 'hot') c.classList.add('anim-hot');
+      else if (outfit === 'warm') c.classList.add('anim-warm');
+      else if (outfit === 'mild') c.classList.add('anim-mild');
+      else if (outfit === 'cool') c.classList.add('anim-cool');
+      else if (outfit === 'cold') c.classList.add('anim-cold');
+      else if (outfit === 'freezing') c.classList.add('anim-freezing');
     }    // ==================== 渲染 ====================
     function renderWeather(data) {
       const c = data.current;
