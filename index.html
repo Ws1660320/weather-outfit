@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="专属穿搭助手">
-  <meta name="theme-color" content="#667eea">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="icon" href="icon.png">
-  <title>专属穿搭助手</title>
-  <script src="lottie-player.js"></script>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="专属穿搭助手">
+<meta name="theme-color" content="#667eea">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.png">
+<title>专属穿搭助手</title>
+<script src="lottie-player.js"></script>
+<style>
     :root {
       --bg: #f0f4f8;
       --card-bg: #ffffff;
@@ -569,112 +569,23 @@
     .search-results .sr-item { color: #fff !important; }
     .search-results .sr-item:hover { background: rgba(255,255,255,0.1) !important; }
     @media (prefers-color-scheme: dark) { .weather-card, .outfit-card, .forecast-card { background: rgba(255,255,255,0.08) !important; } }
-</style>
+</style
 </head>
 <body>
-  <div class="app">
-    <!-- Header -->
-    <div class="header">
-      <h1>✨ 专属穿搭助手</h1>
-      <p class="subtitle">专属你的每日穿搭</p>
-    </div>
+<div class="phone" id="phoneBg">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="city">📍 上海市 <span>· 晴</span></div>
+<div style="display:none"><input id="searchInput"><button id="searchBtn"></button><button id="locateBtn"></button><div id="searchResults"></div><div id="locationName"></div><div id="loading"></div><div id="errorMsg"></div><div id="mainContent"></div><div id="outfitCard"></div><div id="forecast"></div><span id="temp"></span><span id="weatherDescText"></span><span id="weatherDesc2"></span><span id="detailRain"></span><span id="detailWind"></span><span id="detailHumidity"></span><span id="outfitMain"></span><span id="outfitTips"></span><span id="dailyQuote"></span><span id="sunriseTime"></span><span id="sunsetTime"></span><div id="indicesGrid"></div><canvas id="hourlyChart"></canvas><span id="dateDisplay"></span><span id="weatherIcon"></span></div>
+<span id="detailFeels" style="display:none"></span>
+<span id="forecastBadge" style="display:none"></span>
+<span id="hourlySection" style="display:none"></span>
+<span id="heroArea" style="display:none"></span>
+<span id="aqiValue" style="display:none"></span>
+<div style="display:none" id="weatherScene"><div id="weatherAnimContainer"></div></div>
+<div style="display:none" id="girlContainer"></div>
+<script>
 
-    <!-- Search -->
-    <div class="search-section">
-      <input
-        type="text"
-        class="search-input"
-        id="searchInput"
-        placeholder="搜索乡镇或城市..."
-        autocomplete="off"
-      >
-      <button class="btn btn-primary" id="searchBtn">🔍 搜索</button>
-      <button class="btn btn-outline" id="locateBtn" title="使用当前位置">📍</button>
-    </div>
-
-    <!-- Search Results -->
-    <div class="search-results" id="searchResults"></div>
-
-    <!-- Location -->
-    <div class="location" id="locationDisplay">
-      📍 <span id="locationName">选择你的位置开始</span>
-      <span style="margin-left:auto;font-size:0.85rem;color:var(--text-sub)" id="dateDisplay"></span>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <span>获取天气中...</span>
-    </div>
-
-    <!-- Error -->
-    <div class="error-msg" id="errorMsg"></div>
-
-    <!-- Info Bar -->
-    <div id="mainContent" style="display:none">
-      <div class="info-bar" id="infoBar">
-        <div><div class="ib-val"><span id="temp">--</span>°</div><div class="ib-label" id="weatherDescText">--</div></div>
-        <div><div class="ib-val"><span id="sunriseTime2">--</span></div><div class="ib-label">🌅 日出</div></div>
-        <div><div class="ib-val"><span id="sunsetTime2">--</span></div><div class="ib-label">🌇 日落</div></div>
-        <div><div class="ib-val" id="aqiDisplay">--</div><div class="ib-label">🌬️ AQI</div></div>
-      </div>
-
-      <!-- Hero: Scene + Character -->
-      <div class="hero-area" id="heroArea" style="display:none">
-        <div class="hero-scene" id="weatherScene"><div id="weatherAnimContainer"></div></div>
-        <div class="hero-char" id="girlContainer"></div>
-      </div>
-
-      <!-- Tab Bar -->
-   <!-- 7天预报 -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span style="font-size:0.8rem;font-weight:600;color:var(--text-sub)">📅 未来7天天气</span>
-        <span style="font-size:0.65rem;color:var(--text-sub)">点击查看穿搭</span>
-      </div>
-      <div class="forecast" id="forecast"></div>
-
-      class="tab-bar">
-        <button class="tab-btn active" data-tab="trend" onclick="switchTab('trend')">📈 趋势</button>
-        <button class="tab-btn" data-tab="index" onclick="switchTab('index')">📋 指数</button>
-      </div>
-
-      <!-- Tab: 穿搭 -->
-      <div class="tab-content active" id="tab-outfit">
-        <div class="weather-details" style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💧 降水 <strong id="detailRain">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💨 风力 <strong id="detailWind">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💦 湿度 <strong id="detailHumidity">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">🌡️ 体感 <strong id="detailFeels">--</strong></span>
-        </div>
-        <div class="outfit-card" id="outfitCard" style="display:none">
-          <div class="outfit-content" style="text-align:center;width:100%;padding:8px 0">
-            <div class="outfit-title" id="weatherDesc2" style="font-size:1rem;font-weight:600;margin-bottom:4px">--</div>
-            <div class="outfit-main" id="outfitMain" style="font-size:0.9rem;color:var(--text-primary);margin:6px 0"></div>
-            <div class="outfit-tips" id="outfitTips"></div>
-            <div class="daily-quote" id="dailyQuote" style="margin-top:10px"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: 趋势 -->
-      <div class="tab-content" id="tab-trend">
-        <div id="hourlySection" style="display:none;margin-top:4px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:0.8rem;font-weight:600;color:var(--text-sub)">⏰ 24小时气温趋势</span>
-            <button class="btn btn-sm" onclick="toggleTrend()" id="trendToggleBtn">🌡️ 切换降水</button>
-          </div>
-          <canvas class="hourly-chart" id="hourlyChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Tab: 指数 -->
-      <div class="tab-content" id="tab-index">
-        <div class="indices-grid" id="indicesGrid" style="display:none"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
     // ==================== 专属穿搭助手 — 核心逻辑 ====================
 
     // DOM elements
@@ -1343,13 +1254,13 @@
       document.getElementById('forecastBadge').style.display = 'none';
 
       // 日出日落 + AQI
-      document.getElementById('sunriseTime2').textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
-      document.getElementById('sunsetTime2').textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0].slice(11,16) : '--';
+      document.getElementById('sunriseTime').textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
+      document.getElementById('sunsetTime').textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0].slice(11,16) : '--';
       if (data.aqi) {
         var aqi = data.aqi;
         var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
-        document.getElementById('aqiDisplay').innerHTML = aqi.value + ' ' + aqi.level;
-      } else { document.getElementById('aqiDisplay').textContent = '--'; }
+        document.getElementById('aqiValue').innerHTML = aqi.value + ' ' + aqi.level;
+      } else { document.getElementById('aqiValue').textContent = '--'; }
 
       // 生活指数
       var idxGrid = document.getElementById('indicesGrid');
@@ -1712,6 +1623,7 @@
     }
 
     init();
-  </script>
+  
+</script>
 </body>
 </html>
