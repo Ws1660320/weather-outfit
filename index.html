@@ -14,7 +14,7 @@
 <script src="lottie-player.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;min-height:100vh;padding:16px}
+body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;min-height:100vh;padding:16px;padding-top:max(16px,env(safe-area-inset-top,16px))}
 .wrap{max-width:420px;margin:0 auto}
 .sr{display:flex;gap:8px;margin-bottom:12px}
 .si{flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:10px 16px;color:#fff;outline:none;font-size:.85rem;font-family:inherit}
@@ -164,9 +164,10 @@ function renderWeather(data){
  }
  todayData={temp:t,feels:c.feels,code:fc,wind:c.wind,hum:c.hum,precip:c.precip,hourly:data.hourly||[]};drawPrecipChart(data.hourly||[]);hideLoading();}
 function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart");
- if(!canvas||!hourly.length)return;
+ if(!canvas||!hourly.length){document.getElementById("precipCard").style.display="none";return;}
+ document.getElementById("precipCard").style.display="block";
  var dpr=window.devicePixelRatio||1;
- var el=canvas.parentElement;var W=el.clientWidth-36;var H=120;
+ var wrapEl=document.querySelector(".wrap");var W=(wrapEl?wrapEl.clientWidth:360)-36;var H=120;
  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+"px";canvas.style.height=H+"px";
  var ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
  var pad={t:10,b:16,l:28,r:8};var cw=W-pad.l-pad.r;var ch=H-pad.t-pad.b;
