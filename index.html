@@ -626,10 +626,15 @@
       </div>
 
       <!-- Tab Bar -->
-      <div class="tab-bar">
-        <button class="tab-btn active" data-tab="outfit" onclick="switchTab('outfit')">👗 穿搭</button>
-        <button class="tab-btn" data-tab="forecast" onclick="switchTab('forecast')">📅 预报</button>
-        <button class="tab-btn" data-tab="trend" onclick="switchTab('trend')">📈 趋势</button>
+   <!-- 7天预报 -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:0.8rem;font-weight:600;color:var(--text-sub)">📅 未来7天天气</span>
+        <span style="font-size:0.65rem;color:var(--text-sub)">点击查看穿搭</span>
+      </div>
+      <div class="forecast" id="forecast"></div>
+
+      class="tab-bar">
+        <button class="tab-btn active" data-tab="trend" onclick="switchTab('trend')">📈 趋势</button>
         <button class="tab-btn" data-tab="index" onclick="switchTab('index')">📋 指数</button>
       </div>
 
@@ -651,15 +656,13 @@
         </div>
       </div>
 
-      <!-- Tab: 预报 -->
-      <div class="tab-content" id="tab-forecast">
-        <div class="forecast" id="forecast" style="display:flex"></div>
-      </div>
-
       <!-- Tab: 趋势 -->
       <div class="tab-content" id="tab-trend">
         <div id="hourlySection" style="display:none;margin-top:4px">
-          <div style="font-size:0.8rem;font-weight:600;color:var(--text-sub);margin-bottom:4px">⏰ 24小时气温趋势</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:0.8rem;font-weight:600;color:var(--text-sub)">⏰ 24小时气温趋势</span>
+            <button class="btn btn-sm" onclick="toggleTrend()" id="trendToggleBtn">🌡️ 切换降水</button>
+          </div>
           <canvas class="hourly-chart" id="hourlyChart"></canvas>
         </div>
       </div>
