@@ -217,14 +217,13 @@ if(selIdx!==0&&chartMode==='temp'){
   }
 }else{
  if(chartMode==='precip'){
- if(chartMode==="precip"){
  var vals=hourly.map(function(h){return h.precip||0});var maxV=Math.max.apply(null,vals)||1;
  maxV=Math.ceil(maxV/5)*5;if(maxV===0)maxV=5;
  for(var i=0;i<=3;i++){var y=pad.t+(ch/3)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxV-(maxV/3)*i)+"mm",pad.l-4,y);}
  var barW=Math.max(3,cw/hourly.length-2);var x=pad.l;
  for(var i=0;i<hourly.length;i++){var hh=((vals[i]||0)/maxV)*ch;var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fillRect(x,yy,barW,1);x+=cw/hourly.length;}
- ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("降水(mm)",W-pad.r,pad.t-2);}
- else{
+ ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("降水(mm)",W-pad.r,pad.t-2);
+ }else{
  var temps=hourly.map(function(h){return h.temp||0});var minT=Math.floor(Math.min.apply(null,temps))-2;var maxT=Math.ceil(Math.max.apply(null,temps))+2;var range=maxT-minT||1;
  for(var i=0;i<=4;i++){var y=pad.t+(ch/4)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxT-(range/4)*i)+"°",pad.l-4,y);}
  ctx.beginPath();ctx.strokeStyle="#FF6B6B";ctx.lineWidth=2;ctx.shadowColor="rgba(255,107,107,0.3)";ctx.shadowBlur=4;
@@ -232,13 +231,14 @@ if(selIdx!==0&&chartMode==='temp'){
  ctx.stroke();ctx.shadowBlur=0;
  var grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);grad.addColorStop(0,"rgba(255,107,107,0.2)");grad.addColorStop(1,"rgba(255,107,107,0)");ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
  for(var i=0;i<hourly.length;i+=Math.max(1,Math.floor(hourly.length/8))){var ex=pad.l+(cw/(hourly.length-1))*i;var ey=pad.t+ch-((temps[i]-minT)/range)*ch;ctx.beginPath();ctx.arc(ex,ey,3,0,2*Math.PI);ctx.fillStyle="#fff";ctx.fill();ctx.fillStyle="#FF6B6B";ctx.beginPath();ctx.arc(ex,ey,2,0,2*Math.PI);ctx.fill();ctx.fillStyle="#fff";ctx.font="bold 9px sans-serif";ctx.textAlign="center";ctx.fillText(Math.round(temps[i])+"°",ex,ey-10);}
- ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="left";ctx.fillText("气温(°C)",pad.l,pad.t-2);}
+ ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="left";ctx.fillText("气温(°C)",pad.l,pad.t-2);
+ }
  ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="7px sans-serif";ctx.textAlign="center";ctx.textBaseline="top";
  var step=Math.max(1,Math.floor(hourly.length/8));
  for(var i=0;i<hourly.length;i+=step){var lx=pad.l+(cw/(hourly.length-1))*i;ctx.fillText(Math.round(i*24/hourly.length)+'h',lx,pad.t+ch+4);}
  var selIdx=-1;document.querySelectorAll(".fcc.active").forEach(function(el){selIdx=parseInt(el.dataset.idx)||0});
  if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h"+(chartMode==="temp"?"逐时气温":"逐时降水"),W/2,10);}}
- document.getElementById("precipCard").style.display="block";}}
+ document.getElementById("precipCard").style.display="block";}
 function showFcDay(idx){
  if(idx<0||idx>=forecastDays.length)return;
  var day=forecastDays[idx];
