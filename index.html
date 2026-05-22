@@ -59,6 +59,9 @@ body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background
 @keyframes spin{to{transform:rotate(360deg)}}
 .er{display:none;padding:14px;text-align:center;color:#ef4444;font-size:.8rem;background:rgba(239,68,68,0.1);border-radius:12px;margin-bottom:10px}
 .er.show{display:block}
+.ct{display:flex;gap:6px;margin-bottom:6px}
+.ctb{flex:1;text-align:center;padding:5px;border-radius:8px;font-size:.7rem;cursor:pointer;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);transition:all .2s;font-family:inherit}
+.ctb.active{background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.3)}
 .pc{width:100%;height:120px}
 </style>
 </head>
@@ -93,7 +96,7 @@ body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background
 <div class="fc" id="forecast"></div>
 </div>
 <div class="card" id="precipCard" style="display:none">
-<div style="font-size:.65rem;color:rgba(255,255,255,0.4);margin-bottom:6px">📊 24小时降水量</div>
+<div class="ct"><button class="ctb active" id="btnTemp" onclick="switchChart('temp')">🌡️ 气温</button><button class="ctb" id="btnPrecip" onclick="switchChart('precip')">🌧️ 降水</button></div><canvas id="precipChart" class="pc"></canvas>
 <canvas id="precipChart" class="pc"></canvas>
 </div>
 </div>
@@ -106,7 +109,7 @@ var hdrs={'X-QW-Api-Key':QWEATHER_KEY};
 var searchInput=document.getElementById('searchInput'),searchBtn=document.getElementById('searchBtn'),locateBtn=document.getElementById('locateBtn');
 var sres=document.getElementById('sres'),loading=document.getElementById('loading'),errorMsg=document.getElementById('errorMsg');
 var locName=document.getElementById('locName'),mainContent=document.getElementById('mainContent');
-var forecastDays=[],todayData=null;
+var forecastDays=[],todayData=null,chartMode="temp";
 
 function wxe(c){if(c===0)return'☀️';if(c===1)return'🌤️';if(c===2)return'⛅';if(c===3)return'☁️';if(c>=45&&c<=48)return'🌫️';if(c>=51&&c<=55)return'🌦️';if(c>=56&&c<=67)return'🌧️';if(c>=71&&c<=77)return'❄️';if(c>=80&&c<=82)return'🌦️';if(c>=85&&c<=86)return'🌨️';if(c>=95)return'⛈️';return'🌈';}
 function wxd(c){if(c===0)return'晴天';if(c===1)return'晴朗';if(c===2)return'多云';if(c===3)return'阴天';if(c>=45&&c<=48)return'有雾';if(c>=51&&c<=55)return'毛毛雨';if(c>=56&&c<=67)return'下雨';if(c>=71&&c<=77)return'下雪';if(c>=80&&c<=82)return'阵雨';if(c>=85&&c<=86)return'阵雪';if(c>=95)return'雷暴';return'天气';}
@@ -169,24 +172,36 @@ function renderWeather(data){
   fcDiv.innerHTML+='<div class="fcc'+(i===0?' active':'')+'" data-idx="'+i+'" onclick="showFcDay('+i+')"><div class="fd">'+fmtDay(d.time[i])+'</div><div class="fi">'+wxe(cd)+'</div><div class="fh">'+mx+'° <span class="fl">'+mn+'°</span></div></div>';
  }
  todayData={temp:t,feels:c.feels,code:fc,wind:c.wind,hum:c.hum,precip:c.precip,hourly:data.hourly||[]};drawPrecipChart(data.hourly||[]);hideLoading();}
-function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart");
- if(!canvas||!hourly.length){document.getElementById("precipCard").style.display="none";return;}
- document.getElementById("precipCard").style.display="block";
+var chartMode="temp";
+function switchChart(m){chartMode=m;document.getElementById("btnTemp").classList.toggle("active",m==="temp");document.getElementById("btnPrecip").classList.toggle("active",m==="precip");if(todayData&&todayData.hourly)drawPrecipChart(todayData.hourly);}
+function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart");var card=document.getElementById("precipCard");
+ if(!canvas||!hourly.length){if(card)card.style.display="none";return;}if(card)card.style.display="block";
  var dpr=window.devicePixelRatio||1;
- var wrapEl=document.querySelector(".wrap");var W=(wrapEl?wrapEl.clientWidth:360)-36;var H=120;
+ var wrapEl=document.querySelector(".wrap");var W=(wrapEl?wrapEl.clientWidth:360)-36;var H=140;
  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+"px";canvas.style.height=H+"px";
  var ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
  var pad={t:10,b:16,l:28,r:8};var cw=W-pad.l-pad.r;var ch=H-pad.t-pad.b;
+ if(chartMode==="precip"){
  var vals=hourly.map(function(h){return h.precip||0});var maxV=Math.max.apply(null,vals)||1;
  maxV=Math.ceil(maxV/5)*5;if(maxV===0)maxV=5;
  for(var i=0;i<=3;i++){var y=pad.t+(ch/3)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxV-(maxV/3)*i)+"mm",pad.l-4,y);}
  var barW=Math.max(3,cw/hourly.length-2);var x=pad.l;
  for(var i=0;i<hourly.length;i++){var hh=((vals[i]||0)/maxV)*ch;var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fillRect(x,yy,barW,1);x+=cw/hourly.length;}
+ ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("降水(mm)",W-pad.r,pad.t-2);}
+ else{
+ var temps=hourly.map(function(h){return h.temp||0});var minT=Math.floor(Math.min.apply(null,temps))-2;var maxT=Math.ceil(Math.max.apply(null,temps))+2;var range=maxT-minT||1;
+ for(var i=0;i<=4;i++){var y=pad.t+(ch/4)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxT-(range/4)*i)+"°",pad.l-4,y);}
+ ctx.beginPath();ctx.strokeStyle="#FF6B6B";ctx.lineWidth=2;ctx.shadowColor="rgba(255,107,107,0.3)";ctx.shadowBlur=4;
+ for(var i=0;i<hourly.length;i++){var ex=pad.l+(cw/(hourly.length-1))*i;var ey=pad.t+ch-((temps[i]-minT)/range)*ch;if(i===0)ctx.moveTo(ex,ey);else ctx.lineTo(ex,ey);}
+ ctx.stroke();ctx.shadowBlur=0;
+ var grad=ctx.createLinearGradient(0,pad.t,0,pad.t+ch);grad.addColorStop(0,"rgba(255,107,107,0.2)");grad.addColorStop(1,"rgba(255,107,107,0)");ctx.lineTo(pad.l+cw,pad.t+ch);ctx.lineTo(pad.l,pad.t+ch);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+ for(var i=0;i<hourly.length;i+=Math.max(1,Math.floor(hourly.length/8))){var ex=pad.l+(cw/(hourly.length-1))*i;var ey=pad.t+ch-((temps[i]-minT)/range)*ch;ctx.beginPath();ctx.arc(ex,ey,3,0,2*Math.PI);ctx.fillStyle="#fff";ctx.fill();ctx.fillStyle="#FF6B6B";ctx.beginPath();ctx.arc(ex,ey,2,0,2*Math.PI);ctx.fill();ctx.fillStyle="#fff";ctx.font="bold 9px sans-serif";ctx.textAlign="center";ctx.fillText(Math.round(temps[i])+"°",ex,ey-10);}
+ ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="left";ctx.fillText("气温(°C)",pad.l,pad.t-2);}
  ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="7px sans-serif";ctx.textAlign="center";ctx.textBaseline="top";
  var step=Math.max(1,Math.floor(hourly.length/6));
  for(var i=0;i<hourly.length;i+=step){var lx=pad.l+(cw/(hourly.length-1))*i;var tStr=hourly[i].time||"";ctx.fillText(tStr.length>11?tStr.slice(11,16):tStr,lx,pad.t+ch+4);}
  var selIdx=-1;document.querySelectorAll(".fcc.active").forEach(function(el){selIdx=parseInt(el.dataset.idx)||0});
- if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h逐时降水",W/2,10);}
+ if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h"+(chartMode==="temp"?"逐时气温":"逐时降水"),W/2,10);}
  else{ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("",W/2,12);}
  document.getElementById("precipCard").style.display="block";}
 function showFcDay(idx){
