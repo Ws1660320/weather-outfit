@@ -114,22 +114,22 @@ function isr(c){return(c>=51&&c<=65)||(c>=80&&c<=82);}
 function isno(c){return(c>=71&&c<=77)||(c>=85&&c<=86);}
 function qw2wmo(ic){var c=parseInt(ic);if(c>=300&&c<=318||c===399)return 61;if(c>=400&&c<=410||c===456||c===457||c===499)return 71;if(c>=500&&c<=515)return 45;if(c===100||c===150)return 0;if(c===101||c===151)return 1;if(c===102||c===152)return 2;if(c===103||c===153)return 2;if(c===104||c===154)return 3;if(c===900)return 0;if(c===901)return 71;return c;}
 function fmtDay(ds){var d=new Date(ds),t=new Date();if(d.toDateString()===t.toDateString())return'今天';t.setDate(t.getDate()+1);if(d.toDateString()===t.toDateString())return'明天';return['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];}
-function getOutfit(temp,code,w,h){var T='',B='',O='',CL='',FAB='',SPF='',cat='n',ac=[],tp=[];
- if(isr(code)){cat='rain';T=temp>=25?'短袖':'长袖';B=temp>=25?'短裤':'长裤';O='防水外套';ac.push('☂️ 带伞！');tp.push('防水鞋更舒适');}
- else if(isno(code)){cat='snow';T='厚毛衣';B='加绒裤';O='羽绒服+围巾+帽子';ac.push('❄️ 防滑靴');tp.push('路面湿滑小心');}
- else if(temp>=35){cat='hot';T='吊带/背心';B='超短裤';O='防晒衫';ac.push('🧴 防晒用品');tp.push('避开暴晒时段');}
- else if(temp>=30){cat='hot';T='短袖T恤';B='短裤/短裙';O='防晒衣';ac.push('🧴 防晒');}
- else if(temp>=25){T='短袖/衬衫';B='长裤/长裙';O='薄开衫';tp.push('早晚温差备件外套');}
- else if(temp>=18){T='长袖T恤';B='牛仔裤';O='轻薄外套';tp.push('天气舒适适合户外');}
- else if(temp>=12){cat='cool';T='卫衣/毛衣';B='长裤';O='风衣/夹克';tp.push('注意保暖');}
- else if(temp>=5){cat='cold';T='厚毛衣+打底';B='加绒裤';O='羽绒服/大衣';ac.push('🧣 围巾手套');tp.push('天气寒冷');}
- else{T='保暖内衣+毛衣';B='加绒厚裤';O='羽绒服+围巾+帽子+手套';tp.push('🥶 极寒注意保暖！');}
+function getOutfit(temp,code,w,h){var T='',B='',O='',CL='',FAB='',SPF='',S='',cat='n',ac=[],tp=[];
+ if(isr(code)){cat='rain';T=temp>=25?'白色半袖T恤（速干面料）':'V领长袖打底衫';B=temp>=25?'牛仔A字短裤':'深蓝直筒牛仔裤';S=temp>=25?'厚底凉鞋':'马丁靴';O='米色防水风衣';CL='雨天也要穿得好看✨';FAB='速干透气';SPF='SPF15+';ac.push('☂️ 透明长柄伞');ac.push('👢 防水短靴');tp.push('出门必带伞哦~');}
+ else if(isno(code)){cat='snow';T='白色高领羊毛衫';B='黑色加绒打底裤+毛呢短裙';S='加绒雪地靴';O='驼色长款羽绒服';CL='驼+白·冬日暖阳';FAB='羊毛内胆+防风面料';SPF='SPF15(雪地反射)';ac.push('🧣 羊绒围巾');ac.push('🧤 触屏手套');tp.push('下雪路滑·慢慢走~');}
+ else if(temp>=35){cat='hot';T='白色V领半袖T恤(冰感纯棉)';B='米色亚麻A字短裤';S='白色平底凉鞋';O='冰丝长款防晒衫';CL='全白/白+米·极致清凉';FAB='冰感纯棉+亚麻';SPF='SPF50+ PA++++';ac.push('👒 宽檐防晒帽');ac.push('🕶️ UV400墨镜');ac.push('😷 冰丝防晒口罩');ac.push('🧴 防水防晒·2h补涂一次');tp.push('暴晒时段10-16点减少外出！');}
+ else if(temp>=30){cat='hot';T='淡粉色圆领短袖T恤(纯棉)';B='浅蓝牛仔短裤/百褶裙';S='白色帆布鞋/平底凉拖';O='白色薄款防晒衫';CL='浅粉+浅蓝·甜美清爽';FAB='纯棉透气';SPF='SPF30+ PA+++';ac.push('😷 透气防晒口罩');ac.push('👒 渔夫帽/棒球帽');ac.push('🧴 出门前30分钟涂防晒');tp.push('高温多喝水·注意防暑');}
+ else if(temp>=25){T='奶白法式V领短袖衬衫';B='浅蓝高腰直筒牛仔裤';S='白色乐福鞋/帆布鞋';O='米色薄款针织开衫';CL='奶白+牛仔蓝·温柔知性';FAB='纯棉舒适';SPF='SPF30+ PA++';ac.push('🕶️ 金属框墨镜');ac.push('😷 蕾丝花边防晒口罩');tp.push('早晚温差·开衫随身带~');}
+ else if(temp>=18){T='黑白条纹长袖T恤(纯棉)';B='深蓝九分牛仔裤';S='白色厚底运动鞋';O='卡其色轻薄风衣';CL='黑白+牛仔蓝·经典休闲';FAB='纯棉亲肤';SPF='SPF15+ PA+';ac.push('👜 帆布托特包');tp.push('天气宜人·适合逛街约会');}
+ else if(temp>=12){cat='cool';T='灰色宽松连帽卫衣(加绒)';B='黑色高腰阔腿裤';S='黑色马丁靴';O='卡其色中长风衣';CL='灰+黑+卡其·高级大地色';FAB='棉质+摇粒绒内里';tp.push('微凉天气·围巾是点睛之笔');}
+ else if(temp>=5){cat='cold';T='黑色修身高领毛衣';B='深蓝加绒牛仔裤';S='黑色方根短靴';O='驼色双面羊毛大衣';CL='黑+驼色·优雅暖调';FAB='羊毛内胆+保暖里布';ac.push('🧣 驼色羊绒围巾');ac.push('🧤 皮质手套');tp.push('室内外温差大·注意穿脱~');}
+ else{T='加绒保暖内衣+羊绒高领衫';B='加绒加厚打底裤+毛呢长裙';S='加绒雪地靴';O='长款连帽鹅绒羽绒服';CL='黑+深蓝·保暖不臃肿';FAB='鹅绒填充+防风面料';ac.push('🧣 加厚羊绒围巾');ac.push('🧤 加绒触屏手套');ac.push('🐻 毛绒耳罩');tp.push('🥶 极寒天气·全副武装再出门！');}
  if(w>25&&temp<18)tp.push('风大建议防风外套');
  return{main:T+'，'+B+'。'+O,ac:ac,tp:tp,c:cat};}
 
 async function geocode(q){var u='https://restapi.amap.com/v3/geocode/geo?key='+AMAP_KEY+'&address='+encodeURIComponent(q)+'&city=&output=json';var r=await fetch(u);if(!r.ok)throw new Error('搜索失败');var d=await r.json();if(d.status!=='1'||!d.geocodes||!d.geocodes.length)throw new Error('未找到地点');return d.geocodes.map(function(g){var p=g.location.split(',');return{name:g.formatted_address||g.address||q,lat:parseFloat(p[1]),lon:parseFloat(p[0])};});}
 async function getWeather(lt,ln){var loc=ln+','+lt;var ress=await Promise.all([fetch('https://'+baseHost+'/v7/weather/now?location='+loc,{headers:hdrs}),fetch('https://'+baseHost+'/v7/weather/7d?location='+loc,{headers:hdrs}),fetch('https://'+baseHost+'/v7/air/now?location='+loc,{headers:hdrs}).catch(function(){return{ok:false}}),fetch('https://'+baseHost+'/v7/weather/24h?location='+loc,{headers:hdrs}).catch(function(){return{ok:false}})]);var nr=ress[0],fr=ress[1],ar=ress[2],hr=ress[3];if(!nr.ok||!fr.ok)throw new Error('数据获取失败');var nd=await nr.json(),fd=await fr.json();if(nd.code!=='200'||fd.code!=='200')throw new Error('API错误');var n=nd.now,d=fd.daily;var aqi=null,hourly=[];if(ar&&ar.ok){try{var ad=await ar.json();if(ad.code==='200'&&ad.now)aqi={v:parseInt(ad.now.aqi),l:ad.now.level};}catch(e){}}if(hr&&hr.ok){try{var hd=await hr.json();if(hd.code==='200'&&hd.hourly){hourly=hd.hourly.slice(0,24).map(function(h){return{time:h.fxTime,temp:parseFloat(h.temp),precip:parseFloat(h.precip||0)};});}}catch(e){}}
- return{current:{temp:parseFloat(n.temp),feels:parseFloat(n.feelsLike),code:qw2wmo(n.icon),precip:parseFloat(n.precip||0),wind:parseFloat(n.windSpeed),hum:parseFloat(n.humidity)},daily:{time:d.map(function(dd){return dd.fxDate;}),max:d.map(function(dd){return parseFloat(dd.tempMax);}),min:d.map(function(dd){return parseFloat(dd.tempMin);}),code:d.map(function(dd){return qw2wmo(dd.iconDay);}),precip:d.map(function(dd){return parseFloat(dd.precip||0);}),wind:d.map(function(dd){return parseFloat(dd.windSpeedDay||0);}),hum:d.map(function(dd){return parseFloat(dd.humidity||0);}),sunrise:d.map(function(dd){return dd.sunrise||'';}),sunset:d.map(function(dd){return dd.sunset||'';})},aqi:aqi,hourly:hourly};}
+ return{current:{temp:parseFloat(n.temp),feels:parseFloat(n.feelsLike),code:qw2wmo(n.icon),precip:parseFloat(n.precip||0),wind:parseFloat(n.windSpeed),hum:parseFloat(n.humidity)},daily:{time:d.map(function(dd){return dd.fxDate;}),max:d.map(function(dd){return parseFloat(dd.tempMax);}),min:d.map(function(dd){return parseFloat(dd.tempMin);}),code:d.map(function(dd){return qw2wmo(dd.iconDay);}),precip:d.map(function(dd){return parseFloat(dd.precip||0);}),wind:d.map(function(dd){return parseFloat(dd.windSpeedDay||0);}),hum:d.map(function(dd){return parseFloat(dd.humidity||0);}),sunrise:d.map(function(dd){return dd.sunrise||'';}),sunset:d.map(function(dd){return dd.sunset||'';}),uv:d.map(function(dd){return dd.uvIndex||'-';})},aqi:aqi,hourly:hourly};}
 function showLoading(){loading.classList.add('show');errorMsg.classList.remove('show');mainContent.style.display='none'}
 function hideLoading(){loading.classList.remove('show')}
 function showError(m){errorMsg.textContent=m;errorMsg.classList.add('show');hideLoading()}
@@ -155,7 +155,7 @@ function renderWeather(data){
  var tipsDiv=document.getElementById('outfitTips');tipsDiv.innerHTML='';
  if(outfit.CL)tipsDiv.innerHTML+='<div class="ot">🎨 '+outfit.CL+'</div>';
  if(outfit.FAB)tipsDiv.innerHTML+='<div class="ot">🧵 '+outfit.FAB+'</div>';
- if(outfit.SHOES)tipsDiv.innerHTML+='<div class="ot">👡 '+outfit.SHOES+'</div>';
+ if(outfit.S)tipsDiv.innerHTML+='<div class="ot">👡 '+outfit.S+'</div>';
  if(outfit.SPF)tipsDiv.innerHTML+='<div class="ot">🧴 '+outfit.SPF+'</div>';
  outfit.tp.forEach(function(tx){tipsDiv.innerHTML+='<div class="ot">💡 '+tx+'</div>';});
  outfit.ac.forEach(function(ax){tipsDiv.innerHTML+='<div class="ot">✨ '+ax+'</div>';});
@@ -182,8 +182,11 @@ function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart
  for(var i=0;i<=3;i++){var y=pad.t+(ch/3)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxV-(maxV/3)*i)+"mm",pad.l-4,y);}
  var barW=Math.max(3,cw/hourly.length-2);var x=pad.l;
  for(var i=0;i<hourly.length;i++){var hh=((vals[i]||0)/maxV)*ch;var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fillRect(x,yy,barW,1);x+=cw/hourly.length;}
+ ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="7px sans-serif";ctx.textAlign="center";ctx.textBaseline="top";
+ var step=Math.max(1,Math.floor(hourly.length/6));
+ for(var i=0;i<hourly.length;i+=step){var lx=pad.l+(cw/(hourly.length-1))*i;var tStr=hourly[i].time||"";ctx.fillText(tStr.length>11?tStr.slice(11,16):tStr,lx,pad.t+ch+4);}
  var selIdx=-1;document.querySelectorAll(".fcc.active").forEach(function(el){selIdx=parseInt(el.dataset.idx)||0});
- if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h逐时降水",W/2,12);}
+ if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h逐时降水",W/2,10);}
  else{ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("",W/2,12);}
  document.getElementById("precipCard").style.display="block";}
 function showFcDay(idx){
@@ -205,7 +208,7 @@ function showFcDay(idx){
  document.getElementById('outfitTips').innerHTML='';
  if(outfit.CL)document.getElementById('outfitTips').innerHTML+='<div class="ot">🎨 '+outfit.CL+'</div>';
  if(outfit.FAB)document.getElementById('outfitTips').innerHTML+='<div class="ot">🧵 '+outfit.FAB+'</div>';
- if(outfit.SHOES)document.getElementById('outfitTips').innerHTML+='<div class="ot">👡 '+outfit.SHOES+'</div>';
+ if(outfit.S)document.getElementById('outfitTips').innerHTML+='<div class="ot">👡 '+outfit.S+'</div>';
  if(outfit.SPF)document.getElementById('outfitTips').innerHTML+='<div class="ot">🧴 '+outfit.SPF+'</div>';
  outfit.tp.forEach(function(tx){document.getElementById('outfitTips').innerHTML+='<div class="ot">💡 '+tx+'</div>';});
  outfit.ac.forEach(function(ax){document.getElementById('outfitTips').innerHTML+='<div class="ot">✨ '+ax+'</div>';});if(todayData&&todayData.hourly)drawPrecipChart(todayData.hourly);}
