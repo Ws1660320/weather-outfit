@@ -1,647 +1,222 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="专属穿搭助手">
-  <meta name="theme-color" content="#1a1a2e">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="icon" href="icon.png">
-  <title>专属穿搭助手</title>
-  <script src="lottie-player.js"></script>
-  <style>
-    :root {
-      --bg: #f0f4f8;
-      --card-bg: #ffffff;
-      --text: #1a202c;
-      --text-sub: #64748b;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --danger: #ef4444;
-      --warn: #f59e0b;
-      --good: #10b981;
-      --border: #e2e8f0;
-      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="专属穿搭助手">
+<meta name="theme-color" content="#302b63">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.png">
+<title>专属穿搭助手</title>
+<script src="lottie-player.js"></script>
+<style>
+:root {
+  --glass-bg: rgba(255,255,255,0.1);
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-text: rgba(255,255,255,0.9);
+  --glass-dim: rgba(255,255,255,0.5);
+  --accent: #667eea;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow-x: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: #fff; font-size: 14px; line-height: 1.5; min-height: 100vh; padding: 16px;
+}
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f172a;
-        --card-bg: #1e293b;
-        --text: #f1f5f9;
-        --text-sub: #94a3b8;
-        --accent: #60a5fa;
-        --accent-hover: #3b82f6;
-        --border: #334155;
-        --shadow: 0 1px 3px rgba(0,0,0,0.3);
-        --shadow-lg: 0 10px 25px rgba(0,0,0,0.3);
-      }
-    }
+.glass-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; }
+.glass-bg { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; }
+.glass-input { background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 10px 16px; color: #fff; width: 100%; outline: none; font-size: 0.85rem; font-family: inherit; }
+.glass-input::placeholder { color: rgba(255,255,255,0.4); }
+.glass-btn { background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 8px 14px; color: #fff; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; font-family: inherit; white-space: nowrap; }
+.glass-btn:active { transform: scale(0.95); }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
-      display: flex;
-      justify-content: center;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
-      transition: background 0.3s;
-    }
+/* Search */
+.search-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.loc-row { color: rgba(255,255,255,0.85); font-size: 0.9rem; font-weight: 600; margin-bottom: 14px; display: flex; justify-content: space-between; }
+.loc-row .date-sub { font-weight: 400; font-size: 0.75rem; color: rgba(255,255,255,0.45); }
 
-    .app {
-      width: 100%;
-      max-width: 440px;
-      padding-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+/* Main Info */
+.main-glass { padding: 18px; margin-bottom: 10px; }
+.temp-big { font-size: 3.2rem; font-weight: 200; line-height: 1; }
+.temp-unit { font-size: 1rem; font-weight: 300; opacity: 0.5; }
+.weather-desc-line { color: rgba(255,255,255,0.8); font-size: 0.85rem; margin: 4px 0 8px; }
+.weather-icon-big { font-size: 2.5rem; opacity: 0.7; }
+.info-strip { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+.info-strip > div { text-align: center; padding: 6px 4px; background: rgba(255,255,255,0.08); border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); }
+.info-strip .v { color: #fff; font-size: 0.75rem; font-weight: 600; }
+.info-strip .l { color: rgba(255,255,255,0.5); font-size: 0.6rem; margin-top: 1px; }
 
-    /* Header */
-    .header {
-      text-align: center;
-      padding: 4px 0;
-    }
-    .header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-    .header .subtitle {
-      font-size: 0.8rem;
-      color: var(--text-sub);
-      margin-top: 2px;
-    }
+/* Outfit Card */
+.outfit-glass { padding: 14px 18px; margin-bottom: 10px; }
+.outfit-label { color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-bottom: 6px; display: flex; justify-content: space-between; }
+.outfit-text-big { color: #fff; font-size: 0.95rem; font-weight: 600; line-height: 1.6; }
+.outfit-tip-new { color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-top: 3px; }
+.quote-text { color: rgba(255,255,255,0.35); font-size: 0.7rem; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
 
-    /* Search */
-    .search-section {
-      display: flex;
-      gap: 8px;
-    }
-    .search-input {
-      flex: 1;
-      height: 48px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0 14px;
-      font-size: 0.95rem;
-      background: var(--card-bg);
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .search-input:focus { border-color: var(--accent); }
-    .search-input::placeholder { color: var(--text-sub); }
+/* Tabs */
+.tab-bar { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab-btn { flex: 1; text-align: center; padding: 8px 4px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; color: rgba(255,255,255,0.5); transition: all 0.3s; background: rgba(255,255,255,0.05); cursor: pointer; border: none; font-family: inherit; background: none; }
+.tab-btn:active { transform: scale(0.95); }
+.tab-btn.active { background: rgba(255,255,255,0.2); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-    .btn {
-      height: 48px;
-      padding: 0 16px;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-outline {
-      background: var(--card-bg);
-      color: var(--accent);
-      border: 2px solid var(--border);
-    }
+/* Forecast */
+.forecast-header { color: rgba(255,255,255,0.4); font-size: 0.65rem; margin-bottom: 8px; letter-spacing: 1px; }
+.fc-scroll { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+.fc-scroll::-webkit-scrollbar { height: 2px; }
+.fc-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px; }
+.fc-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+.fc-card { flex-shrink: 0; width: 70px; padding: 10px 4px; background: rgba(255,255,255,0.05); border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; border: 1px solid transparent; }
+.fc-card:active { transform: scale(0.95); }
+.fc-card.active { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3); transform: scale(1.05); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.fc-card .fd { font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+.fc-card.active .fd { color: rgba(255,255,255,0.8); }
+.fc-card .fi { font-size: 1.2rem; margin-bottom: 2px; }
+.fc-card .fh { font-size: 0.75rem; font-weight: 600; color: #fff; }
+.fc-card .fl { font-size: 0.6rem; color: rgba(255,255,255,0.4); }
 
-    /* Location chip */
-    .location {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-      color: var(--text-sub);
-      padding: 2px 0;
-    }
-    .location strong {
-      color: var(--text);
-      font-size: 1rem;
-    }
+.day-detail { margin-top: 10px; padding: 12px; background: rgba(255,255,255,0.06); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); min-height: 50px; }
+.day-detail .dd-row { display: flex; justify-content: space-between; align-items: center; }
+.day-detail .dd-label { color: rgba(255,255,255,0.4); font-size: 0.65rem; }
+.day-detail .dd-temp { color: #fff; font-size: 1.5rem; font-weight: 300; }
+.day-detail .dd-desc { color: rgba(255,255,255,0.8); font-size: 0.8rem; text-align: right; }
+.day-detail .dd-outfit { color: rgba(255,255,255,0.9); font-size: 0.8rem; font-weight: 500; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
+.day-detail .dd-info { display: flex; gap: 8px; margin-top: 4px; }
+.day-detail .dd-info span { font-size: 0.65rem; color: rgba(255,255,255,0.45); }
+.day-detail-placeholder { color: rgba(255,255,255,0.3); font-size: 0.7rem; text-align: center; }
 
-    /* Main Weather Card */
-    .weather-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow-lg);
-      position: relative;
-      overflow: hidden;
-    }
-    .weather-card::before {
-      content: '';
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      background: var(--accent);
-      opacity: 0.08;
-    }
-    .weather-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      position: relative;
-      z-index: 1;
-    }
-    .weather-temp {
-      font-size: 4rem;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-    .weather-unit { font-size: 1.5rem; font-weight: 400; }
-    .weather-icon {
-      font-size: 4rem;
-      line-height: 1;
-    }
-    .weather-desc { font-size: 1.1rem; font-weight: 500; margin-top: 8px; }
-    .weather-feels {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-top: 2px;
-    }
-    .weather-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      position: relative;
-      z-index: 1;
-    }
-    .detail-item {
-      text-align: center;
-    }
-    .detail-label {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      margin-bottom: 4px;
-    }
-    .detail-value {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
+/* Chart & Indices */
+.tab-content .hourly-chart { width: 100%; height: 130px; border-radius: 8px; }
+.indices-grid { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; -webkit-overflow-scrolling: touch; }
+.index-card { flex-shrink: 0; width: 80px; padding: 8px 4px; background: rgba(255,255,255,0.06); border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.06); }
+.index-card .ii { font-size: 1.1rem; }
+.index-card .il { font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.9); }
+.index-card .in { font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
 
-    /* Outfit Card */
-    .outfit-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      box-shadow: var(--shadow-lg);
-      border-left: 4px solid var(--accent);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-items: center;
-      text-align: center;
-    }
-    .outfit-card.rain { border-left-color: #6366f1; }
-    .outfit-card.snow { border-left-color: #a5f3fc; }
-    .outfit-card.hot { border-left-color: #f97316; }
-    .outfit-card.cold { border-left-color: #06b6d4; }
+/* Search results */
+.search-results { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-bottom: 10px; display: none; }
+.search-results.show { display: block; }
+.search-results .sr-item { padding: 10px 14px; color: #fff; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.04); transition: all 0.2s; }
+.search-results .sr-item:last-child { border-bottom: none; }
+.search-results .sr-item:hover { background: rgba(255,255,255,0.1); }
 
-    .outfit-girl {
-      flex-shrink: 0;
-      width: 120px;
-      height: 174px;
-    }
-    /* ===== Tab 布局 ===== */
-    .info-bar {
-      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px;
-      margin: 8px 0 0; padding: 10px 12px; background: var(--card-bg);
-      border-radius: var(--radius); border: 1px solid var(--border); text-align: center;
-    }
-    .info-bar .ib-item { }
-    .info-bar .ib-val { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
-    .info-bar .ib-label { font-size: 0.6rem; color: var(--text-muted); margin-top: 1px; }
-
-    .hero-area {
-      display: flex; gap: 12px; align-items: center; margin: 8px 0 0;
-      padding: 12px; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border);
-    }
-    .hero-area .hero-scene { flex: 1; height: 130px; border-radius: var(--radius-sm); overflow: hidden; }
-    .hero-area .hero-scene lottie-player { width: 100%; height: 100%; }
-    .hero-area .hero-char { width: 90px; height: 130px; flex-shrink: 0; }
-
-    .tab-bar {
-      display: flex; margin: 8px 0 0; background: var(--bg-secondary);
-      border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border);
-    }
-    .tab-btn {
-      flex: 1; text-align: center; padding: 7px 6px; border-radius: 6px;
-      font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); cursor: pointer;
-      transition: all 0.2s; border: none; background: none; font-family: inherit;
-    }
-    .tab-btn:active { transform: scale(0.95); }
-    .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(33,150,243,0.3); }
-    .tab-content { display: none; margin-top: 8px; }
-    .tab-content.active { display: block; }
-    .tab-content .outfit-card { margin: 0; }
-    .tab-content .forecast { margin: 0; }
-    @keyframes rain-fall { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
-    @keyframes snow-fall { 0% { transform: translateY(-10px) rotate(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(190px) rotate(360deg); opacity: 0; } }
-    @keyframes cloud-drift { 0% { transform: translateX(-40px); } 100% { transform: translateX(40px); } }
-    @keyframes float-up { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-    .weather-scene {
-      position: relative; width: 100%; height: 180px; border-radius: var(--radius);
-      overflow: hidden; display: flex; align-items: center; justify-content: center;
-      margin-bottom: 8px;
-    }
-    .weather-scene.sunny { background: linear-gradient(180deg, #87CEEB 0%, #FFF8DC 100%); }
-    .weather-scene.cloudy { background: linear-gradient(180deg, #A0B8D0 0%, #D0D8E0 100%); }
-    .weather-scene.rain { background: linear-gradient(180deg, #5A6A78 0%, #8595A6 100%); }
-    .weather-scene.snow { background: linear-gradient(180deg, #C8DDE8 0%, #E8EEF4 100%); }
-    .weather-scene.storm { background: linear-gradient(180deg, #4A5568 0%, #2D3748 100%); }
-    .weather-scene.default { background: linear-gradient(180deg, #74B9FF 0%, #DFE6E9 100%); }
-    .weather-scene lottie-player { width: 140px; height: 140px; }
-    .rain-drops {
-      position: absolute; inset: 0; pointer-events: none;
-      background: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(116,185,255,0.25) 8px, rgba(116,185,255,0.25) 10px);
-      animation: rain-fall 0.8s linear infinite;
-    }
-    .snow-flake {
-      position: absolute; top: -10px; background: #FFF; border-radius: 50%;
-      animation: snow-fall linear infinite;
-    }
-    .wx-cloud {
-      position: absolute; border-radius: 50%; background: rgba(255,255,255,0.85);
-      animation: cloud-drift 6s ease-in-out infinite alternate;
-    }
-    .outfit-girl svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* ===== 角色动画 ===== */
-    @keyframes breathe { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.02); } }
-    @keyframes sway { 0%,100% { transform: rotate(0); } 25% { transform: rotate(1.5deg); } 75% { transform: rotate(-1.5deg); } }
-    @keyframes head-tilt { 0%,100% { transform: rotate(0); } 50% { transform: rotate(3deg); } }
-    @keyframes head-nod { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-2deg); } }
-    @keyframes head-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-2px); } 40% { transform: translateX(2px); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
-    @keyframes arm-swing { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-5deg); } }
-    @keyframes arm-fan { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-12deg); } }
-    @keyframes arm-hug { 0%,100% { transform: rotate(8deg); } 50% { transform: rotate(-5deg); } }
-    @keyframes step { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-    @keyframes shiver-body { 0%,100% { transform: translateX(0); } 15% { transform: translateX(-1.5px) rotate(-0.5deg); } 30% { transform: translateX(1.5px) rotate(0.5deg); } 45% { transform: translateX(-1px); } 60% { transform: translateX(1px); } }
-    @keyframes shiver-intense { 0% { transform: translateX(-2px) rotate(-1deg); } 25% { transform: translateX(2px) rotate(1deg); } 50% { transform: translateX(-1.5px) rotate(-0.5deg); } 75% { transform: translateX(1.5px) rotate(0.5deg); } }
-    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-    @keyframes stomp { 0%,100% { transform: translateY(0); } 25% { transform: translateY(-2px); } 50% { transform: translateY(0); } 75% { transform: translateY(-2px); } }
-    @keyframes sweat-drop { 0% { opacity: 0; transform: translateY(0); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(10px); } }
-    @keyframes rain-shake { 0%,100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
-    @keyframes snow-look { 0%,100% { transform: rotate(0); } 50% { transform: rotate(5deg) translateY(-2px); } }
-
-    /* Heatwave 35°C+ */
-    .anim-heatwave #torso { animation: sway 3s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-heatwave #head { animation: head-tilt 4s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-heatwave #arms { animation: arm-swing 2.5s ease-in-out infinite; transform-origin: 53px 96px; }
-
-    /* Hot 30-34°C */
-    .anim-hot #torso { animation: sway 3.5s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-hot #head { animation: head-tilt 5s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-hot #arms { animation: arm-fan 2s ease-in-out infinite; transform-origin: 53px 96px; }
-
-    /* Warm 25-29°C */
-    .anim-warm #torso { animation: bounce 1.5s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-warm #head { animation: head-tilt 2s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-warm #arms { animation: arm-swing 1.2s ease-in-out infinite; transform-origin: 53px 96px; }
-
-    /* Mild 15-24°C */
-    .anim-mild #torso { animation: breathe 3s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-mild #head { animation: head-nod 4s ease-in-out infinite; transform-origin: 75px 62px; }
-
-    /* Cool 10-14°C */
-    .anim-cool #torso { animation: shiver-body 0.8s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-cool #head { animation: head-nod 2s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-cool #arms { animation: arm-hug 1.5s ease-in-out infinite; transform-origin: 53px 96px; }
-
-    /* Cold 5-9°C */
-    .anim-cold #torso { animation: shiver-body 0.4s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-cold #head { animation: head-shake 0.6s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-cold #arms { animation: arm-hug 0.5s ease-in-out infinite; transform-origin: 53px 96px; }
-
-    /* Freezing <5°C */
-    .anim-freezing #torso { animation: shiver-intense 0.2s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-freezing #head { animation: head-shake 0.25s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-freezing #arms { animation: arm-hug 0.3s ease-in-out infinite; transform-origin: 53px 96px; }
-    .anim-freezing #legs { animation: stomp 0.4s ease-in-out infinite; transform-origin: 56px 126px; }
-
-    /* Rain */
-    .anim-rain #torso { animation: sway 2s ease-in-out infinite; transform-origin: 75px 128px; }
-    .anim-rain #head { animation: head-tilt 1.5s ease-in-out infinite; transform-origin: 75px 62px; }
-
-    /* Snow */
-    .anim-snow #head { animation: snow-look 3s ease-in-out infinite; transform-origin: 75px 62px; }
-    .anim-snow #torso { animation: breathe 2.5s ease-in-out infinite; transform-origin: 75px 128px; }
-
-    .outfit-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .outfit-title {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .outfit-main {
-      font-size: 1.1rem;
-      font-weight: 600;
-      line-height: 1.6;
-    }
-    .outfit-tips {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .outfit-tip {
-      font-size: 0.88rem;
-      color: var(--text-sub);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .daily-quote {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border);
-      font-size: 0.9rem;
-      color: var(--accent);
-      text-align: center;
-      font-weight: 500;
-      line-height: 1.5;
-      letter-spacing: 0.5px;
-    }
-
-    @media (max-width: 380px) {
-      .outfit-card { padding: 16px; }
-      .outfit-girl { width: 100px; height: 145px; }
-    }
-
-    /* Forecast horizontal scroll */
-    .forecast {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 4px;
-      scrollbar-width: thin;
-    }
-    .forecast::-webkit-scrollbar { height: 3px; }
-    .forecast::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
-    .forecast::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-    .forecast-card {
-      flex-shrink: 0;
-      width: 72px;
-      background: var(--card-bg);
-      border-radius: var(--radius-sm);
-      padding: 12px 6px;
-      text-align: center;
-      box-shadow: var(--shadow);
-      scroll-snap-align: start;
-    }
-    .forecast-day {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
-    .forecast-icon { font-size: 1.5rem; }
-    .forecast-temps {
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-    .forecast-temps .low { color: var(--text-sub); font-weight: 400; font-size: 0.75rem; }
-    .forecast-card.active { background: var(--accent); color: #fff; transform: scale(1.08); }
-    .forecast-card.active .low { color: rgba(255,255,255,0.75); }
-    .forecast-card { cursor: pointer; transition: all 0.2s ease; }
-    .forecast-card:active { transform: scale(0.95); }
-    .forecast-badge {
-      display: inline-block; font-size: 0.7rem; background: var(--accent); color: #fff;
-      padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
-    }
-
-    /* ===== 新增功能样式 ===== */
-    .sunrise-sunset {
-      display: flex; justify-content: space-around; margin-top: 4px; gap: 8px;
-    }
-    .sunrise-sunset span { font-size: 0.75rem; color: var(--text-sub); }
-    .sunrise-sunset strong { color: var(--text-primary); font-size: 0.85rem; }
-    .aqi-card {
-      display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px;
-      border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 4px;
-    }
-    .aqi-card.good { background: rgba(76,175,80,0.15); color: #4CAF50; }
-    .aqi-card.moderate { background: rgba(255,193,7,0.15); color: #FFC107; }
-    .aqi-card.unhealthy { background: rgba(255,152,0,0.15); color: #FF9800; }
-    .aqi-card.bad { background: rgba(244,67,54,0.15); color: #f44336; }
-
-    .indices-grid {
-      display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 4px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .index-card {
-      flex-shrink: 0; width: 90px; padding: 10px 8px; border-radius: 10px;
-      background: var(--bg-secondary); text-align: center; border: 1px solid var(--border);
-    }
-    .index-card .index-icon { font-size: 1.2rem; }
-    .index-card .index-name { font-size: 0.65rem; color: var(--text-sub); margin-top: 2px; }
-    .index-card .index-level { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); }
-
-    .hourly-chart { width: 100%; height: 130px; margin-top: 8px; border-radius: var(--radius-sm); }
-
-    /* Search Results Dropdown */
-    .search-results {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-      display: none;
-    }
-    .search-results.show { display: block; }
-    .search-result-item {
-      padding: 12px 16px;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-      transition: background 0.15s;
-    }
-    .search-result-item:last-child { border-bottom: none; }
-    .search-result-item:hover, .search-result-item:active {
-      background: var(--accent);
-      color: #fff;
-    }
-    .search-result-item .place-type {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-    }
-    .search-result-item:hover .place-type { color: rgba(255,255,255,0.7); }
-
-    /* Loading */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 20px;
-      color: var(--text-sub);
-    }
-    .loading.show { display: block; }
-    .spinner {
-      width: 32px; height: 32px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 10px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Error */
-    .error-msg {
-      display: none;
-      background: #fef2f2;
-      color: #dc2626;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.88rem;
-      text-align: center;
-    }
-    .error-msg.show { display: block; }
-
-    /* Responsive */
-    @media (min-width: 440px) {
-      .app { padding-top: 40px; }
-    }
-  </style>
+/* Loading & Error */
+.loading { display: none; justify-content: center; align-items: center; gap: 10px; padding: 40px 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+.loading.show { display: flex; }
+.spinner { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.15); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-msg { display: none; padding: 20px; text-align: center; color: #ef4444; font-size: 0.85rem; background: rgba(239,68,68,0.1); border-radius: 12px; margin-bottom: 10px; }
+.error-msg.show { display: block; }
+</style>
 </head>
 <body>
-  <div class="app">
-    <!-- Header -->
-    <div class="header">
-      <h1>✨ 专属穿搭助手</h1>
-      <p class="subtitle">专属你的每日穿搭</p>
-    </div>
 
-    <!-- Search -->
-    <div class="search-section">
-      <input
-        type="text"
-        class="search-input"
-        id="searchInput"
-        placeholder="搜索乡镇或城市..."
-        autocomplete="off"
-      >
-      <button class="btn btn-primary" id="searchBtn">🔍 搜索</button>
-      <button class="btn btn-outline" id="locateBtn" title="使用当前位置">📍</button>
-    </div>
+<!-- Content wrapper -->
+<div style="max-width:420px;margin:0 auto">
 
-    <!-- Search Results -->
-    <div class="search-results" id="searchResults"></div>
-
-    <!-- Location -->
-    <div class="location" id="locationDisplay">
-      📍 <span id="locationName">选择你的位置开始</span>
-      <span style="margin-left:auto;font-size:0.85rem;color:var(--text-sub)" id="dateDisplay"></span>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <span>获取天气中...</span>
-    </div>
-
-    <!-- Error -->
-    <div class="error-msg" id="errorMsg"></div>
-
-    <!-- Info Bar -->
-    <div id="mainContent" style="display:none">
-      <div class="info-bar" id="infoBar">
-        <div><div class="ib-val"><span id="temp">--</span>°</div><div class="ib-label" id="weatherDescText">--</div></div>
-        <div><div class="ib-val"><span id="sunriseTime2">--</span></div><div class="ib-label">🌅 日出</div></div>
-        <div><div class="ib-val"><span id="sunsetTime2">--</span></div><div class="ib-label">🌇 日落</div></div>
-        <div><div class="ib-val" id="aqiDisplay">--</div><div class="ib-label">🌬️ AQI</div></div>
-      </div>
-
-      <!-- Hero: Scene + Character -->
-      <div class="hero-area" id="heroArea" style="display:none">
-        <div class="hero-scene" id="weatherScene"><div id="weatherAnimContainer"></div></div>
-        <div class="hero-char" id="girlContainer"></div>
-      </div>
-
-      <!-- Tab Bar -->
-      <div class="tab-bar">
-        <button class="tab-btn active" data-tab="outfit" onclick="switchTab('outfit')">👗 穿搭</button>
-        <button class="tab-btn" data-tab="forecast" onclick="switchTab('forecast')">📅 预报</button>
-        <button class="tab-btn" data-tab="trend" onclick="switchTab('trend')">📈 趋势</button>
-        <button class="tab-btn" data-tab="index" onclick="switchTab('index')">📋 指数</button>
-      </div>
-
-      <!-- Tab: 穿搭 -->
-      <div class="tab-content active" id="tab-outfit">
-        <div class="weather-details" style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💧 降水 <strong id="detailRain">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💨 风力 <strong id="detailWind">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💦 湿度 <strong id="detailHumidity">--</strong></span>
-          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">🌡️ 体感 <strong id="detailFeels">--</strong></span>
-        </div>
-        <div class="outfit-card" id="outfitCard" style="display:none">
-          <div class="outfit-content" style="text-align:center;width:100%;padding:8px 0">
-            <div class="outfit-title" id="weatherDesc2" style="font-size:1rem;font-weight:600;margin-bottom:4px">--</div>
-            <div class="outfit-main" id="outfitMain" style="font-size:0.9rem;color:var(--text-primary);margin:6px 0"></div>
-            <div class="outfit-tips" id="outfitTips"></div>
-            <div class="daily-quote" id="dailyQuote" style="margin-top:10px"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tab: 预报 -->
-      <div class="tab-content" id="tab-forecast">
-        <div class="forecast" id="forecast" style="display:flex"></div>
-      </div>
-
-      <!-- Tab: 趋势 -->
-      <div class="tab-content" id="tab-trend">
-        <div id="hourlySection" style="display:none;margin-top:4px">
-          <div style="font-size:0.8rem;font-weight:600;color:var(--text-sub);margin-bottom:4px">⏰ 24小时气温趋势</div>
-          <canvas class="hourly-chart" id="hourlyChart"></canvas>
-        </div>
-      </div>
-
-      <!-- Tab: 指数 -->
-      <div class="tab-content" id="tab-index">
-        <div class="indices-grid" id="indicesGrid" style="display:none"></div>
-      </div>
-    </div>
+  <!-- Search -->
+  <div class="search-row">
+    <input class="glass-input" id="searchInput" placeholder="搜索城市..." autocomplete="off">
+    <button class="glass-btn" id="searchBtn">🔍</button>
+    <button class="glass-btn" id="locateBtn">📍</button>
   </div>
 
-  <script>
+  <!-- Search Results -->
+  <div class="search-results" id="searchResults"></div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>获取天气中...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- Location -->
+  <div class="loc-row">
+    <span>📍 <span id="locationName">选择位置</span></span>
+    <span class="date-sub" id="dateDisplay"></span>
+  </div>
+
+  <!-- Main content (hidden until loaded) -->
+  <div id="mainContent" style="display:none">
+
+    <!-- Main Info -->
+    <div class="glass-card main-glass">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="temp-big"><span id="temp">--</span><span class="temp-unit">°C</span></div>
+          <div class="weather-desc-line" id="weatherDesc">加载中...</div>
+        </div>
+        <div class="weather-icon-big" id="weatherIcon">☀️</div>
+      </div>
+      <div class="info-strip">
+        <div><div class="v" id="sunriseVal">--</div><div class="l">🌅 日出</div></div>
+        <div><div class="v" id="sunsetVal">--</div><div class="l">🌇 日落</div></div>
+        <div><div class="v" id="aqiVal">--</div><div class="l">🌬️ AQI</div></div>
+        <div><div class="v" id="humidVal">--</div><div class="l">💦 湿度</div></div>
+      </div>
+    </div>
+
+    <!-- Outfit Card -->
+    <div class="glass-card outfit-glass">
+      <div class="outfit-label">
+        <span>👗 今日穿搭</span>
+        <span style="font-size:0.65rem;color:rgba(255,255,255,0.35)" id="outfitLabel2"></span>
+      </div>
+      <div class="outfit-text-big" id="outfitMain">加载中...</div>
+      <div id="outfitTips" style="margin-top:6px"></div>
+      <div class="quote-text" id="dailyQuote"></div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-forecast">📅 预报</button>
+      <button class="tab-btn" data-tab="tab-trend">📈 趋势</button>
+      <button class="tab-btn" data-tab="tab-indices">📋 指数</button>
+    </div>
+
+    <!-- Tab: Forecast -->
+    <div class="tab-content active" id="tab-forecast">
+      <div class="glass-bg" style="padding:14px">
+        <div class="forecast-header">7天预报 · 点击查看每日穿搭</div>
+        <div class="fc-scroll" id="forecastScroll"></div>
+        <div class="day-detail" id="dayDetail">
+          <div class="day-detail-placeholder">← 点击日期查看详情</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Trend -->
+    <div class="tab-content glass-bg" style="padding:14px" id="tab-trend">
+      <div style="color:rgba(255,255,255,0.4);font-size:0.65rem;margin-bottom:6px">⏰ 24小时气温趋势</div>
+      <canvas class="hourly-chart" id="hourlyChart"></canvas>
+    </div>
+
+    <!-- Tab: Indices -->
+    <div class="tab-content glass-bg" style="padding:14px" id="tab-indices">
+      <div class="indices-grid" id="indicesGrid"></div>
+    </div>
+
+    <span id="outfitCard" style="display:none"></span><span id="forecast" style="display:none"></span><span id="weatherDescText" style="display:none"></span><span id="weatherDesc2" style="display:none"></span><span id="detailRain" style="display:none"></span><span id="detailWind" style="display:none"></span><span id="detailHumidity" style="display:none"></span><span id="detailFeels" style="display:none"></span><span id="outfitLabel2" style="display:none"></span>
+    <!-- Hidden: weather scene -->
+    <div style="display:none" id="weatherScene"><div id="weatherAnimContainer"></div></div>
+    <div style="display:none" id="girlContainer"></div>
+
+  </div>
+</div>
+
+<script src="_js_combined.js"></script>
+<script>
     // ==================== 专属穿搭助手 — 核心逻辑 ====================
 
     // DOM elements
@@ -652,7 +227,7 @@
     const locationName = document.getElementById('locationName');
     const loading = document.getElementById('loading');
     const errorMsg = document.getElementById('errorMsg');
-    const weatherCard = document.getElementById('mainContent');
+    //
     const outfitCard = document.getElementById('outfitCard');
     const forecast = document.getElementById('forecast');
 
@@ -665,6 +240,7 @@
     // 预报数据存储
     var forecastDays = [];
     var todayData = null;
+    var outfitDataStore = {};
 
     // ==================== API 配置 ====================
     // !! 请替换下面的 Key 为你自己的 !!
@@ -978,8 +554,7 @@
       errorMsg.classList.remove('show');
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("heroArea").style.display = "none";;
-      outfitCard.style.display = 'none';
-      forecast.style.display = 'none';
+      
     }
 
     function hideLoading() {
@@ -1262,10 +837,11 @@
       document.getElementById('detailHumidity').textContent = d.humidity + '%';
       document.getElementById('detailFeels').textContent = d.feelsLike + '°C';
       // 恢复AQI
-      if (window._aqiData) document.getElementById('aqiDisplay').innerHTML = window._aqiData;
+      if (window._aqiData) document.getElementById('aqiVal').innerHTML = window._aqiData;
       const outfit = getOutfit(d.temp, d.feelsLike, d.weatherCode, d.windSpeed, d.humidity);
       document.getElementById('outfitMain').textContent = outfit.main;
-      const tipsDiv = document.getElementById('outfitTips');
+      document.getElementById('outfitLabel2').textContent = getWeatherEmoji(weatherCode) + ' ' + getWeatherDesc(weatherCode);
+      var tipsDiv = document.getElementById('outfitTips');
       tipsDiv.innerHTML = '';
       outfit.tips.forEach(t => {
         const tip = document.createElement('div');
@@ -1372,7 +948,7 @@
     }
 
     // ==================== 事件绑定 ====================
-    searchBtn.addEventListener('click', () => {
+    searchBtn.addEventListener('click', function(){
       const query = searchInput.value.trim();
       if (!query) return;
       searchAndShowWeather(query);
@@ -1388,7 +964,7 @@
 
     // 实时搜索建议
     let searchTimeout;
-    searchInput.addEventListener('input', () => {
+    // search input removed - using oninput in HTML () => {
       clearTimeout(searchTimeout);
       const query = searchInput.value.trim();
       if (query.length < 2) {
@@ -1427,7 +1003,7 @@
       }, 400);
     });
 
-    locateBtn.addEventListener('click', () => {
+    locateBtn.addEventListener('click', function(){
       if (!navigator.geolocation) {
         showError('你的浏览器不支持定位功能');
         return;
@@ -1458,7 +1034,7 @@
 
       // 注册 Service Worker (PWA 离线缓存)
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js').catch(function(){});
       }
 
       const saved = loadLocation();
@@ -1467,7 +1043,7 @@
         showLoading();
         getWeather(saved.lat, saved.lon)
           .then(renderWeather)
-          .catch(() => {
+          .catch(function(){
             hideLoading();
             locationName.textContent = '选择你的位置开始';
           });
@@ -1475,6 +1051,7 @@
     }
 
     init();
-  </script>
+  
+</script>
 </body>
 </html>
