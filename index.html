@@ -149,7 +149,7 @@ body {
   </div>
 
   <!-- Main content (hidden until loaded) -->
-  <div id="mainContent" style="display:none">
+  <div id="mainContent" style="display:none"><div style="display:none"><span id="weatherDescText"></span><span id="weatherDesc2"></span><span id="detailFeels"></span><span id="detailRain"></span><span id="detailWind"></span><span id="detailHumidity"></span><span id="forecastBadge"></span><span id="hourlySection"></span><span id="heroArea"></span></div>
 
     <!-- Main Info -->
     <div class="glass-card main-glass">
@@ -555,7 +555,7 @@ body {
       loading.classList.add('show');
       errorMsg.classList.remove('show');
       document.getElementById("mainContent").style.display = "none";
-      document.getElementById("heroArea").style.display = "none";;
+      document.getElementById("heroArea").style.display = "none";
       outfitCard.style.display = 'none';
       forecast.style.display = 'none';
     }
@@ -814,12 +814,13 @@ body {
 
       document.getElementById('temp').textContent = temp;
       var desc = getWeatherDesc(weatherCode);
-      document.getElementById('weatherDescText').textContent = desc;
-      document.getElementById('weatherDesc2').textContent = getWeatherEmoji(weatherCode) + ' ' + desc;
+      document.getElementById("weatherDesc").textContent = getWeatherEmoji(weatherCode) + " " + desc;
+      document.getElementById("outfitLabel2").textContent = getWeatherEmoji(weatherCode) + " " + desc;
       updateWeatherScene(weatherCode);
       document.getElementById('detailRain').textContent = precip > 0 ? precip.toFixed(1) + ' mm' : '无降水';
       document.getElementById('detailWind').textContent = (windSpeed / 3.6).toFixed(1) + ' m/s';
-      document.getElementById('detailHumidity').textContent = humidity + '%';
+      document.getElementById("detailHumidity").textContent = humidity + "%";
+      document.getElementById("humidVal").textContent = humidity + "%";
       document.getElementById('detailFeels').textContent = feelsLike + '°C';
       document.getElementById('heroArea').style.display = 'flex';
       document.getElementById('mainContent').style.display = 'block';
@@ -1000,8 +1001,8 @@ body {
       const emoji = getWeatherEmoji(weatherCode);
       const desc = getWeatherDesc(weatherCode);
       document.getElementById('temp').textContent = avgTemp;
-      document.getElementById('weatherDescText').textContent = desc;
-      document.getElementById('weatherDesc2').textContent = emoji + ' ' + desc;
+      document.getElementById("weatherDesc").textContent = getWeatherEmoji(weatherCode) + " " + desc;
+      document.getElementById("outfitLabel2").textContent = emoji + " " + desc;
       document.getElementById('detailRain').textContent = (day.precip || 0) > 0 ? (day.precip || 0).toFixed(1) + ' mm' : '无降水';
       document.getElementById('detailWind').textContent = (day.wind || 0) > 0 ? (day.wind || 0).toFixed(1) + ' m/s' : '微风';
       document.getElementById('detailHumidity').textContent = (day.hum || 0) > 0 ? day.hum + '%' : '--';
@@ -1039,7 +1040,7 @@ body {
       const d = todayData;
       var desc = getWeatherDesc(d.weatherCode);
       document.getElementById('temp').textContent = d.temp;
-      document.getElementById('weatherDescText').textContent = desc;
+      document.getElementById("weatherDesc").textContent = getWeatherEmoji(weatherCode) + " " + desc;
       document.getElementById('weatherDesc2').textContent = getWeatherEmoji(d.weatherCode) + ' ' + desc;
       document.getElementById('detailRain').textContent = d.precip > 0 ? d.precip.toFixed(1) + ' mm' : '无降水';
       document.getElementById('detailWind').textContent = (d.windSpeed / 3.6).toFixed(1) + ' m/s';
