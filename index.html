@@ -201,7 +201,7 @@
   <!-- Top Bar -->
   <div class="top-bar">
     <div class="city">📍 <span id="locationName">选择位置</span></div>
-    <div class="date" id="dateDisplay"></div>
+    <span id="dateDisplay" style="color:rgba(255,255,255,0.7);font-size:0.75rem"></span>
   </div>
 
   <!-- Search -->
@@ -227,29 +227,28 @@
   <div class="main-info">
     <div class="temp-row">
       <div>
-        <div class="temp-big">25<span class="temp-unit">°C</span></div>
-        <div class="desc">☀️ 晴 · 体感 23°C <span>| 65% 湿度</span></div>
+        <div class="temp-big"><span id="temp">25</span><span class="temp-unit">°C</span></div>
+        <div class="desc" id="weatherDesc">☀️ 晴 · 体感 23°C</div>
       </div>
-      <div class="weather-icon-big">☀️</div>
+      <div class="weather-icon-big" id="weatherIcon">☀️</div>
     </div>
     <div class="info-strip">
-      <div><div class="val">🌅 06:22</div><div class="lbl">日出</div></div>
-      <div><div class="val">🌇 18:45</div><div class="lbl">日落</div></div>
-      <div><div class="val">🌬️ 42</div><div class="lbl">AQI</div></div>
-      <div><div class="val">💨 3.2m/s</div><div class="lbl">风力</div></div>
+      <div><div class="val" id="sunriseVal">--</div><div class="lbl">🌅 日出</div></div>
+      <div><div class="val" id="sunsetVal">--</div><div class="lbl">🌇 日落</div></div>
+      <div><div class="val" id="aqiVal">--</div><div class="lbl">🌬️ AQI</div></div>
+      <div><div class="val" id="windVal">--</div><div class="lbl">💨 风力</div></div>
     </div>
   </div>
 
   <!-- Outfit Card -->
   <div class="outfit-card" id="outfitCard">
     <div class="outfit-header">
-      <span>👗 今日穿搭</span>
+      <span>👗 <span id="outfitLabel">今日穿搭</span></span>
       <span>推荐指数 ★★★★☆</span>
     </div>
-    <div class="outfit-main" id="outfitText">👕 短袖T恤 + 棉质薄长裤</div>
-    <div class="outfit-tip">💡 白色或浅色系更清爽</div>
-    <div class="outfit-tip">🧴 紫外线中等，建议防晒</div>
-    <div class="outfit-quote">💬 穿对衣服，心情自然好</div>
+    <div class="outfit-main" id="outfitMain">👕 短袖T恤 + 棉质薄长裤</div>
+    <div id="outfitTips"></div>
+    <div class="outfit-quote" id="dailyQuote">💬 穿对衣服，心情自然好</div>
   </div>
 
   <!-- Forecast Section -->
@@ -990,13 +989,13 @@
       document.getElementById('forecastBadge').style.display = 'none';
 
       // 日出日落 + AQI
-      document.getElementById('sunriseTime').textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
-      document.getElementById('sunsetTime').textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0].slice(11,16) : '--';
+      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0] : '--';
+      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0] : '--';
       if (data.aqi) {
         var aqi = data.aqi;
         var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
-        document.getElementById('aqiValue').innerHTML = aqi.value + ' ' + aqi.level;
-      } else { document.getElementById('aqiValue').textContent = '--'; }
+        document.getElementById("aqiVal").innerHTML = aqi.value + ' ' + aqi.level;
+      } else { document.getElementById("aqiVal").textContent = '--'; }
 
       // 生活指数
       var idxGrid = document.getElementById('indicesGrid');
