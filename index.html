@@ -1307,7 +1307,7 @@
         };
       }
       selectedForecastDay = 0;
-      document.getElementById('forecastBadge').style.display = 'none';
+      /* removed */;
 
       // 日出日落 + AQI
       document.getElementById('sunriseTime2').textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
@@ -1490,7 +1490,7 @@
       document.querySelectorAll('.forecast-card').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.idx) === 0);
       });
-      document.getElementById('forecastBadge').style.display = 'none';
+      /* removed */;
     }
 
     function updateWeatherScene(weatherCode) {
