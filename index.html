@@ -916,11 +916,10 @@
 
       document.getElementById('temp').textContent = temp;
       var desc = getWeatherDesc(weatherCode);
-      document.getElementById('weatherDescText').textContent = desc;
-      document.getElementById('weatherDesc2').textContent = getWeatherEmoji(weatherCode) + ' ' + desc;
+      document.getElementById('weatherDesc').textContent = getWeatherEmoji(weatherCode) + ' ' + desc;
       updateWeatherScene(weatherCode);
       document.getElementById('detailRain').textContent = precip > 0 ? precip.toFixed(1) + ' mm' : '无降水';
-      document.getElementById('detailWind').textContent = (windSpeed / 3.6).toFixed(1) + ' m/s';
+      document.getElementById('detailWind').textContent; document.getElementById('windVal').textContent = (windSpeed / 3.6).toFixed(1) + ' m/s';
       document.getElementById('detailHumidity').textContent = humidity + '%';
       document.getElementById('detailFeels').textContent = feelsLike + '°C';
       document.getElementById('heroArea').style.display = 'flex';
@@ -947,6 +946,12 @@
       // Color category
       outfitCard.className = 'outfit-card ' + outfit.category;
       outfitCard.style.display = 'block';
+      // 更新详情面板
+      var dd = document.getElementById('dayDetail');
+      if (dd) {
+        var dayNames = ['今天','明天','第三天','第四天','第五天','第六天','第七天'];
+        dd.innerHTML = '<div class=\"dd-row\"><div><div style=\"color:rgba(255,255,255,0.5);font-size:0.65rem\">' + (dayNames[idx] || '') + '</div><div class=\"dd-temp\">' + avgTemp + '°<span style=\"font-size:0.7rem;font-weight:400;color:rgba(255,255,255,0.4)\">/' + day.min + '°</span></div></div><div style=\"text-align:right\"><div class=\"dd-desc\">' + emoji + ' ' + desc + '</div></div></div><div class=\"dd-outfit\">👗 ' + outfit.main + '</div><div class=\"dd-info\"><span>💧 ' + ((day.precip||0) > 0 ? (day.precip||0).toFixed(1) + 'mm' : '无降水') + '</span><span>💨 ' + ((day.wind||0) > 0 ? (day.wind||0).toFixed(1) + 'm/s' : '微风') + '</span><span>💦 ' + (day.hum||0) + '%' + '</span></div>';
+      }
 
       // Render little girl character
       const girlState = getGirlOutfitState(temp, weatherCode);
@@ -997,6 +1002,11 @@
         var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
         document.getElementById("aqiVal").innerHTML = aqi.value + ' ' + aqi.level;
       } else { document.getElementById("aqiVal").textContent = '--'; }
+      if (typeof data !== 'undefined' && data.aqi) {
+        var aqi = data.aqi;
+        document.getElementById('aqiVal').innerHTML = aqi.value + ' ' + aqi.level;
+        window._aqiData = aqi.value + ' ' + aqi.level;
+      }
 
       // 生活指数
       var idxGrid = document.getElementById('indicesGrid');
@@ -1108,6 +1118,18 @@
       document.getElementById('detailWind').textContent = (day.wind || 0) > 0 ? (day.wind || 0).toFixed(1) + ' m/s' : '微风';
       document.getElementById('detailHumidity').textContent = (day.hum || 0) > 0 ? day.hum + '%' : '--';
       document.getElementById('detailFeels').textContent = avgTemp + '°C（估）';
+      // 更新详情面板
+      
+      // 更新日出日落AQI
+      if (day.sunrise) {
+        document.getElementById('sunriseVal').textContent = day.sunrise;
+        document.getElementById('sunsetVal').textContent = day.sunset;
+      }
+      if (window._aqiData && idx === 0) {
+        document.getElementById('aqiVal').innerHTML = window._aqiData;
+      } else if (idx !== 0) {
+        document.getElementById('aqiVal').textContent = '--';
+      }
       const outfit = getOutfit(avgTemp, avgTemp, weatherCode, 10, 50);
       document.getElementById('outfitMain').textContent = outfit.main;
       const tipsDiv = document.getElementById('outfitTips');
