@@ -192,7 +192,7 @@ body {
         <div class="forecast-header">7天预报 · 点击查看每日穿搭</div>
         <div class="fc-scroll" id="forecastScroll"></div>
         <div class="day-detail" id="dayDetail">
-          <div class="day-detail-placeholder">← 点击日期查看详情</div>
+          <div class="day-detail-placeholder">← 点击上方日期查看该天穿搭</div>
         </div>
       </div>
     </div>
@@ -893,8 +893,8 @@ body {
       document.getElementById('forecastBadge').style.display = 'none';
 
       // 日出日落 + AQI
-      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
-      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0].slice(11,16) : '--';
+      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0] : "--";
+      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0] : "--";
       if (data.aqi) {
         var aqi = data.aqi;
         var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
@@ -922,9 +922,8 @@ body {
       hideLoading();
     }
 
-    function drawHourlyChart(hourly) {
-      // Draw precipitation data if toggled
-      var dataKey = showPrecip ? 'precip' : 'temp';
+    function drawHourlyChart(hourly, forecastDayTemp) {
+      forecastDayTemp = forecastDayTemp || null;
       var canvas = document.getElementById('hourlyChart');
       var container = canvas.parentElement;
       var dpr = window.devicePixelRatio || 1;
