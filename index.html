@@ -407,6 +407,14 @@
       margin-top: 4px;
     }
     .forecast-temps .low { color: var(--text-sub); font-weight: 400; font-size: 0.75rem; }
+    .forecast-card.active { background: var(--accent); color: #fff; transform: scale(1.08); }
+    .forecast-card.active .low { color: rgba(255,255,255,0.75); }
+    .forecast-card { cursor: pointer; transition: all 0.2s ease; }
+    .forecast-card:active { transform: scale(0.95); }
+    .forecast-badge {
+      display: inline-block; font-size: 0.7rem; background: var(--accent); color: #fff;
+      padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
+    }
 
     /* Search Results Dropdown */
     .search-results {
@@ -517,6 +525,7 @@
         <div>
           <div class="weather-temp">
             <span id="temp">--</span><span class="weather-unit">°C</span>
+            <span class="forecast-badge" id="forecastBadge" style="display:none"></span>
           </div>
           <div class="weather-desc" id="weatherDesc">--</div>
           <div class="weather-feels" id="weatherFeels">体感 --</div>
@@ -573,6 +582,10 @@
     const weatherCard = document.getElementById('weatherCard');
     const outfitCard = document.getElementById('outfitCard');
     const forecast = document.getElementById('forecast');
+
+    // 预报数据存储
+    var forecastDays = [];
+    var todayData = null;
 
     // ==================== API 配置 ====================
     // !! 请替换下面的 Key 为你自己的 !!
@@ -1105,50 +1118,7 @@
       document.getElementById('weatherFeels').textContent = `体感 ${feelsLike > temp ? feelsLike : feelsLike}°C`;
       document.getElementById('weatherIcon').textContent = getWeatherEmoji(weatherCode);
       // 天气场景动画
-      var scene = document.getElementById('weatherScene');
-      var sceneCont = document.getElementById('weatherAnimContainer');
-      scene.style.display = 'block';
-      // 判断天气场景类型
-      var sceneType = 'default';
-      if (weatherCode === 0 || weatherCode === 1) sceneType = 'sunny';
-      else if (weatherCode === 2 || weatherCode === 3) sceneType = 'cloudy';
-      else if (weatherCode >= 61 && weatherCode <= 67 || weatherCode >= 80 && weatherCode <= 82) sceneType = 'rain';
-      else if (weatherCode >= 71 && weatherCode <= 77 || weatherCode >= 85 && weatherCode <= 86) sceneType = 'snow';
-      else if (weatherCode >= 95) sceneType = 'storm';
-      scene.className = 'weather-scene ' + sceneType;
-
-      if (sceneType === 'sunny') {
-        sceneCont.innerHTML = '<lottie-player src="anim-sunny.json" background="transparent" speed="1" loop autoplay></lottie-player>';
-      } else {
-        // CSS 天气场景
-        var html = '';
-        if (sceneType === 'cloudy') {
-          html += '<div class="wx-cloud" style="width:60px;height:28px;left:30px;top:30px;"></div>';
-          html += '<div class="wx-cloud" style="width:50px;height:24px;left:60px;top:20px;animation-delay:2s;animation-duration:5s;"></div>';
-          html += '<div class="wx-cloud" style="width:44px;height:22px;left:80px;top:45px;animation-delay:4s;"></div>';
-          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">⛅</div>';
-        } else if (sceneType === 'rain') {
-          html += '<div class="rain-drops"></div>';
-          html += '<div style="font-size:50px;animation:float-up 1.5s ease-in-out infinite;">🌧️</div>';
-        } else if (sceneType === 'snow') {
-          var flakes = '';
-          for (var i = 0; i < 15; i++) {
-            var left = Math.random() * 90 + 5;
-            var size = Math.random() * 4 + 3;
-            var dur = Math.random() * 4 + 3;
-            var delay = Math.random() * 5;
-            flakes += '<div class="snow-flake" style="left:'+left+'%;width:'+size+'px;height:'+size+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s;"></div>';
-          }
-          html += flakes;
-          html += '<div style="font-size:50px;animation:float-up 2s ease-in-out infinite;">❄️</div>';
-        } else if (sceneType === 'storm') {
-          html += '<div class="rain-drops"></div>';
-          html += '<div style="font-size:50px;animation:float-up 1s ease-in-out infinite;">⛈️</div>';
-        } else {
-          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">'+getWeatherEmoji(weatherCode)+'</div>';
-        }
-        sceneCont.innerHTML = html;
-      }
+      updateWeatherScene(weatherCode);
       document.getElementById('detailRain').textContent = precip > 0 ? `${precip.toFixed(1)} mm` : '无降水';
       document.getElementById('detailWind').textContent = `${(windSpeed / 3.6).toFixed(1)} m/s`;
       document.getElementById('detailHumidity').textContent = `${humidity}%`;
@@ -1187,13 +1157,17 @@
       // Forecast
       const forecastDiv = document.getElementById('forecast');
       forecastDiv.innerHTML = '';
+      // 保存预报数据
+      forecastDays = [];
       for (let i = 0; i < Math.min(7, data.daily.time.length); i++) {
         const day = data.daily;
         const max = Math.round(day.temperature_2m_max[i]);
         const min = Math.round(day.temperature_2m_min[i]);
         const code = day.weather_code[i];
+        forecastDays.push({ max, min, code });
+        const isActive = i === 0 && !selectedForecastDay;
         forecastDiv.innerHTML += `
-          <div class="forecast-card">
+          <div class="forecast-card${isActive ? ' active' : ''}" data-idx="${i}" onclick="showForecastDay(${i})">
             <div class="forecast-day">${formatDay(day.time[i])}</div>
             <div class="forecast-icon">${getWeatherEmoji(code)}</div>
             <div class="forecast-temps">${max}° <span class="low">${min}°</span></div>
@@ -1201,8 +1175,145 @@
         `;
       }
       forecast.style.display = 'flex';
+      // 保存今天的数据用于"返回今天"
+      if (!todayData) {
+        todayData = {
+          temp: temp, feelsLike: feelsLike, weatherCode: weatherCode,
+          windSpeed: windSpeed, humidity: humidity, precip: precip,
+        };
+      }
+      selectedForecastDay = 0;
+      document.getElementById('forecastBadge').style.display = 'none';
 
       hideLoading();
+    }
+
+    var selectedForecastDay = 0;
+
+    // 查看未来某天的天气和穿搭
+    function showForecastDay(idx) {
+      if (idx < 0 || idx >= forecastDays.length) return;
+      selectedForecastDay = idx;
+      const day = forecastDays[idx];
+      document.querySelectorAll('.forecast-card').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
+      });
+      const avgTemp = Math.round((day.max + day.min) / 2);
+      const weatherCode = day.code;
+      const emoji = getWeatherEmoji(weatherCode);
+      const desc = getWeatherDesc(weatherCode);
+      document.getElementById('temp').textContent = avgTemp;
+      document.getElementById('weatherDesc').textContent = desc;
+      document.getElementById('weatherIcon').textContent = emoji;
+      document.getElementById('weatherFeels').textContent = '预估温度 ' + day.min + '~' + day.max + '°C';
+      document.getElementById('detailRain').textContent = '--';
+      document.getElementById('detailWind').textContent = '--';
+      document.getElementById('detailHumidity').textContent = '--';
+      const outfit = getOutfit(avgTemp, avgTemp, weatherCode, 10, 50);
+      document.getElementById('outfitMain').textContent = outfit.main;
+      const tipsDiv = document.getElementById('outfitTips');
+      tipsDiv.innerHTML = '';
+      outfit.tips.forEach(t => {
+        const tip = document.createElement('div');
+        tip.className = 'outfit-tip';
+        tip.textContent = '💡 ' + t;
+        tipsDiv.appendChild(tip);
+      });
+      outfit.accessories.forEach(a => {
+        const acc = document.createElement('div');
+        acc.className = 'outfit-tip';
+        acc.textContent = a;
+        tipsDiv.appendChild(acc);
+      });
+      outfitCard.className = 'outfit-card ' + outfit.category;
+      outfitCard.style.display = 'block';
+      const girlState = getGirlOutfitState(avgTemp, weatherCode);
+      renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
+      updateWeatherScene(weatherCode);
+      const badge = document.getElementById('forecastBadge');
+      badge.textContent = '📅 ' + (idx === 0 ? '今天' : '第' + (idx + 1) + '天预报');
+      badge.style.display = 'inline';
+    }
+
+    function backToToday() {
+      if (!todayData) return;
+      selectedForecastDay = 0;
+      showForecastDay(0);
+      const d = todayData;
+      document.getElementById('temp').textContent = d.temp;
+      document.getElementById('weatherDesc').textContent = getWeatherDesc(d.weatherCode);
+      document.getElementById('weatherIcon').textContent = getWeatherEmoji(d.weatherCode);
+      document.getElementById('weatherFeels').textContent = '体感 ' + d.feelsLike + '°C';
+      document.getElementById('detailRain').textContent = d.precip > 0 ? d.precip.toFixed(1) + ' mm' : '无降水';
+      document.getElementById('detailWind').textContent = (d.windSpeed / 3.6).toFixed(1) + ' m/s';
+      document.getElementById('detailHumidity').textContent = d.humidity + '%';
+      const outfit = getOutfit(d.temp, d.feelsLike, d.weatherCode, d.windSpeed, d.humidity);
+      document.getElementById('outfitMain').textContent = outfit.main;
+      const tipsDiv = document.getElementById('outfitTips');
+      tipsDiv.innerHTML = '';
+      outfit.tips.forEach(t => {
+        const tip = document.createElement('div');
+        tip.className = 'outfit-tip';
+        tip.textContent = '💡 ' + t;
+        tipsDiv.appendChild(tip);
+      });
+      outfit.accessories.forEach(a => {
+        const acc = document.createElement('div');
+        acc.className = 'outfit-tip';
+        acc.textContent = a;
+        tipsDiv.appendChild(acc);
+      });
+      outfitCard.className = 'outfit-card ' + outfit.category;
+      const girlState = getGirlOutfitState(d.temp, d.weatherCode);
+      renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
+      updateWeatherScene(d.weatherCode);
+      document.querySelectorAll('.forecast-card').forEach(el => {
+        el.classList.toggle('active', parseInt(el.dataset.idx) === 0);
+      });
+      document.getElementById('forecastBadge').style.display = 'none';
+    }
+
+    function updateWeatherScene(weatherCode) {
+      var scene = document.getElementById('weatherScene');
+      var sceneCont = document.getElementById('weatherAnimContainer');
+      scene.style.display = 'block';
+      var sceneType = 'default';
+      if (weatherCode === 0 || weatherCode === 1) sceneType = 'sunny';
+      else if (weatherCode === 2 || weatherCode === 3) sceneType = 'cloudy';
+      else if (weatherCode >= 61 && weatherCode <= 67 || weatherCode >= 80 && weatherCode <= 82) sceneType = 'rain';
+      else if (weatherCode >= 71 && weatherCode <= 77 || weatherCode >= 85 && weatherCode <= 86) sceneType = 'snow';
+      else if (weatherCode >= 95) sceneType = 'storm';
+      scene.className = 'weather-scene ' + sceneType;
+      if (sceneType === 'sunny') {
+        sceneCont.innerHTML = '<lottie-player src="anim-sunny.json" background="transparent" speed="1" loop autoplay></lottie-player>';
+      } else {
+        var html = '';
+        if (sceneType === 'cloudy') {
+          html += '<div class="wx-cloud" style="width:60px;height:28px;left:30px;top:30px;"></div>';
+          html += '<div class="wx-cloud" style="width:50px;height:24px;left:60px;top:20px;animation-delay:2s;animation-duration:5s;"></div>';
+          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">⛅</div>';
+        } else if (sceneType === 'rain') {
+          html += '<div class="rain-drops"></div>';
+          html += '<div style="font-size:50px;animation:float-up 1.5s ease-in-out infinite;">🌧️</div>';
+        } else if (sceneType === 'snow') {
+          var flakes = '';
+          for (var i = 0; i < 15; i++) {
+            var left = Math.random() * 90 + 5;
+            var size = Math.random() * 4 + 3;
+            var dur = Math.random() * 4 + 3;
+            var delay = Math.random() * 5;
+            flakes += '<div class="snow-flake" style="left:'+left+'%;width:'+size+'px;height:'+size+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s;"></div>';
+          }
+          html += flakes;
+          html += '<div style="font-size:50px;animation:float-up 2s ease-in-out infinite;">❄️</div>';
+        } else if (sceneType === 'storm') {
+          html += '<div class="rain-drops"></div>';
+          html += '<div style="font-size:50px;animation:float-up 1s ease-in-out infinite;">⛈️</div>';
+        } else {
+          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">'+getWeatherEmoji(weatherCode)+'</div>';
+        }
+        sceneCont.innerHTML = html;
+      }
     }
 
     // ==================== 主要操作 ====================
