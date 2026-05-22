@@ -902,9 +902,9 @@ body {
       if (data.indices && data.indices.length > 0) {
         idxGrid.style.display = 'flex';
         idxGrid.innerHTML = data.indices.map(function(idx) {
-          return '<div class="index-card"><div class="index-icon">' +
+          return '<div class="index-card"><div class="ii">' +
             ({'1':'👗','2':'☀️','3':'🚗','5':'😊','8':'🏃','9':'🎣'}[idx.category] || '📋') +
-            '</div><div class="index-level">' + idx.level + '</div><div class="index-name">' + idx.name + '</div></div>';
+            '</div><div class="il">' + idx.level + '</div><div class="in">' + idx.name + '</div></div>';
         }).join('');
       } else { idxGrid.style.display = 'none'; }
 
