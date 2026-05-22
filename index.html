@@ -217,6 +217,7 @@ body {
 
 <script src="_js_combined.js"></script>
 <script>
+
     // ==================== 专属穿搭助手 — 核心逻辑 ====================
 
     // DOM elements
@@ -963,46 +964,39 @@ body {
     });
 
     // 实时搜索建议
-    let searchTimeout;
-    // search input removed - using oninput in HTML () => {
+    //
+    // 搜索 input handler (在HTML中用oninput触发)
+    function handleSearch(query) {
       clearTimeout(searchTimeout);
-      const query = searchInput.value.trim();
-      if (query.length < 2) {
-        searchResults.classList.remove('show');
+      if (!query || query.length < 2) {
+        searchResults.classList.remove("show");
         return;
       }
-      searchTimeout = setTimeout(async () => {
+      searchTimeout = setTimeout(async function() {
         try {
-          const results = await geocode(query);
-          searchResults.innerHTML = results.map((r, i) => {
-            const parts = r.name.split(',');
-            const main = parts[0];
-            const rest = parts.slice(1).join('，');
-            return `
-              <div class="search-result-item" data-index="${i}">
-                <div>📍 ${main}</div>
-                <div class="place-type">${rest}</div>
-              </div>
-            `;
-          }).join('');
-          searchResults.classList.add('show');
-
-          document.querySelectorAll('.search-result-item').forEach(el => {
-            el.addEventListener('click', () => {
-              const idx = parseInt(el.dataset.index);
-              const r = results[idx];
-              locationName.textContent = r.name.split(',')[0].trim();
-              saveLocation(r.lat, r.lon, r.name.split(',')[0].trim());
+          var results = await geocode(query);
+          searchResults.innerHTML = results.map(function(r, i) {
+            var parts = r.name.split(",");
+            var main = parts[0];
+            var rest = parts.slice(1).join("，");
+            return '<div class="sr-item" data-index="' + i + '"><div style="font-weight:500">' + main + '</div><div style="font-size:0.65rem;opacity:0.6">' + rest + '</div></div>';
+          }).join("'");
+          searchResults.classList.add("show");
+          document.querySelectorAll(".sr-item").forEach(function(el) {
+            el.addEventListener("click", function() {
+              var idx = parseInt(el.dataset.index);
+              var r = results[idx];
+              locationName.textContent = r.name.split(",")[0].trim();
+              saveLocation(r.lat, r.lon, r.name.split(",")[0].trim());
               showLoading();
-              searchResults.classList.remove('show');
-              searchInput.value = r.name.split(',')[0].trim();
-              getWeather(r.lat, r.lon).then(renderWeather).catch(e => showError(e.message));
+              searchResults.classList.remove("show");
+              searchInput.value = r.name.split(",")[0].trim();
+              getWeather(r.lat, r.lon).then(renderWeather).catch(function(e) { showError(e.message); });
             });
           });
-        } catch { /* 静默失败，下拉建议非必需 */ }
+        } catch(e) { /* 静默失败 */ }
       }, 400);
-    });
-
+    }
     locateBtn.addEventListener('click', function(){
       if (!navigator.geolocation) {
         showError('你的浏览器不支持定位功能');
@@ -1052,6 +1046,7 @@ body {
 
     init();
   
+
 </script>
 </body>
 </html>
