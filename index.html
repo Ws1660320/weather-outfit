@@ -636,10 +636,7 @@
           sunset: d.map(function(day) { return day.sunset || ""; }),
           wind_speed: d.map(function(day) { return parseFloat(day.windSpeedDay || 0); }),
           humidity: d.map(function(day) { return parseFloat(day.humidity || 0); }),
-          wind_speed: d.map(function(day) { return parseFloat(day.windSpeedDay || 0); }),
-          humidity: d.map(function(day) { return parseFloat(day.humidity || 0); }),
-          sunrise: d.map(function(day) { return day.sunrise || ''; }),
-          sunset: d.map(function(day) { return day.sunset || ''; }),
+          
         },
         hourly: hourly,
         indices: indices,
@@ -1011,20 +1008,6 @@
       }
       selectedForecastDay = 0;
       document.getElementById('forecastBadge').style.display = 'none';
-
-      // 日出日落 + AQI
-      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0] : '--';
-      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0] : '--';
-      if (data.aqi) {
-        var aqi = data.aqi;
-        var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
-        document.getElementById("aqiVal").innerHTML = aqi.value + ' ' + aqi.level;
-      } else { document.getElementById("aqiVal").textContent = '--'; }
-      if (typeof data !== 'undefined' && data.aqi) {
-        var aqi = data.aqi;
-        document.getElementById('aqiVal').innerHTML = aqi.value + ' ' + aqi.level;
-        window._aqiData = aqi.value + ' ' + aqi.level;
-      }
 
       // 生活指数
       var idxGrid = document.getElementById('indicesGrid');
