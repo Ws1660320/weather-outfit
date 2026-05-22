@@ -200,11 +200,15 @@ body {
     <!-- Tab: Trend -->
     <div class="tab-content glass-bg" style="padding:14px" id="tab-trend">
       <div style="color:rgba(255,255,255,0.4);font-size:0.65rem;margin-bottom:6px">⏰ 24小时气温趋势</div>
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <button class="glass-btn" id="trendToggle" style="flex:1;text-align:center;font-size:0.7rem;padding:4px" onclick="toggleTrend()">🌡️ 切换降水</button>
+      </div>
       <canvas class="hourly-chart" id="hourlyChart"></canvas>
     </div>
 
     <!-- Tab: Indices -->
     <div class="tab-content glass-bg" style="padding:14px" id="tab-indices">
+      <div style="color:rgba(255,255,255,0.4);font-size:0.65rem;margin-bottom:6px">📋 生活指数</div>
       <div class="indices-grid" id="indicesGrid"></div>
     </div>
 
@@ -911,6 +915,7 @@ body {
       // 小时预报图表
       if (data.hourly && data.hourly.length > 0) {
         document.getElementById('hourlySection').style.display = 'block';
+        hourlyDataStore = data.hourly;
         drawHourlyChart(data.hourly);
       } else { document.getElementById('hourlySection').style.display = 'none'; }
 
@@ -918,6 +923,8 @@ body {
     }
 
     function drawHourlyChart(hourly) {
+      // Draw precipitation data if toggled
+      var dataKey = showPrecip ? 'precip' : 'temp';
       var canvas = document.getElementById('hourlyChart');
       var container = canvas.parentElement;
       var dpr = window.devicePixelRatio || 1;
@@ -987,6 +994,13 @@ body {
     }
 
     var selectedForecastDay = 0;
+    var showPrecip = false;
+    var hourlyDataStore = [];
+    function toggleTrend() {
+      showPrecip = !showPrecip;
+      document.getElementById("trendToggle").textContent = showPrecip ? "💧 切换气温" : "🌡️ 切换降水";
+      if (hourlyDataStore.length > 0) drawHourlyChart(hourlyDataStore);
+    }
 
     // 查看未来某天的天气和穿搭
     function showForecastDay(idx) {
