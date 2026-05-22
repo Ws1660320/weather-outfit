@@ -5,1389 +5,207 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="专属穿搭助手">
+<meta name="apple-mobile-web-app-title" content="穿搭助手">
 <meta name="theme-color" content="#667eea">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon.png">
-<title>专属穿搭助手</title>
+<title>穿搭助手</title>
 <script src="lottie-player.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, system-ui, "Microsoft YaHei", sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh; padding: 16px;
-  }
-  .phone {
-    max-width: 390px; margin: 0 auto;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 32px; padding: 20px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-    position: relative; overflow: hidden;
-  }
-  .phone::before {
-    content: ''; position: absolute; top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.05) 0%, transparent 60%);
-    pointer-events: none;
-  }
-
-  /* === 顶部 === */
-  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 1; }
-  .top-bar .city { color: #fff; font-size: 0.95rem; font-weight: 600; }
-  .top-bar .city span { opacity: 0.7; font-weight: 400; }
-  .top-bar .date { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
-  .search-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); cursor: pointer; }
-
-  /* Search */
-  .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .glass-input { flex: 1; background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 16px; color: #fff; outline: none; font-size: 0.85rem; font-family: inherit; }
-  .glass-input::placeholder { color: rgba(255,255,255,0.4); }
-  .glass-btn { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 14px; color: #fff; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; font-family: inherit; white-space: nowrap; }
-  .glass-btn:active { transform: scale(0.95); }
-
-  /* Search results */
-  .search-results { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden; margin-bottom: 10px; display: none; }
-  .search-results.show { display: block; }
-  .search-results .sr-item { padding: 10px 14px; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .search-results .sr-item:last-child { border-bottom: none; }
-  .search-results .sr-item:hover { background: rgba(255,255,255,0.1); }
-
-  /* Loading & Error */
-  .loading { display: none; justify-content: center; align-items: center; gap: 10px; padding: 20px 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; }
-  .loading.show { display: flex; }
-  .spinner { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.15); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .error-msg { display: none; padding: 14px; text-align: center; color: #ef4444; font-size: 0.8rem; background: rgba(239,68,68,0.1); border-radius: 12px; margin-bottom: 10px; }
-  .error-msg.show { display: block; }
-
-  /* === 主信息区 === */
-  .main-info {
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px; padding: 20px;
-    margin-bottom: 12px; position: relative; z-index: 1;
-  }
-  .main-info .temp-row { display: flex; justify-content: space-between; align-items: flex-start; }
-  .main-info .temp-big { font-size: 3.5rem; font-weight: 200; color: #fff; line-height: 1; }
-  .main-info .temp-unit { font-size: 1.2rem; font-weight: 300; opacity: 0.6; }
-  .main-info .weather-icon-big { font-size: 2.8rem; opacity: 0.8; }
-  .main-info .desc { color: rgba(255,255,255,0.9); font-size: 0.9rem; margin: 4px 0 12px; }
-  .main-info .desc span { opacity: 0.6; }
-
-  .info-strip {
-    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px;
-  }
-  .info-strip > div {
-    text-align: center; padding: 8px 4px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);
-  }
-  .info-strip .val { color: #fff; font-size: 0.8rem; font-weight: 600; }
-  .info-strip .lbl { color: rgba(255,255,255,0.5); font-size: 0.6rem; margin-top: 2px; }
-
-  /* === 穿搭 + 场景融合 === */
-  .outfit-card {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px; padding: 16px;
-    margin-bottom: 12px; position: relative; z-index: 1;
-  }
-  .outfit-card .outfit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .outfit-card .outfit-header span { color: rgba(255,255,255,0.5); font-size: 0.7rem; }
-  .outfit-card .outfit-main { color: #fff; font-size: 1rem; font-weight: 600; line-height: 1.6; }
-  .outfit-card .outfit-tip { color: rgba(255,255,255,0.7); font-size: 0.78rem; margin-top: 4px; padding-left: 12px; position: relative; }
-  .outfit-card .outfit-tip::before { content: ''; position: absolute; left: 0; top: 50%; width: 4px; height: 4px; background: rgba(255,255,255,0.4); border-radius: 50%; transform: translateY(-50%); }
-  .outfit-card .outfit-quote { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.75rem; color: rgba(255,255,255,0.5); }
-
-  /* === 预报 Tab === */
-  .tab-bar {
-    display: flex; gap: 4px; margin-bottom: 12px; position: relative; z-index: 1;
-  }
-  .tab-bar > div {
-    flex: 1; text-align: center; padding: 10px 4px;
-    border-radius: 12px; font-size: 0.75rem; font-weight: 500;
-    color: rgba(255,255,255,0.6); cursor: pointer;
-    transition: all 0.3s; background: rgba(255,255,255,0.05);
-  }
-  .tab-bar > div.active {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
-
-  /* === 预报卡片（核心改进） === */
-  .forecast-section {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px; padding: 14px;
-    position: relative; z-index: 1;
-    transition: all 0.3s;
-  }
-  .forecast-section .section-title { color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
-
-  .forecast-scroll {
-    display: flex; gap: 6px; overflow-x: auto;
-    -webkit-overflow-scrolling: touch; padding-bottom: 4px;
-  }
-  .forecast-scroll::-webkit-scrollbar { height: 2px; }
-  .forecast-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 2px; }
-  .forecast-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-
-  .fc-card {
-    flex-shrink: 0; width: 72px; padding: 12px 6px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 14px; text-align: center; cursor: pointer;
-    transition: all 0.3s; border: 1px solid transparent;
-  }
-  .fc-card:hover { background: rgba(255,255,255,0.1); }
-  .fc-card.active {
-    background: rgba(255,255,255,0.2);
-    border-color: rgba(255,255,255,0.3);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    transform: scale(1.05);
-  }
-  .fc-card .day { font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
-  .fc-card .icon { font-size: 1.3rem; margin-bottom: 2px; }
-  .fc-card .high { font-size: 0.8rem; font-weight: 600; color: #fff; }
-  .fc-card .low { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
-
-  .fc-card.active .day { color: rgba(255,255,255,0.8); }
-
-  /* === 选中天的详情 === */
-  .day-detail {
-    margin-top: 12px; padding: 14px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
-    min-height: 60px; transition: all 0.3s;
-  }
-  .day-detail .dd-row { display: flex; justify-content: space-between; align-items: center; }
-  .day-detail .dd-temp { color: #fff; font-size: 2rem; font-weight: 200; }
-  .day-detail .dd-desc { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
-  .day-detail .dd-outfit { color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 500; margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
-  .day-detail .dd-info { display: flex; gap: 8px; margin-top: 6px; }
-  .day-detail .dd-info span { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
-
-  /* 底部 tab */
-  .bottom-nav {
-    display: flex; justify-content: space-around; margin-top: 16px;
-    position: relative; z-index: 1;
-  }
-  .bottom-nav > span { font-size: 0.7rem; color: rgba(255,255,255,0.3); padding: 6px; }
-
-  /* 场景 Demo: 不同天气的选中效果 */
-  .demo-controls { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-  .demo-controls span {
-    font-size: 0.6rem; padding: 3px 8px; border-radius: 6px;
-    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); cursor: pointer;
-  }
-  .demo-controls span.active-demo { background: rgba(255,255,255,0.25); color: #fff; }
-
-  .note {
-    max-width: 390px; margin: 20px auto 0;
-    text-align: center; font-size: 0.75rem; color: rgba(255,255,255,0.3);
-    line-height: 1.6;
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;min-height:100vh;padding:16px}
+.wrap{max-width:420px;margin:0 auto}
+.sr{display:flex;gap:8px;margin-bottom:12px}
+.si{flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:10px 16px;color:#fff;outline:none;font-size:.85rem;font-family:inherit}
+.si::placeholder{color:rgba(255,255,255,0.4)}
+.sb{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:10px 14px;color:#fff;cursor:pointer;font-size:.85rem;transition:all .2s;font-family:inherit;white-space:nowrap}
+.sb:active{transform:scale(.95)}
+.sres{background:rgba(255,255,255,0.15);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;margin-bottom:10px;display:none}
+.sres.show{display:block}
+.sres .i{padding:10px 14px;color:#fff;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04)}
+.sres .i:last-child{border-bottom:none}
+.sres .i:active{background:rgba(255,255,255,0.1)}
+.loc{font-size:.9rem;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between}
+.loc .d{font-weight:400;font-size:.75rem;color:rgba(255,255,255,0.5)}
+.card{background:rgba(255,255,255,0.12);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:18px;margin-bottom:10px}
+.mw{display:flex;justify-content:space-between;align-items:flex-start}
+.mt{font-size:3.2rem;font-weight:200;line-height:1}
+.mtu{font-size:1rem;font-weight:300;opacity:.5}
+.md{font-size:.85rem;margin:4px 0 8px}
+.mi{font-size:2.5rem;opacity:.7}
+.is{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px}
+.is>div{text-align:center;padding:6px 4px;background:rgba(255,255,255,0.08);border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
+.is .v{font-size:.75rem;font-weight:600}
+.is .l{font-size:.6rem;color:rgba(255,255,255,0.5);margin-top:1px}
+.om{font-size:.95rem;font-weight:600;line-height:1.6}
+.ot{font-size:.75rem;margin-top:3px;color:rgba(255,255,255,0.7)}
+.oq{font-size:.7rem;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.4)}
+.fc{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.fc::-webkit-scrollbar{height:2px}
+.fc::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:2px}
+.fc::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+.fcc{flex-shrink:0;width:72px;padding:10px 4px;background:rgba(255,255,255,0.06);border-radius:12px;text-align:center;cursor:pointer;transition:all .3s;border:1px solid transparent}
+.fcc:active{transform:scale(.95)}
+.fcc.active{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.3);transform:scale(1.05)}
+.fcc .fd{font-size:.6rem;color:rgba(255,255,255,0.5);margin-bottom:2px}
+.fcc.active .fd{color:rgba(255,255,255,0.8)}
+.fcc .fi{font-size:1.2rem;margin-bottom:2px}
+.fcc .fh{font-size:.75rem;font-weight:600}
+.fcc .fl{font-size:.6rem;color:rgba(255,255,255,0.4)}
+.ld{display:none;justify-content:center;align-items:center;gap:10px;padding:40px 0;color:rgba(255,255,255,0.6);font-size:.85rem}
+.ld.show{display:flex}
+.sp{width:24px;height:24px;border:2px solid rgba(255,255,255,0.15);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.er{display:none;padding:14px;text-align:center;color:#ef4444;font-size:.8rem;background:rgba(239,68,68,0.1);border-radius:12px;margin-bottom:10px}
+.er.show{display:block}
 </style>
 </head>
 <body>
-
-<div class="phone" id="phoneBg">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <div class="city">📍 <span id="locationName">选择位置</span></div>
-    <span id="dateDisplay" style="color:rgba(255,255,255,0.7);font-size:0.75rem"></span>
-  </div>
-
-  <!-- Search -->
-  <div class="search-row">
-    <input class="glass-input" id="searchInput" placeholder="搜索城市..." autocomplete="off">
-    <button class="glass-btn" id="searchBtn">🔍</button>
-    <button class="glass-btn" id="locateBtn">📍</button>
-  </div>
-
-  <!-- Search Results -->
-  <div class="search-results" id="searchResults"></div>
-
-  <!-- Loading -->
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <span>获取天气中...</span>
-  </div>
-
-  <!-- Error -->
-  <div class="error-msg" id="errorMsg"></div>
-
-  <!-- Main Info -->
-  <div class="main-info">
-    <div class="temp-row">
-      <div>
-        <div class="temp-big"><span id="temp">25</span><span class="temp-unit">°C</span></div>
-        <div class="desc" id="weatherDesc">☀️ 晴 · 体感 23°C</div>
-      </div>
-      <div class="weather-icon-big" id="weatherIcon">☀️</div>
-    </div>
-    <div class="info-strip">
-      <div><div class="val" id="sunriseVal">--</div><div class="lbl">🌅 日出</div></div>
-      <div><div class="val" id="sunsetVal">--</div><div class="lbl">🌇 日落</div></div>
-      <div><div class="val" id="aqiVal">--</div><div class="lbl">🌬️ AQI</div></div>
-      <div><div class="val" id="windVal">--</div><div class="lbl">💨 风力</div></div>
-    </div>
-  </div>
-
-  <!-- Outfit Card -->
-  <div class="outfit-card" id="outfitCard">
-    <div class="outfit-header">
-      <span>👗 <span id="outfitLabel">今日穿搭</span></span>
-      <span>推荐指数 ★★★★☆</span>
-    </div>
-    <div class="outfit-main" id="outfitMain">👕 短袖T恤 + 棉质薄长裤</div>
-    <div id="outfitTips"></div>
-    <div class="outfit-quote" id="dailyQuote">💬 穿对衣服，心情自然好</div>
-  </div>
-
-  <!-- Forecast Section -->
-  <div class="forecast-section">
-    <div class="section-title">📅 7天预报 · 点击查看每日穿搭</div>
-    <div class="forecast" id="forecast"></div>
-    <!-- Selected Day Detail -->
-    <div class="day-detail" id="dayDetail">
-      <div class="day-detail-placeholder">← 点击日期查看穿搭</div>
-    </div>
-    
-  </div>
-
-  <!-- Bottom Nav -->
-  <div class="bottom-nav">
-    <span>🏠</span>
-    <span>👗</span>
-    <span>📊</span>
-    <span>⚙️</span>
-  </div>
+<div class="wrap">
+<div class="sr">
+<input class="si" id="searchInput" placeholder="搜索城市..." autocomplete="off">
+<button class="sb" id="searchBtn">🔍</button>
+<button class="sb" id="locateBtn">📍</button>
 </div>
-
-<div class="note">
-  ⬆️ 点击上方"今天~周二"体验切换不同天气时的穿搭变化<br>
-  选中某天 → 左侧详情区 + 上方穿搭卡同时更新 ← 这就是方案
+<div class="sres" id="sres"></div>
+<div class="ld" id="loading"><div class="sp"></div><span>获取天气中...</span></div>
+<div class="er" id="errorMsg"></div>
+<div class="loc"><span>📍 <span id="locName">选择位置</span></span><span class="d" id="dateDisp"></span></div>
+<div id="mainContent" style="display:none">
+<div class="card">
+<div class="mw"><div><div class="mt"><span id="temp">--</span><span class="mtu">C</span></div><div class="md" id="desc">--</div></div><div class="mi" id="wicon">☀️</div></div>
+<div class="is">
+<div><div class="v" id="sunriseVal">--</div><div class="l">🌅 日出</div></div>
+<div><div class="v" id="sunsetVal">--</div><div class="l">🌇 日落</div></div>
+<div><div class="v" id="aqiVal">--</div><div class="l">🌬️ AQI</div></div>
+<div><div class="v" id="humidVal">--</div><div class="l">💦 湿度</div></div>
 </div>
-
-<div style="display:none" id="hiddenCompat"><div id="mainContent"></div><span id="outfitText"></span><span id="weatherDescText"></span><span id="weatherDesc2"></span><span id="detailRain"></span><span id="detailWind"></span><span id="detailHumidity"></span><span id="detailFeels"></span><span id="heroArea"></span><span id="forecastBadge"></span><div id="indicesGrid"></div><div id="hourlySection"></div><canvas id="hourlyChart"></canvas><div id="weatherScene"><div id="weatherAnimContainer"></div></div><div id="girlContainer"></div></div>
+</div>
+<div class="card">
+<div class="om" id="outfitMain">加载中...</div>
+<div class="ot" id="outfitTips"></div>
+<div class="oq" id="dailyQuote"></div>
+</div>
+<div class="card">
+<div style="font-size:.65rem;color:rgba(255,255,255,0.4);margin-bottom:8px;letter-spacing:1px">📅 7天预报 · 左右滑动</div>
+<div class="fc" id="forecast"></div>
+</div>
+</div>
+</div>
 <script>
-  const outfitData = {
-    0: { temp: '25°/19°', desc: '☀️ 晴', rain:'无降水', wind:'3.2m/s', hum:'65%', outfit:'短袖T恤 + 薄长裤，浅色系搭配', tip1:'白色或浅色系更清爽', tip2:'紫外线中等，建议防晒'},
-    1: { temp: '24°/18°', desc: '⛅ 多云转晴', rain:'无降水', wind:'4.1m/s', hum:'60%', outfit:'长袖T恤 + 休闲外套，方便穿脱', tip1:'早晚温差大，备件外套', tip2:'适合户外活动'},
-    2: { temp: '19°/14°', desc: '🌧️ 小雨', rain:'1.2mm', wind:'5.0m/s', hum:'78%', outfit:'薄毛衣 + 防水外套 + 长裤', tip1:'记得带伞 ☂️', tip2:'防水鞋或短靴更舒适'},
-    3: { temp: '16°/12°', desc: '🌧️ 中雨', rain:'3.5mm', wind:'6.0m/s', hum:'85%', outfit:'针织衫 + 厚外套 + 防水裤', tip1:'🌧️ 强降水，带好雨具', tip2:'建议穿防水鞋'},
-    4: { temp: '18°/13°', desc: '☁️ 阴天', rain:'无降水', wind:'3.8m/s', hum:'70%', outfit:'卫衣 + 休闲裤，层次穿搭', tip1:'阴天紫外线仍在，注意防晒', tip2:'适合露营或散步'},
-    5: { temp: '22°/15°', desc: '☀️ 晴', rain:'无降水', wind:'2.5m/s', hum:'55%', outfit:'衬衫 + 薄外套 + 牛仔裤', tip1:'天气回暖，适合踏青', tip2:'白天舒适，傍晚微凉'},
-    6: { temp: '23°/17°', desc: '⛅ 晴转多云', rain:'无降水', wind:'3.0m/s', hum:'58%', outfit:'针织开衫 + T恤 + 长裤', tip1:'温度和湿度适宜', tip2:'推荐洋葱式穿搭法'},
-  };
-
-  function selectDay(idx) {
-    document.querySelectorAll('.fc-card').forEach(function(el) {
-      el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
-    });
-    var data = outfitData[idx];
-    var d = document.getElementById('dayDetail');
-    var dayNames = ['今天', '周四', '周五', '周六', '周日', '周一', '周二'];
-    var dates = ['5月22日', '5月23日', '5月24日', '5月25日', '5月26日', '5月27日', '5月28日'];
-    d.innerHTML = '<div class="dd-row"><div><div style="color:rgba(255,255,255,0.5);font-size:0.7rem">' + dayNames[idx] + ' · ' + dates[idx] + '</div><div class="dd-temp">' + data.temp + '</div></div><div style="text-align:right"><div class="dd-desc">' + data.desc + '</div></div></div><div class="dd-outfit">👗 <span id="ddOutfitText">' + data.outfit + '</span></div><div class="dd-info"><span>💧 ' + data.rain + '</span><span>💨 ' + data.wind + '</span><span>💦 ' + data.hum + '</span></div>';
-
-    // Update the outfit card too
-    document.getElementById('outfitText').textContent = '👕 ' + data.outfit;
-    var tips = document.querySelectorAll('.outfit-tip');
-    tips[0].textContent = '💡 ' + data.tip1;
-    tips[1].textContent = '🧴 ' + data.tip2;
-
-    // Update main info
-    document.querySelector('.main-info .desc').innerHTML = data.desc + ' · 体感 ' + Math.round((parseInt(data.temp.split('°/')[0]) - 2)) + '°C <span>| ' + data.hum + '</span>';
-    document.querySelector('.temp-big').innerHTML = data.temp.split('°')[0] + '<span class="temp-unit">°C</span>';
-  }
-
-  function demoSelect(idx) {
-    selectDay(idx);
-    document.querySelectorAll('.demo-controls span').forEach(function(el) {
-      el.classList.toggle('active-demo', parseInt(el.dataset.demo) === idx);
-    });
-  }
-</script>
-
-</div><div id="girlContainer"></div></div>
-</body>
-<script>
-
-
-    // ==================== 专属穿搭助手 — 核心逻辑 ====================
-
-    // DOM elements
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const locateBtn = document.getElementById('locateBtn');
-    const searchResults = document.getElementById('searchResults');
-    const locationName = document.getElementById('locationName');
-    const loading = document.getElementById('loading');
-    const errorMsg = document.getElementById('errorMsg');
-    const weatherCard = document.getElementById('mainContent');
-    const outfitCard = document.getElementById('outfitCard');
-    const forecast = document.getElementById('forecast');
-
-    // Tab 切换
-    function switchTab(name) {
-      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === name); });
-      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.toggle('active', c.id === 'tab-' + name); });
-    }
-
-    // 预报数据存储
-    var forecastDays = [];
-    var todayData = null;
-
-    // ==================== API 配置 ====================
-    // !! 请替换下面的 Key 为你自己的 !!
-    // 高德地图: https://lbs.amap.com/ (注册 → 应用管理 → 创建新应用 → 添加 Key)
-    // 和风天气: https://dev.qweather.com/ (注册 → 创建应用 → 获取 Key)
-    const AMAP_KEY = '477195416ac8d4105cc6ab0f522d600e';
-    const QWEATHER_KEY = 'f0e2252fea8b4696b3df33e116728cf8';
-
-    // ==================== 天气代码映射 ====================
-    function getWeatherEmoji(code) {
-      if (code === 0) return '☀️';
-      if (code === 1) return '🌤️';
-      if (code === 2) return '⛅';
-      if (code === 3) return '☁️';
-      if (code >= 45 && code <= 48) return '🌫️';
-      if (code >= 51 && code <= 55) return '🌦️';
-      if (code >= 56 && code <= 57) return '🌧️';
-      if (code >= 61 && code <= 65) return '🌧️';
-      if (code >= 66 && code <= 67) return '🌧️';
-      if (code >= 71 && code <= 77) return '❄️';
-      if (code >= 80 && code <= 82) return '🌦️';
-      if (code >= 85 && code <= 86) return '🌨️';
-      if (code >= 95) return '⛈️';
-      return '🌈';
-    }
-
-    function getWeatherDesc(code) {
-      if (code === 0) return '晴天';
-      if (code === 1) return '大部晴朗';
-      if (code === 2) return '多云';
-      if (code === 3) return '阴天';
-      if (code >= 45 && code <= 48) return '有雾';
-      if (code >= 51 && code <= 55) return '毛毛雨';
-      if (code >= 56 && code <= 57) return '冻雨';
-      if (code >= 61 && code <= 65) return '下雨';
-      if (code >= 66 && code <= 67) return '冻雨';
-      if (code >= 71 && code <= 77) return '下雪';
-      if (code >= 80 && code <= 82) return '阵雨';
-      if (code >= 85 && code <= 86) return '阵雪';
-      if (code >= 95) return '雷暴';
-      return '未知';
-    }
-
-    function isRainCode(code) {
-      return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || code >= 95;
-    }
-
-    function isSnowCode(code) {
-      return (code >= 71 && code <= 77) || (code >= 85 && code <= 86);
-    }
-
-    // ==================== 和风天气 icon → WMO 编码映射 ====================
-    function qweatherIconToWMO(icon) {
-      const code = parseInt(icon);
-      if (code === 100 || code === 150) return 0;        // 晴
-      if (code === 101 || code === 151) return 1;        // 少云
-      if (code === 102 || code === 152) return 2;        // 多云
-      if (code === 103 || code === 153) return 2;
-      if (code === 104) return 3;                         // 阴
-      if ((code >= 500 && code <= 502) || (code >= 509 && code <= 514) || code === 515) return 45; // 雾/霾
-      if (code >= 503 && code <= 508) return 48;          // 沙尘
-      if (code >= 300 && code <= 302) return 51;          // 毛毛雨
-      if (code >= 303 && code <= 304) return 95;          // 雷阵雨
-      if (code >= 305 && code <= 309) return 61;          // 小雨
-      if (code >= 310 && code <= 313) return 63;          // 中雨/大雨
-      if (code >= 314 && code <= 399) return 65;          // 暴雨+
-      if (code === 399) return 61;
-      if (code >= 400 && code <= 402) return 71;          // 小雪
-      if (code >= 403 && code <= 404) return 73;          // 中雪/大雪
-      if (code >= 405 && code <= 499) return 75;          // 暴雪+
-      if (code >= 408 && code <= 409) return 66;          // 雨夹雪
-      if (code === 456 || code === 457) return 66;
-      return 0;
-    }
-
-    // ==================== 穿衣推荐引擎 ====================
-    function getOutfit(temp, feelsLike, weatherCode, windSpeed, humidity) {
-      const tips = [];
-
-      // 体感温度更准确
-      const effectiveTemp = feelsLike != null ? feelsLike : temp;
-
-      let top, bottom, outer, accessories;
-      let category = 'normal';
-
-      if (effectiveTemp >= 35) {
-        category = 'hot';
-        top = '透气短袖T恤或背心';
-        bottom = '短裤或超薄长裙';
-        outer = '无需外套';
-        accessories = ['🧴 防晒霜是必需品', '🕶️ 太阳镜 + 遮阳帽', '💧 多喝水防中暑'];
-        tips.push('天气炎热，注意防暑降温');
-      } else if (effectiveTemp >= 30) {
-        category = 'hot';
-        top = '短袖T恤、衬衫或吊带';
-        bottom = '短裤、短裙或薄款阔腿裤';
-        outer = '无需外套，可备一件防晒衫';
-        accessories = ['🧴 记得涂防晒', '🕶️ 太阳镜推荐佩戴'];
-        tips.push('阳光充足，注意防晒');
-      } else if (effectiveTemp >= 25) {
-        top = '短袖T恤、polo衫或轻薄衬衫';
-        bottom = '长裤、九分裤或中长裙';
-        outer = '不需外套，或备一件薄开衫';
-        accessories = ['👒 遮阳帽可选'];
-        tips.push('温暖舒适，适合户外活动');
-      } else if (effectiveTemp >= 20) {
-        top = '纯棉T恤、衬衫或薄卫衣';
-        bottom = '牛仔裤、休闲长裤或长裙';
-        outer = '薄款夹克或针织开衫备用';
-        accessories = [];
-        tips.push('体感舒适，经典穿搭日');
-      } else if (effectiveTemp >= 15) {
-        top = '长袖T恤、衬衫或薄款卫衣';
-        bottom = '牛仔裤、长裤或厚款长裙';
-        outer = '牛仔外套、风衣或薄夹克';
-        accessories = [];
-        tips.push('早晚微凉，建议薄外套随身');
-      } else if (effectiveTemp >= 10) {
-        top = '卫衣、针织衫或法兰绒衬衫';
-        bottom = '牛仔裤或厚款长裤';
-        outer = '夹克、风衣或轻薄羽绒服';
-        accessories = ['🧣 薄围巾可选'];
-        tips.push('降温明显，注意保暖');
-      } else if (effectiveTemp >= 5) {
-        category = 'cold';
-        top = '厚卫衣、毛衣或抓绒衫';
-        bottom = '厚款牛仔裤或加绒长裤';
-        outer = '羽绒服、棉服或毛呢大衣';
-        accessories = ['🧣 围巾必备', '🧤 薄手套可选'];
-        tips.push('天气寒冷，做好保暖措施');
-      } else if (effectiveTemp >= 0) {
-        category = 'cold';
-        top = '保暖内衣 + 厚毛衣';
-        bottom = '加绒长裤或厚款牛仔裤';
-        outer = '厚羽绒服或棉大衣';
-        accessories = ['🧣 围巾 + 🧤 手套必备', '🧢 保暖帽推荐'];
-        tips.push('接近零度，裹紧别冻着！');
-      } else if (effectiveTemp >= -10) {
-        category = 'cold';
-        top = '保暖内衣 + 厚毛衣/抓绒衣';
-        bottom = '加绒厚裤 + 保暖裤袜打底';
-        outer = '最厚的羽绒服或军大衣';
-        accessories = ['🧣 厚围巾 + 🧤 厚手套 + 🧢 毛线帽', '🧦 厚袜子必备'];
-        tips.push('零下天气！能穿多厚穿多厚');
-      } else {
-        category = 'cold';
-        top = '保暖内衣×2 + 最厚毛衣';
-        bottom = '加绒裤 + 保暖裤 + 外裤三件套';
-        outer = '最厚羽绒服，裹成粽子也光荣';
-        accessories = ['🧣🧤🧢 全套保暖装备', '😷 口罩防止冻伤脸颊'];
-        tips.push('极寒天气，尽量减少户外时间');
-      }
-
-      // Wind adjustment
-      if (windSpeed >= 20) {
-        outer = (outer === '无需外套' || outer === '不需外套') ? '防风外套必备' : outer + '（务必防风款）';
-        tips.push('💨 今天风大，穿防风面料');
-        if (effectiveTemp >= 10 && effectiveTemp < 20) {
-          accessories.push('🧣 薄围巾挡风');
-        }
-      }
-
-      // Rain adjustment
-      if (isRainCode(weatherCode)) {
-        category = 'rain';
-        accessories.push('☂️ 带伞！今天会下雨');
-        if (windSpeed >= 25) {
-          accessories.push('⚠️ 风大雨大，雨伞效果有限，考虑雨衣');
-        }
-        if (effectiveTemp < 15) {
-          tips.push('雨天偏冷，穿防水鞋或备一双干袜子');
-        }
-      }
-
-      // Snow adjustment
-      if (isSnowCode(weatherCode)) {
-        category = 'snow';
-        accessories.push('❄️ 今天下雪，穿防滑鞋');
-        tips.push('路面可能结冰，走路小心');
-      }
-
-      // High humidity comfort tip
-      if (humidity > 85 && effectiveTemp > 28) {
-        tips.push('湿度较大体感闷热，选透气快干面料');
-      }
-
-      return {
-        category,
-        main: `${top}，搭配${bottom}。外层：${outer}`,
-        accessories: [...new Set(accessories)],
-        tips: [...new Set(tips)],
-      };
-    }
-
-    // ==================== API 调用 ====================
-    async function geocode(query) {
-      const url = `https://restapi.amap.com/v3/geocode/geo?key=${AMAP_KEY}&address=${encodeURIComponent(query)}&city=&output=json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('地址搜索失败');
-      const data = await res.json();
-      if (data.status !== '1' || !data.geocodes || data.geocodes.length === 0) {
-        throw new Error('未找到该地点');
-      }
-      return data.geocodes.map(d => {
-        const [lng, lat] = d.location.split(',');
-        return {
-          name: d.formatted_address || d.address || query,
-          lat: parseFloat(lat),
-          lon: parseFloat(lng),
-          type: d.level || 'city',
-        };
-      });
-    }
-
-    async function getWeather(lat, lon) {
-      const location = `${lon},${lat}`;
-      const baseHost = 'pf6vhgwgnj.re.qweatherapi.com';
-      const nowUrl = `https://${baseHost}/v7/weather/now?location=${location}`;
-      const forecastUrl = `https://${baseHost}/v7/weather/7d?location=${location}`;
-      const hourlyUrl = `https://${baseHost}/v7/weather/24h?location=${location}`;
-      const indicesUrl = `https://${baseHost}/v7/indices/1d?type=1,2,3,5,8,9&location=${location}`;
-      const airUrl = `https://${baseHost}/v7/air/now?location=${location}`;
-      const headers = { 'X-QW-Api-Key': QWEATHER_KEY };
-
-      const [nowRes, forecastRes, hourlyRes, indicesRes, airRes] = await Promise.all([
-        fetch(nowUrl, { headers }),
-        fetch(forecastUrl, { headers }),
-        fetch(hourlyUrl, { headers }).catch(() => ({ ok: false })),
-        fetch(indicesUrl, { headers }).catch(() => ({ ok: false })),
-        fetch(airUrl, { headers }).catch(() => ({ ok: false }))
-      ]);
-
-      if (!nowRes.ok || !forecastRes.ok) throw new Error('天气数据获取失败');
-
-      const nowData = await nowRes.json();
-      const forecastData = await forecastRes.json();
-
-      if (nowData.code !== '200') throw new Error('当前天气获取失败');
-      if (forecastData.code !== '200') throw new Error('天气预报获取失败');
-
-      const n = nowData.now;
-      const d = forecastData.daily;
-
-      // 处理小时预报
-      var hourly = [];
-      if (hourlyRes && hourlyRes.ok) {
-        try { var hd = await hourlyRes.json();
-          if (hd.code === '200' && hd.hourly) {
-            hourly = hd.hourly.slice(0,24).map(function(h) { return {
-              time: h.fxTime, temp: parseFloat(h.temp), weather_code: qweatherIconToWMO(h.icon) };});
-          }
-        } catch(e) {} }
-
-      // 处理生活指数
-      var indices = [];
-      if (indicesRes && indicesRes.ok) {
-        try { var id = await indicesRes.json();
-          if (id.code === '200' && id.daily) {
-            indices = id.daily.map(function(d2) { return {
-              name: d2.name, level: d2.level, category: d2.category, text: d2.text };});
-          }
-        } catch(e) {} }
-
-      // 处理空气质量
-      var aqi = null;
-      if (airRes && airRes.ok) {
-        try { var ad = await airRes.json();
-          if (ad.code === '200' && ad.now) {
-            aqi = { value: parseInt(ad.now.aqi), level: ad.now.level, pm25: parseInt(ad.now.pm2p5), pm10: parseInt(ad.now.pm10) };
-          }
-        } catch(e) {} }
-
-      return {
-        current: {
-          temperature_2m: parseFloat(n.temp),
-          apparent_temperature: parseFloat(n.feelsLike),
-          weather_code: qweatherIconToWMO(n.icon),
-          precipitation: parseFloat(n.precip || 0),
-          wind_speed_10m: parseFloat(n.windSpeed),
-          relative_humidity_2m: parseFloat(n.humidity),
-        },
-        daily: {
-          time: d.map(function(day) { return day.fxDate; }),
-          temperature_2m_max: d.map(function(day) { return parseFloat(day.tempMax); }),
-          temperature_2m_min: d.map(function(day) { return parseFloat(day.tempMin); }),
-          weather_code: d.map(function(day) { return qweatherIconToWMO(day.iconDay); }),
-          precipitation_sum: d.map(function(day) { return parseFloat(day.precip || 0); }),
-          sunrise: d.map(function(day) { return day.sunrise || ""; }),
-          sunset: d.map(function(day) { return day.sunset || ""; }),
-          wind_speed: d.map(function(day) { return parseFloat(day.windSpeedDay || 0); }),
-          humidity: d.map(function(day) { return parseFloat(day.humidity || 0); }),
-          
-        },
-        hourly: hourly,
-        indices: indices,
-        aqi: aqi,
-      };
-    }
-
-    async function reverseGeocode(lat, lon) {
-      const url = `https://restapi.amap.com/v3/geocode/regeo?key=${AMAP_KEY}&location=${lon},${lat}&output=json&radius=1000`;
-      const res = await fetch(url);
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (data.status !== '1') return null;
-      return data.regeocode.formatted_address || null;
-    }
-
-    // ==================== UI 操作 ====================
-    function showLoading() {
-      loading.classList.add('show');
-      errorMsg.classList.remove('show');
-      document.getElementById("mainContent").style.display = "none";
-      document.getElementById("heroArea").style.display = "none";
-      outfitCard.style.display = 'none';
-      forecast.style.display = 'none';
-    }
-
-    function hideLoading() {
-      loading.classList.remove('show');
-    }
-
-    function showError(msg) {
-      errorMsg.textContent = msg;
-      errorMsg.classList.add('show');
-      hideLoading();
-    }
-
-    function saveLocation(lat, lon, name) {
-      const loc = { lat, lon, name, savedAt: Date.now() };
-      localStorage.setItem('weather-outfit-location', JSON.stringify(loc));
-    }
-
-    function loadLocation() {
-      try {
-        const raw = localStorage.getItem('weather-outfit-location');
-        return raw ? JSON.parse(raw) : null;
-      } catch { return null; }
-    }
-
-    function formatDay(dateStr) {
-      const date = new Date(dateStr);
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      if (date.toDateString() === today.toDateString()) return '今天';
-      if (date.toDateString() === tomorrow.toDateString()) return '明天';
-      const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-      return days[date.getDay()];
-    }
-
-    // ==================== 每日语录 ====================
-    const dailyQuotes = [
-      '希望你今天开开心心 🌸',
-      '今天你又变漂亮了 ✨',
-      '你笑起来的样子最美 😊',
-      '今天也是元气满满的一天 💪',
-      '你是最棒的，加油 🌟',
-      '愿好运一直陪伴你 🍀',
-      '今天的心情像阳光一样灿烂 ☀️',
-      '每一天的你都很特别 💕',
-      '保持微笑，好运自然来 😄',
-      '你就是独一无二的存在 🌈',
-      '今天也要好好爱自己 ❤️',
-      '愿你今天充满惊喜 🎁',
-      '你的微笑能照亮整个世界 💫',
-      '今天比昨天更优秀，加油 🌱',
-      '生活明朗，万物可爱 🐾',
-      '愿你眼里有光，心中有爱 🕯️',
-      '今天也是美好的一天 🎀',
-      '自信的你最美，别怀疑 👑',
-      '一切都会好起来的，慢慢来 🌻',
-      '今天要对自己好一点 🧸',
-      '你的努力都值得被看见 💝',
-      '心怀希望，就会遇见美好 🌄',
-      '今天也要做个快乐的女孩 🎈',
-      '温柔待人，也被世界温柔以待 🕊️',
-      '你值得世间所有的美好 🌺',
-      '今天的天气和心情都刚刚好 🌤️',
-    ];
-
-    function getTodayQuote() {
-      const today = new Date();
-      const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
-      return dailyQuotes[dayOfYear % dailyQuotes.length];
-    }
-
-    // ==================== 小女孩换装 ====================
-    function getGirlOutfitState(temp, weatherCode) {
-      const isRain = isRainCode(weatherCode);
-      const isSnow = isSnowCode(weatherCode);
-      let outfit;
-      if (temp >= 35) outfit = 'heatwave';
-      else if (temp >= 30) outfit = 'hot';
-      else if (temp >= 25) outfit = 'warm';
-      else if (temp >= 15) outfit = 'mild';
-      else if (temp >= 10) outfit = 'cool';
-      else if (temp >= 5) outfit = 'cold';
-      else outfit = 'freezing';
-      if (isSnow && outfit !== 'freezing' && outfit !== 'cold') outfit = 'cool';
-      return { outfit, isRain, isSnow };
-    }
-
-            function renderGirlCharacter(outfit, isRain, isSnow) {
-      const c = document.getElementById('girlContainer');
-      const C = { heatwave:{tp:'#FF6B6B',bt:'#FFD93D',sh:'#FF9FF3'}, hot:{tp:'#6BCB77',bt:'#FFEAA7',sh:'#FF9FF3'}, warm:{tp:'#FD79A8',bt:'#A29BFE',sh:'#FFEAA7'}, mild:{tp:'#74B9FF',bt:'#2D3436',sh:'#636E72'}, cool:{tp:'#E17055',bt:'#2D3436',sh:'#FFB347'}, cold:{tp:'#4895EF',bt:'#2D3436',sh:'#F72585'}, freezing:{tp:'#2D3436',bt:'#2D3436',sh:'#E63946'} };
-      const col = C[outfit] || C.warm;
-      const SK = '#FDE8D0', HK = '#3D2B1F', ST = '#333';
-
-      function makeOutfit(o) {
-        var tp='', bt='', am='', lg='', sh='', ac='';
-        switch(o) {
-          case 'heatwave':
-            tp = '<path d="M53,69 Q75,66 97,69 L99,104 Q75,108 51,104Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            bt = '<path d="M58,106 L92,106 L94,124 Q75,126 56,124Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M53,72 Q42,88 44,100" fill="none" stroke="'+SK+'" stroke-width="8" stroke-linecap="round"/>';
-            am+= '<path d="M97,72 Q108,88 106,100" fill="none" stroke="'+SK+'" stroke-width="8" stroke-linecap="round"/>';
-            lg = '<path d="M64,126 L60,148" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            lg+= '<path d="M86,126 L90,148" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="152" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="152" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<path d="M60,68 Q75,64 90,68 Q75,56 60,68Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac+= '<circle cx="62" cy="64" r="2.5" fill="#FF6B9D"/>';
-            break;
-          case 'hot':
-            tp = '<path d="M54,69 Q75,66 96,69 L98,106 Q75,110 52,106Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            bt = '<path d="M59,108 L91,108 L93,128 L83,120 L67,120 L57,128Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M53,72 Q43,88 45,102" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            am+= '<path d="M97,72 Q107,88 105,102" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            lg = '<path d="M64,128 L60,150" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            lg+= '<path d="M86,128 L90,150" fill="none" stroke="'+SK+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="154" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="154" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<rect x="60" y="66" width="30" height="3" rx="1.5" fill="#FFF" opacity="0.6"/>';
-            ac+= '<path d="M70,65 Q72,60 75,58 Q78,60 80,65Z" fill="#FF6B9D"/>';
-            break;
-          case 'warm':
-            tp = '<path d="M53,69 Q75,64 97,69 L99,106 Q75,112 51,106 L51,88 Q75,84 99,88Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            bt = '';
-            am = '<path d="M53,72 Q44,88 46,102" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            am+= '<path d="M97,72 Q106,88 104,102" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            lg = '<path d="M64,128 L60,150" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            lg+= '<path d="M86,128 L90,150" fill="none" stroke="'+SK+'" stroke-width="6" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="154" rx="8" ry="4" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="154" rx="8" ry="4" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<circle cx="75" cy="64" r="3" fill="#FF6B9D" stroke="'+ST+'" stroke-width="0.6"/>';
-            ac+= '<circle cx="75" cy="64" r="1.2" fill="#FFF"/>';
-            break;
-          case 'mild':
-            tp = '<path d="M52,69 Q75,65 98,69 L100,108 Q75,112 50,108Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            bt = '<path d="M59,110 L91,110 L93,132 L83,124 L67,124 L57,132Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M52,72 Q40,92 42,104" fill="none" stroke="'+col.tp+'" stroke-width="9" stroke-linecap="round"/>';
-            am+= '<path d="M98,72 Q110,92 108,104" fill="none" stroke="'+col.tp+'" stroke-width="9" stroke-linecap="round"/>';
-            am+= '<path d="M42,104 L43,106" fill="none" stroke="'+SK+'" stroke-width="3" stroke-linecap="round"/>';
-            am+= '<path d="M108,104 L107,106" fill="none" stroke="'+SK+'" stroke-width="3" stroke-linecap="round"/>';
-            lg = '<path d="M64,132 L60,154" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            lg+= '<path d="M86,132 L90,154" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="158" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="158" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '';
-            break;
-          case 'cool':
-            tp = '<path d="M52,69 Q75,65 98,69 L100,110 Q75,114 50,110Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            bt = '<path d="M59,112 L91,112 L93,134 L83,126 L67,126 L57,134Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M52,72 Q38,94 40,106" fill="none" stroke="'+col.tp+'" stroke-width="9" stroke-linecap="round"/>';
-            am+= '<path d="M98,72 Q112,94 110,106" fill="none" stroke="'+col.tp+'" stroke-width="9" stroke-linecap="round"/>';
-            am+= '<path d="M40,106 L41,108" fill="none" stroke="'+SK+'" stroke-width="2.5" stroke-linecap="round"/>';
-            am+= '<path d="M110,106 L109,108" fill="none" stroke="'+SK+'" stroke-width="2.5" stroke-linecap="round"/>';
-            lg = '<path d="M64,134 L60,156" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            lg+= '<path d="M86,134 L90,156" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="160" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="160" rx="9" ry="4.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<path d="M50,70 Q75,80 100,70 Q75,74 50,70Z" fill="#FFF" opacity="0.5"/>';
-            break;
-          case 'cold':
-            tp = '<path d="M48,68 Q75,64 102,68 L104,114 Q75,118 46,114Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            tp+= '<rect x="50" y="74" width="50" height="5" rx="2.5" fill="#FFF" opacity="0.25"/><rect x="51" y="84" width="48" height="5" rx="2.5" fill="#FFF" opacity="0.2"/>';
-            bt = '<path d="M59,116 L91,116 L93,140 L83,132 L67,132 L57,140Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M50,72 Q36,96 38,110" fill="none" stroke="'+col.tp+'" stroke-width="11" stroke-linecap="round"/>';
-            am+= '<path d="M100,72 Q114,96 112,110" fill="none" stroke="'+col.tp+'" stroke-width="11" stroke-linecap="round"/>';
-            lg = '<path d="M64,140 L60,162" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            lg+= '<path d="M86,140 L90,162" fill="none" stroke="'+col.bt+'" stroke-width="7" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="166" rx="9" ry="5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="166" rx="9" ry="5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<path d="M48,72 Q75,88 102,72" fill="none" stroke="'+col.sh+'" stroke-width="6" stroke-linecap="round"/>';
-            break;
-          case 'freezing':
-            tp = '<path d="M46,67 Q75,63 104,67 L106,116 Q75,120 44,116Z" fill="'+col.tp+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            tp+= '<rect x="48" y="73" width="54" height="5" rx="2.5" fill="#FFF" opacity="0.25"/>';
-            tp+= '<rect x="49" y="83" width="52" height="5" rx="2.5" fill="#FFF" opacity="0.2"/>';
-            tp+= '<rect x="48" y="93" width="54" height="5" rx="2.5" fill="#FFF" opacity="0.15"/>';
-            bt = '<path d="M57,118 L93,118 L95,142 L83,134 L67,134 L55,142Z" fill="'+col.bt+'" stroke="'+ST+'" stroke-width="1.3"/>';
-            am = '<path d="M48,72 Q32,98 L34,112" fill="none" stroke="'+col.tp+'" stroke-width="13" stroke-linecap="round"/>';
-            am+= '<path d="M102,72 Q118,98 L116,112" fill="none" stroke="'+col.tp+'" stroke-width="13" stroke-linecap="round"/>';
-            lg = '<path d="M64,142 L60,164" fill="none" stroke="'+col.bt+'" stroke-width="8" stroke-linecap="round"/>';
-            lg+= '<path d="M86,142 L90,164" fill="none" stroke="'+col.bt+'" stroke-width="8" stroke-linecap="round"/>';
-            sh = '<ellipse cx="60" cy="168" rx="10" ry="5.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            sh+= '<ellipse cx="90" cy="168" rx="10" ry="5.5" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac = '<path d="M62,62 Q75,52 88,62 Q75,56 62,62Z" fill="'+col.sh+'" stroke="'+ST+'" stroke-width="1.2"/>';
-            ac+= '<circle cx="62" cy="58" r="2" fill="#FFF"/>';
-            ac+= '<circle cx="88" cy="58" r="2" fill="#FFF"/>';
-            break;
-        }
-        return {tp,bt,am,lg,sh,ac};
-      }
-
-      var p = makeOutfit(outfit);
-      var wfx = '';
-      if (isRain) {
-        wfx = '<g opacity="0.75"><line x1="114" y1="16" x2="118" y2="56" stroke="#74B9FF" stroke-width="2" stroke-linecap="round"/><line x1="118" y1="56" x2="114" y2="62" stroke="#74B9FF" stroke-width="2" stroke-linecap="round"/><path d="M108,16 Q114,8 120,16 L118,56 Q116,60 114,56Z" fill="#6C5CE7" stroke="#333" stroke-width="0.8"/><line x1="34" y1="78" x2="31" y2="90" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="116" y1="78" x2="113" y2="90" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="26" y1="126" x2="23" y2="138" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><line x1="126" y1="126" x2="123" y2="138" stroke="#74B9FF" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></g>';
-      }
-      if (isSnow) {
-        wfx += '<circle cx="30" cy="42" r="2.5" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="120" cy="52" r="2" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="38" cy="88" r="2.5" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="116" cy="98" r="2" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="22" cy="136" r="3" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="128" cy="146" r="2.5" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="32" cy="176" r="2.5" fill="#FFF" stroke="#CCC" stroke-width="0.3"/><circle cx="126" cy="196" r="2" fill="#FFF" stroke="#CCC" stroke-width="0.3"/>';
-      }
-
-      c.innerHTML = '<svg viewBox="0 0 150 280" xmlns="http://www.w3.org/2000/svg">'
-        +'<g id="shadow"><ellipse cx="75" cy="264" rx="54" ry="6" fill="#E8E8E8" stroke="#CCC" stroke-width="0.5"/>'
-        +'<ellipse cx="75" cy="260" rx="24" ry="3" fill="#D0D0D0" opacity="0.4"/></g>'
-        +'<g id="torso">'
-        +'<ellipse cx="75" cy="90" rx="22" ry="30" fill="'+HK+'" opacity="0.3"/>'
-        +'<ellipse cx="52" cy="95" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8" transform="rotate(6,52,95)"/>'
-        +'<ellipse cx="98" cy="95" rx="7" ry="18" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8" transform="rotate(-6,98,95)"/>'
-        +'<ellipse cx="65" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
-        +'<ellipse cx="85" cy="128" rx="6" ry="16" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
-        +'</g>'
-        +'<g id="head">'
-        +'<ellipse cx="75" cy="42" rx="18" ry="17" fill="'+SK+'" stroke="'+ST+'" stroke-width="0.8"/>'
-        +'<path d="M57,42 Q57,28 75,26 Q93,28 93,42 Q93,35 75,33 Q57,35 57,42Z" fill="'+HK+'" opacity="0.8"/>'
-        +'<path d="M62,42 Q60,30 75,28 Q90,30 88,42" fill="none" stroke="'+HK+'" stroke-width="4" stroke-linecap="round"/>'
-        +'<path d="M62,38 Q60,48 62,56" fill="none" stroke="'+HK+'" stroke-width="3.5" stroke-linecap="round"/>'
-        +'<path d="M88,38 Q90,48 88,56" fill="none" stroke="'+HK+'" stroke-width="3.5" stroke-linecap="round"/>'
-        +'<circle cx="68" cy="40" r="2.5" fill="#333"/>'
-        +'<circle cx="67" cy="39" r="1" fill="#FFF"/>'
-        +'<circle cx="82" cy="40" r="2.5" fill="#333"/>'
-        +'<circle cx="81" cy="39" r="1" fill="#FFF"/>'
-        +'<ellipse cx="63" cy="45" rx="3" ry="1.5" fill="#FFB5C2" opacity="0.6"/>'
-        +'<ellipse cx="87" cy="45" rx="3" ry="1.5" fill="#FFB5C2" opacity="0.6"/>'
-        +'<path d="M72,47 Q75,49.5 78,47" fill="none" stroke="#D4656A" stroke-width="1.2" stroke-linecap="round"/>'
-        +'</g>'
-        +'<g id="neck"><rect x="71" y="60" width="8" height="7" rx="2" fill="'+SK+'"/></g>'
-        +'<g id="top">'+p.tp+'</g>'
-        +'<g id="bottom">'+p.bt+'</g>'
-        +'<g id="arms">'+p.am+'</g>'
-        +'<g id="legs">'+p.lg+'</g>'
-        +'<g id="shoes">'+p.sh+'</g>'
-        +'<g id="acce">'+p.ac+'</g>'
-        +'<g id="wfx">'+wfx+'</g>'
-        +'</svg>';
-      // 添加角色动画类
-      c.className = 'outfit-girl';
-      if (isRain) c.classList.add('anim-rain');
-      else if (isSnow) c.classList.add('anim-snow');
-      else if (outfit === 'heatwave') c.classList.add('anim-heatwave');
-      else if (outfit === 'hot') c.classList.add('anim-hot');
-      else if (outfit === 'warm') c.classList.add('anim-warm');
-      else if (outfit === 'mild') c.classList.add('anim-mild');
-      else if (outfit === 'cool') c.classList.add('anim-cool');
-      else if (outfit === 'cold') c.classList.add('anim-cold');
-      else if (outfit === 'freezing') c.classList.add('anim-freezing');
-    }    // ==================== 渲染 ====================
-    function renderWeather(data) {
-      try {
-      const c = data.current;
-      const temp = Math.round(c.temperature_2m);
-      const feelsLike = Math.round(c.apparent_temperature);
-      const precip = c.precipitation || 0;
-      const windSpeed = c.wind_speed_10m;
-      const humidity = c.relative_humidity_2m;
-      const weatherCode = c.weather_code;
-
-      document.getElementById('temp').textContent = temp;
-      var desc = getWeatherDesc(weatherCode);
-      document.getElementById('weatherDesc').textContent = getWeatherEmoji(weatherCode) + ' ' + desc;
-      updateWeatherScene(weatherCode);
-      document.getElementById('detailRain').textContent = precip > 0 ? precip.toFixed(1) + ' mm' : '无降水';
-      document.getElementById('detailWind').textContent; document.getElementById('windVal').textContent = (windSpeed / 3.6).toFixed(1) + ' m/s';
-      document.getElementById('detailHumidity').textContent = humidity + '%';
-      document.getElementById('detailFeels').textContent = feelsLike + '°C';
-      document.getElementById('heroArea').style.display = 'flex';
-      document.getElementById('mainContent').style.display = 'block';
-
-      // Outfit
-      const outfit = getOutfit(temp, feelsLike, weatherCode, windSpeed, humidity);
-      document.getElementById('outfitMain').textContent = outfit.main;
-      const tipsDiv = document.getElementById('outfitTips');
-      tipsDiv.innerHTML = '';
-      outfit.tips.forEach(t => {
-        const tip = document.createElement('div');
-        tip.className = 'outfit-tip';
-        tip.textContent = '💡 ' + t;
-        tipsDiv.appendChild(tip);
-      });
-      outfit.accessories.forEach(a => {
-        const acc = document.createElement('div');
-        acc.className = 'outfit-tip';
-        acc.textContent = a;
-        tipsDiv.appendChild(acc);
-      });
-
-      // Color category
-      outfitCard.className = 'outfit-card ' + outfit.category;
-      outfitCard.style.display = 'block';
-      // 更新详情面板
-      var dd = document.getElementById('dayDetail');
-      if (dd) {
-        var dayNames = ['今天','明天','第三天','第四天','第五天','第六天','第七天'];
-        dd.innerHTML = '<div class=\"dd-row\"><div><div style=\"color:rgba(255,255,255,0.5);font-size:0.65rem\">' + (dayNames[idx] || '') + '</div><div class=\"dd-temp\">' + avgTemp + '°<span style=\"font-size:0.7rem;font-weight:400;color:rgba(255,255,255,0.4)\">/' + day.min + '°</span></div></div><div style=\"text-align:right\"><div class=\"dd-desc\">' + emoji + ' ' + desc + '</div></div></div><div class=\"dd-outfit\">👗 ' + outfit.main + '</div><div class=\"dd-info\"><span>💧 ' + ((day.precip||0) > 0 ? (day.precip||0).toFixed(1) + 'mm' : '无降水') + '</span><span>💨 ' + ((day.wind||0) > 0 ? (day.wind||0).toFixed(1) + 'm/s' : '微风') + '</span><span>💦 ' + (day.hum||0) + '%' + '</span></div>';
-      }
-
-      // Render little girl character
-      const girlState = getGirlOutfitState(temp, weatherCode);
-      renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
-
-      // Daily quote
-      document.getElementById('dailyQuote').textContent = '💬 ' + getTodayQuote();
-
-      // 日出日落 + AQI
-      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0] : '--';
-      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0] : '--';
-      if (data.aqi) {
-        var aqi = data.aqi;
-        var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
-        document.getElementById("aqiVal").innerHTML = aqi.value + ' ' + aqi.level;
-      } else { document.getElementById("aqiVal").textContent = '--'; }
-      if (typeof data !== 'undefined' && data.aqi) {
-        var aqi = data.aqi;
-        document.getElementById('aqiVal').innerHTML = aqi.value + ' ' + aqi.level;
-      }
-
-      // Forecast
-      const forecastDiv = document.getElementById('forecast');
-      forecastDiv.innerHTML = '';
-      // 保存预报数据
-      forecastDays = [];
-      for (let i = 0; i < Math.min(7, data.daily.time.length); i++) {
-        const day = data.daily;
-        const max = Math.round(day.temperature_2m_max[i]);
-        const min = Math.round(day.temperature_2m_min[i]);
-        const code = day.weather_code[i];
-        const precip = day.precipitation_sum[i] || 0;
-        const wind = Math.round((day.wind_speed[i] || 0) / 3.6 * 10) / 10;
-        const hum = day.humidity[i] || 0;
-        forecastDays.push({ max, min, code, precip, wind, hum, sunrise: (day.sunrise ? day.sunrise[i] : ''), sunset: (day.sunset ? day.sunset[i] : '') });
-        const isActive = i === 0 && !selectedForecastDay;
-        forecastDiv.innerHTML += `
-          <div class="fc-card${isActive ? ' active' : ''}" data-idx="${i}" onclick="showForecastDay(${i})">
-            <div class="fd">${formatDay(day.time[i])}</div>
-            <div class="fi">${getWeatherEmoji(code)}</div>
-            <div class="fh">${max}° <span class="fl">${min}°</span></div>
-          </div>
-        `;
-      }
-      forecast.style.display = 'flex';
-      // 保存今天的数据用于"返回今天"
-      if (!todayData) {
-        todayData = {
-          temp: temp, feelsLike: feelsLike, weatherCode: weatherCode,
-          windSpeed: windSpeed, humidity: humidity, precip: precip,
-        };
-      }
-      selectedForecastDay = 0;
-      document.getElementById('forecastBadge').style.display = 'none';
-
-      // 生活指数
-      var idxGrid = document.getElementById('indicesGrid');
-      if (data.indices && data.indices.length > 0) {
-        idxGrid.style.display = 'flex';
-        idxGrid.innerHTML = data.indices.map(function(idx) {
-          return '<div class="index-card"><div class="ii">' +
-            ({'1':'👗','2':'☀️','3':'🚗','5':'😊','8':'🏃','9':'🎣'}[idx.category] || '📋') +
-            '</div><div class="il">' + idx.level + '</div><div class="in">' + idx.name + '</div></div>';
-        }).join('');
-      } else { idxGrid.style.display = 'none'; }
-
-      // 小时预报图表
-      if (data.hourly && data.hourly.length > 0) {
-        document.getElementById('hourlySection').style.display = 'block';
-        drawHourlyChart(data.hourly);
-      } else { document.getElementById('hourlySection').style.display = 'none'; }
-
-      hideLoading();
-      } catch(e) {
-        console.error(e);
-        hideLoading();
-      }
-    }
-
-    function drawHourlyChart(hourly) {
-      var canvas = document.getElementById('hourlyChart');
-      var container = canvas.parentElement;
-      var dpr = window.devicePixelRatio || 1;
-      var W = container.clientWidth || 320;
-      var H = 130;
-      canvas.width = W * dpr;
-      canvas.height = H * dpr;
-      canvas.style.width = W + 'px';
-      canvas.style.height = H + 'px';
-      var ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-
-      ctx.clearRect(0, 0, W, H);
-      var pad = { top: 15, bottom: 22, left: 28, right: 10 };
-      var cw = W - pad.left - pad.right;
-      var ch = H - pad.top - pad.bottom;
-      var temps = hourly.map(function(h) { return h.temp; });
-      var minT = Math.min.apply(null, temps);
-      var maxT = Math.max.apply(null, temps);
-      var range = (maxT - minT) || 1;
-      var padT = range * 0.15;
-
-      // Grid lines
-      ctx.strokeStyle = 'rgba(26,58,106,0.2)';
-      ctx.lineWidth = 0.5;
-      for (var i = 0; i <= 4; i++) {
-        var y = pad.top + (ch / 4) * i;
-        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
-        ctx.fillStyle = '#8a9bb5'; ctx.font = '9px sans-serif';
-        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-        ctx.fillText(Math.round(maxT - (range / 4) * i), pad.left - 4, y);
-      }
-
-      // Line
-      ctx.beginPath();
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 2;
-      ctx.shadowColor = 'rgba(59,130,246,0.3)';
-      ctx.shadowBlur = 3;
-      for (var i = 0; i < hourly.length; i++) {
-        var x = pad.left + (cw / (hourly.length - 1)) * i;
-        var y = pad.top + ch - ((temps[i] - minT + padT) / (range + padT*2)) * ch;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // Dots
-      for (var i = 0; i < Math.min(hourly.length, 25); i++) {
-        var x = pad.left + (cw / (Math.min(hourly.length, 25) - 1)) * i;
-        var y = pad.top + ch - ((temps[i] - minT + padT) / (range + padT*2)) * ch;
-        ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2);
-        ctx.fillStyle = '#3b82f6'; ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI*2); ctx.fill();
-      }
-
-      // Time labels
-      ctx.fillStyle = '#8a9bb5';
-      ctx.font = '9px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      for (var i = 0; i < hourly.length; i += 3) {
-        var x = pad.left + (cw / (hourly.length - 1)) * i;
-        var t = hourly[i].time || '';
-        ctx.fillText(t.length > 16 ? t.slice(11,16) : '--', x, H - pad.bottom + 4);
-      }
-    }
-
-    var selectedForecastDay = 0;
-
-    // 查看未来某天的天气和穿搭
-    function showForecastDay(idx) {
-      if (idx < 0 || idx >= forecastDays.length) return;
-      selectedForecastDay = idx;
-      const day = forecastDays[idx];
-      document.querySelectorAll('.fc-card').forEach(el => {
-        el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
-      });
-      const avgTemp = Math.round((day.max + day.min) / 2);
-      const weatherCode = day.code;
-      const emoji = getWeatherEmoji(weatherCode);
-      const desc = getWeatherDesc(weatherCode);
-      document.getElementById('temp').textContent = avgTemp;
-      document.getElementById('weatherDescText').textContent = desc;
-      document.getElementById('weatherDesc2').textContent = emoji + ' ' + desc;
-      document.getElementById('detailRain').textContent = (day.precip || 0) > 0 ? (day.precip || 0).toFixed(1) + ' mm' : '无降水';
-      document.getElementById('detailWind').textContent = (day.wind || 0) > 0 ? (day.wind || 0).toFixed(1) + ' m/s' : '微风';
-      document.getElementById('detailHumidity').textContent = (day.hum || 0) > 0 ? day.hum + '%' : '--';
-      document.getElementById('detailFeels').textContent = avgTemp + '°C（估）';
-      // 更新详情面板
-      
-      // 更新日出日落AQI
-      if (day.sunrise) {
-        document.getElementById('sunriseVal').textContent = day.sunrise;
-        document.getElementById('sunsetVal').textContent = day.sunset;
-      }
-      if (window._aqiData && idx === 0) {
-        document.getElementById('aqiVal').innerHTML = window._aqiData;
-      } else if (idx !== 0) {
-        document.getElementById('aqiVal').textContent = '--';
-      }
-      const outfit = getOutfit(avgTemp, avgTemp, weatherCode, 10, 50);
-      document.getElementById('outfitMain').textContent = outfit.main;
-      const tipsDiv = document.getElementById('outfitTips');
-      tipsDiv.innerHTML = '';
-      outfit.tips.forEach(t => {
-        const tip = document.createElement('div');
-        tip.className = 'outfit-tip';
-        tip.textContent = '💡 ' + t;
-        tipsDiv.appendChild(tip);
-      });
-      outfit.accessories.forEach(a => {
-        const acc = document.createElement('div');
-        acc.className = 'outfit-tip';
-        acc.textContent = a;
-        tipsDiv.appendChild(acc);
-      });
-      outfitCard.className = 'outfit-card ' + outfit.category;
-      outfitCard.style.display = 'block';
-      const girlState = getGirlOutfitState(avgTemp, weatherCode);
-      renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
-      updateWeatherScene(weatherCode);
-      const badge = document.getElementById('forecastBadge');
-      badge.textContent = '📅 ' + (idx === 0 ? '今天' : '第' + (idx + 1) + '天预报');
-      badge.style.display = 'inline';
-    }
-
-    function backToToday() {
-      if (!todayData) return;
-      selectedForecastDay = 0;
-      showForecastDay(0);
-      const d = todayData;
-      var desc = getWeatherDesc(d.weatherCode);
-      document.getElementById('temp').textContent = d.temp;
-      document.getElementById('weatherDescText').textContent = desc;
-      document.getElementById('weatherDesc2').textContent = getWeatherEmoji(d.weatherCode) + ' ' + desc;
-      document.getElementById('detailRain').textContent = d.precip > 0 ? d.precip.toFixed(1) + ' mm' : '无降水';
-      document.getElementById('detailWind').textContent = (d.windSpeed / 3.6).toFixed(1) + ' m/s';
-      document.getElementById('detailHumidity').textContent = d.humidity + '%';
-      document.getElementById('detailFeels').textContent = d.feelsLike + '°C';
-      const outfit = getOutfit(d.temp, d.feelsLike, d.weatherCode, d.windSpeed, d.humidity);
-      document.getElementById('outfitMain').textContent = outfit.main;
-      const tipsDiv = document.getElementById('outfitTips');
-      tipsDiv.innerHTML = '';
-      outfit.tips.forEach(t => {
-        const tip = document.createElement('div');
-        tip.className = 'outfit-tip';
-        tip.textContent = '💡 ' + t;
-        tipsDiv.appendChild(tip);
-      });
-      outfit.accessories.forEach(a => {
-        const acc = document.createElement('div');
-        acc.className = 'outfit-tip';
-        acc.textContent = a;
-        tipsDiv.appendChild(acc);
-      });
-      outfitCard.className = 'outfit-card ' + outfit.category;
-      const girlState = getGirlOutfitState(d.temp, d.weatherCode);
-      renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
-      updateWeatherScene(d.weatherCode);
-      document.querySelectorAll('.fc-card').forEach(el => {
-        el.classList.toggle('active', parseInt(el.dataset.idx) === 0);
-      });
-      document.getElementById('forecastBadge').style.display = 'none';
-    }
-
-    function updateWeatherScene(weatherCode) {
-      var scene = document.getElementById('weatherScene');
-      var sceneCont = document.getElementById('weatherAnimContainer');
-      scene.style.display = 'block';
-      var sceneType = 'default';
-      if (weatherCode === 0 || weatherCode === 1) sceneType = 'sunny';
-      else if (weatherCode === 2 || weatherCode === 3) sceneType = 'cloudy';
-      else if (weatherCode >= 61 && weatherCode <= 67 || weatherCode >= 80 && weatherCode <= 82) sceneType = 'rain';
-      else if (weatherCode >= 71 && weatherCode <= 77 || weatherCode >= 85 && weatherCode <= 86) sceneType = 'snow';
-      else if (weatherCode >= 95) sceneType = 'storm';
-      scene.className = 'weather-scene ' + sceneType;
-      if (sceneType === 'sunny') {
-        sceneCont.innerHTML = '<lottie-player src="anim-sunny.json" background="transparent" speed="1" loop autoplay></lottie-player>';
-      } else {
-        var html = '';
-        if (sceneType === 'cloudy') {
-          html += '<div class="wx-cloud" style="width:60px;height:28px;left:30px;top:30px;"></div>';
-          html += '<div class="wx-cloud" style="width:50px;height:24px;left:60px;top:20px;animation-delay:2s;animation-duration:5s;"></div>';
-          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">⛅</div>';
-        } else if (sceneType === 'rain') {
-          html += '<div class="rain-drops"></div>';
-          html += '<div style="font-size:50px;animation:float-up 1.5s ease-in-out infinite;">🌧️</div>';
-        } else if (sceneType === 'snow') {
-          var flakes = '';
-          for (var i = 0; i < 15; i++) {
-            var left = Math.random() * 90 + 5;
-            var size = Math.random() * 4 + 3;
-            var dur = Math.random() * 4 + 3;
-            var delay = Math.random() * 5;
-            flakes += '<div class="snow-flake" style="left:'+left+'%;width:'+size+'px;height:'+size+'px;animation-duration:'+dur+'s;animation-delay:'+delay+'s;"></div>';
-          }
-          html += flakes;
-          html += '<div style="font-size:50px;animation:float-up 2s ease-in-out infinite;">❄️</div>';
-        } else if (sceneType === 'storm') {
-          html += '<div class="rain-drops"></div>';
-          html += '<div style="font-size:50px;animation:float-up 1s ease-in-out infinite;">⛈️</div>';
-        } else {
-          html += '<div style="font-size:50px;animation:float-up 3s ease-in-out infinite;">'+getWeatherEmoji(weatherCode)+'</div>';
-        }
-        sceneCont.innerHTML = html;
-      }
-    }
-
-    // ==================== 主要操作 ====================
-    async function searchAndShowWeather(query) {
-      searchResults.classList.remove('show');
-      showLoading();
-
-      try {
-        const results = await geocode(query);
-        if (results.length === 0) {
-          showError('未找到该地点，请换个关键词试试（如加上省/市名）');
-          return;
-        }
-
-        const best = results[0];
-        const shortName = best.name.split(',')[0].trim();
-        locationName.textContent = shortName;
-        saveLocation(best.lat, best.lon, shortName);
-
-        const weather = await getWeather(best.lat, best.lon);
-        renderWeather(weather);
-      } catch (e) {
-        showError('获取数据失败：' + e.message + '。请检查网络后重试。');
-      }
-    }
-
-    async function loadWeatherForCoords(lat, lon) {
-      showLoading();
-      try {
-        const name = await reverseGeocode(lat, lon);
-        const shortName = name ? name.split(',')[0].trim() : '我的位置';
-        locationName.textContent = shortName;
-        saveLocation(lat, lon, shortName);
-
-        const weather = await getWeather(lat, lon);
-        renderWeather(weather);
-      } catch (e) {
-        showError('获取数据失败：' + e.message + '。请检查网络后重试。');
-      }
-    }
-
-    // ==================== 事件绑定 ====================
-    searchBtn.addEventListener('click', () => {
-      const query = searchInput.value.trim();
-      if (!query) return;
-      searchAndShowWeather(query);
-    });
-
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const query = searchInput.value.trim();
-        if (!query) return;
-        searchAndShowWeather(query);
-      }
-    });
-
-    // 实时搜索建议
-    let searchTimeout;
-    searchInput.addEventListener('input', () => {
-      clearTimeout(searchTimeout);
-      const query = searchInput.value.trim();
-      if (query.length < 2) {
-        searchResults.classList.remove('show');
-        return;
-      }
-      searchTimeout = setTimeout(async () => {
-        try {
-          const results = await geocode(query);
-          searchResults.innerHTML = results.map((r, i) => {
-            const parts = r.name.split(',');
-            const main = parts[0];
-            const rest = parts.slice(1).join('，');
-            return `
-              <div class="search-result-item" data-index="${i}">
-                <div>📍 ${main}</div>
-                <div class="place-type">${rest}</div>
-              </div>
-            `;
-          }).join('');
-          searchResults.classList.add('show');
-
-          document.querySelectorAll('.search-result-item').forEach(el => {
-            el.addEventListener('click', () => {
-              const idx = parseInt(el.dataset.index);
-              const r = results[idx];
-              locationName.textContent = r.name.split(',')[0].trim();
-              saveLocation(r.lat, r.lon, r.name.split(',')[0].trim());
-              showLoading();
-              searchResults.classList.remove('show');
-              searchInput.value = r.name.split(',')[0].trim();
-              getWeather(r.lat, r.lon).then(renderWeather).catch(e => showError(e.message));
-            });
-          });
-        } catch { /* 静默失败，下拉建议非必需 */ }
-      }, 400);
-    });
-
-    locateBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        showError('你的浏览器不支持定位功能');
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          loadWeatherForCoords(pos.coords.latitude, pos.coords.longitude);
-        },
-        () => {
-          showError('定位失败，请手动搜索你的位置');
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    });
-
-    // 点击空白关闭搜索建议
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search-section')) {
-        searchResults.classList.remove('show');
-      }
-    });
-
-    // ==================== 启动 ====================
-    function init() {
-      // 显示当前日期
-      const now = new Date();
-      document.getElementById('dateDisplay').textContent = `${now.getMonth()+1}/${now.getDate()}`;
-
-      // 注册 Service Worker (PWA 离线缓存)
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
-      }
-
-      const saved = loadLocation();
-      if (saved) {
-        locationName.textContent = saved.name;
-        showLoading();
-        getWeather(saved.lat, saved.lon)
-          .then(renderWeather)
-          .catch(() => {
-            hideLoading();
-            locationName.textContent = '选择你的位置开始';
-          });
-      }
-    }
-
-    init();
-  
-
+var AMAP_KEY='477195416ac8d4105cc6ab0f522d600e';
+var QWEATHER_KEY='f0e2252fea8b4696b3df33e116728cf8';
+var baseHost='pf6vhgwgnj.re.qweatherapi.com';
+var hdrs={'X-QW-Api-Key':QWEATHER_KEY};
+var searchInput=document.getElementById('searchInput'),searchBtn=document.getElementById('searchBtn'),locateBtn=document.getElementById('locateBtn');
+var sres=document.getElementById('sres'),loading=document.getElementById('loading'),errorMsg=document.getElementById('errorMsg');
+var locName=document.getElementById('locName'),mainContent=document.getElementById('mainContent');
+var forecastDays=[],todayData=null;
+
+function wxe(c){if(c===0)return'☀️';if(c===1)return'🌤️';if(c===2)return'⛅';if(c===3)return'☁️';if(c>=45&&c<=48)return'🌫️';if(c>=51&&c<=55)return'🌦️';if(c>=56&&c<=67)return'🌧️';if(c>=71&&c<=77)return'❄️';if(c>=80&&c<=82)return'🌦️';if(c>=85&&c<=86)return'🌨️';if(c>=95)return'⛈️';return'🌈';}
+function wxd(c){if(c===0)return'晴天';if(c===1)return'晴朗';if(c===2)return'多云';if(c===3)return'阴天';if(c>=45&&c<=48)return'有雾';if(c>=51&&c<=55)return'毛毛雨';if(c>=56&&c<=67)return'下雨';if(c>=71&&c<=77)return'下雪';if(c>=80&&c<=82)return'阵雨';if(c>=85&&c<=86)return'阵雪';if(c>=95)return'雷暴';return'天气';}
+function isr(c){return(c>=51&&c<=65)||(c>=80&&c<=82);}
+function isno(c){return(c>=71&&c<=77)||(c>=85&&c<=86);}
+function qw2wmo(ic){var c=parseInt(ic);if(c===0)return 0;if(c===1)return 1;if(c===2)return 2;if(c===3)return 3;if(c>=4&&c<=7)return 3;if(c>=8&&c<=9)return 45;if(c>=10&&c<=12)return 45;if(c>=13&&c<=16)return 51;if(c>=17&&c<=18)return 61;if(c>=19&&c<=22)return 71;if(c===23)return 66;if(c>=24&&c<=25)return 66;if(c>=26&&c<=28)return 71;if(c>=29&&c<=30)return 85;if(c>=31&&c<=32)return 80;return 0;}
+function fmtDay(ds){var d=new Date(ds),t=new Date();if(d.toDateString()===t.toDateString())return'今天';t.setDate(t.getDate()+1);if(d.toDateString()===t.toDateString())return'明天';return['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];}
+function getOutfit(temp,code,w,h){var T='',B='',O='',cat='n',ac=[],tp=[];
+ if(isr(code)){cat='rain';T=temp>=25?'短袖':'长袖';B=temp>=25?'短裤':'长裤';O='防水外套';ac.push('☂️ 带伞！');tp.push('防水鞋更舒适');}
+ else if(isno(code)){cat='snow';T='厚毛衣';B='加绒裤';O='羽绒服+围巾+帽子';ac.push('❄️ 防滑靴');tp.push('路面湿滑小心');}
+ else if(temp>=35){cat='hot';T='吊带/背心';B='超短裤';O='防晒衫';ac.push('🧴 防晒用品');tp.push('避开暴晒时段');}
+ else if(temp>=30){cat='hot';T='短袖T恤';B='短裤/短裙';O='防晒衣';ac.push('🧴 防晒');}
+ else if(temp>=25){T='短袖/衬衫';B='长裤/长裙';O='薄开衫';tp.push('早晚温差备件外套');}
+ else if(temp>=18){T='长袖T恤';B='牛仔裤';O='轻薄外套';tp.push('天气舒适适合户外');}
+ else if(temp>=12){cat='cool';T='卫衣/毛衣';B='长裤';O='风衣/夹克';tp.push('注意保暖');}
+ else if(temp>=5){cat='cold';T='厚毛衣+打底';B='加绒裤';O='羽绒服/大衣';ac.push('🧣 围巾手套');tp.push('天气寒冷');}
+ else{T='保暖内衣+毛衣';B='加绒厚裤';O='羽绒服+围巾+帽子+手套';tp.push('🥶 极寒注意保暖！');}
+ if(w>25&&temp<18)tp.push('风大建议防风外套');
+ return{main:T+'，'+B+'。'+O,ac:ac,tp:tp,c:cat};}
+
+async function geocode(q){var u='https://restapi.amap.com/v3/geocode/geo?key='+AMAP_KEY+'&address='+encodeURIComponent(q)+'&city=&output=json';var r=await fetch(u);if(!r.ok)throw new Error('搜索失败');var d=await r.json();if(d.status!=='1'||!d.geocodes||!d.geocodes.length)throw new Error('未找到地点');return d.geocodes.map(function(g){var p=g.location.split(',');return{name:g.formatted_address||g.address||q,lat:parseFloat(p[1]),lon:parseFloat(p[0])};});}
+async function getWeather(lt,ln){var loc=ln+','+lt;var ress=await Promise.all([fetch('https://'+baseHost+'/v7/weather/now?location='+loc,{headers:hdrs}),fetch('https://'+baseHost+'/v7/weather/7d?location='+loc,{headers:hdrs}),fetch('https://'+baseHost+'/v7/air/now?location='+loc,{headers:hdrs}).catch(function(){return{ok:false}})]);var nr=ress[0],fr=ress[1],ar=ress[2];if(!nr.ok||!fr.ok)throw new Error('数据获取失败');var nd=await nr.json(),fd=await fr.json();if(nd.code!=='200'||fd.code!=='200')throw new Error('API错误');var n=nd.now,d=fd.daily;var aqi=null;if(ar&&ar.ok){try{var ad=await ar.json();if(ad.code==='200'&&ad.now)aqi={v:parseInt(ad.now.aqi),l:ad.now.level};}catch(e){}}
+ return{current:{temp:parseFloat(n.temp),feels:parseFloat(n.feelsLike),code:qw2wmo(n.icon),precip:parseFloat(n.precip||0),wind:parseFloat(n.windSpeed),hum:parseFloat(n.humidity)},daily:{time:d.map(function(dd){return dd.fxDate;}),max:d.map(function(dd){return parseFloat(dd.tempMax);}),min:d.map(function(dd){return parseFloat(dd.tempMin);}),code:d.map(function(dd){return qw2wmo(dd.iconDay);}),precip:d.map(function(dd){return parseFloat(dd.precip||0);}),wind:d.map(function(dd){return parseFloat(dd.windSpeedDay||0);}),hum:d.map(function(dd){return parseFloat(dd.humidity||0);}),sunrise:d.map(function(dd){return dd.sunrise||'';}),sunset:d.map(function(dd){return dd.sunset||'';})},aqi:aqi};}
+function showLoading(){loading.classList.add('show');errorMsg.classList.remove('show');mainContent.style.display='none'}
+function hideLoading(){loading.classList.remove('show')}
+function showError(m){errorMsg.textContent=m;errorMsg.classList.add('show');hideLoading()}
+function saveLoc(lt,ln,nm){try{localStorage.setItem('woloc',JSON.stringify({lat:lt,lon:ln,name:nm}))}catch(e){}}
+function loadLoc(){try{return JSON.parse(localStorage.getItem('woloc'))}catch(e){return null}}
+var qts=['穿对衣服心情自然好','今日穿搭决定今日心情','合适的穿搭是最好的名片','每一天都是新的T台','简单穿搭不简单的生活'];
+function getQ(){return qts[Math.floor((new Date()-new Date(2025,0,1))/86400000)%qts.length];}
+function renderWeather(data){
+ mainContent.style.display='block';var c=data.current,d=data.daily;var t=Math.round(c.temp),fc=c.code;
+ document.getElementById('temp').textContent=t;
+ document.getElementById('desc').innerHTML='<span>'+wxe(fc)+' '+wxd(fc)+' · 体感 '+Math.round(c.feels)+'°C</span>';
+ document.getElementById('wicon').textContent=wxe(fc);
+ document.getElementById('humidVal').textContent=c.hum+'%';
+ var sr=d.sunrise&&d.sunrise[0]?d.sunrise[0]:'--';
+ var ss=d.sunset&&d.sunset[0]?d.sunset[0]:'--';
+ document.getElementById('sunriseVal').textContent=sr;
+ document.getElementById('sunsetVal').textContent=ss;
+ if(data.aqi)document.getElementById('aqiVal').innerHTML=data.aqi.v+' <span style="font-size:0.6rem;opacity:0.6">'+data.aqi.l+'</span>';
+ else document.getElementById('aqiVal').textContent='--';
+ var outfit=getOutfit(t,fc,c.wind,c.hum);
+ document.getElementById('outfitMain').textContent=outfit.main;
+ var tipsDiv=document.getElementById('outfitTips');tipsDiv.innerHTML='';
+ outfit.tp.forEach(function(tx){tipsDiv.innerHTML+='<div class="ot">💡 '+tx+'</div>';});
+ outfit.ac.forEach(function(ax){tipsDiv.innerHTML+='<div class="ot">✨ '+ax+'</div>';});
+ document.getElementById('dailyQuote').textContent='💬 '+getQ();
+ forecastDays=[];var fcDiv=document.getElementById('forecast');fcDiv.innerHTML='';
+ for(var i=0;i<Math.min(7,d.time.length);i++){
+  var mx=Math.round(d.max[i]),mn=Math.round(d.min[i]),cd=d.code[i];
+  var pw=d.precip[i]||0,wd=Math.round((d.wind[i]||0)/3.6*10)/10,hm=d.hum[i]||0;
+  var sr2=d.sunrise?d.sunrise[i]:'',ss2=d.sunset?d.sunset[i]:'';
+  forecastDays.push({max:mx,min:mn,code:cd,precip:pw,wind:wd,hum:hm,sunrise:sr2,sunset:ss2});
+  fcDiv.innerHTML+='<div class="fcc'+(i===0?' active':'')+'" data-idx="'+i+'" onclick="showFcDay('+i+')"><div class="fd">'+fmtDay(d.time[i])+'</div><div class="fi">'+wxe(cd)+'</div><div class="fh">'+mx+'° <span class="fl">'+mn+'°</span></div></div>';
+ }
+ todayData={temp:t,feels:c.feels,code:fc,wind:c.wind,hum:c.hum,precip:c.precip};hideLoading();}
+function showFcDay(idx){
+ if(idx<0||idx>=forecastDays.length)return;
+ var day=forecastDays[idx];
+ document.querySelectorAll('.fcc').forEach(function(el){el.classList.toggle('active',parseInt(el.dataset.idx)===idx);});
+ var at=Math.round((day.max+day.min)/2);
+ document.getElementById('temp').textContent=at;
+ document.getElementById('desc').innerHTML='<span>'+wxe(day.code)+' '+wxd(day.code)+' · '+day.min+'~'+day.max+'°C</span>';
+ document.getElementById('wicon').textContent=wxe(day.code);
+ document.getElementById('sunriseVal').textContent=day.sunrise||'--';
+ document.getElementById('sunsetVal').textContent=day.sunset||'--';
+ document.getElementById('aqiVal').textContent=idx===0?'今日':'预估';
+ document.getElementById('humidVal').textContent=day.hum+'%';
+ var outfit=getOutfit(at,day.code,day.wind,day.hum);
+ document.getElementById('outfitMain').textContent=outfit.main;
+ document.getElementById('outfitTips').innerHTML='';
+ outfit.tp.forEach(function(tx){document.getElementById('outfitTips').innerHTML+='<div class="ot">💡 '+tx+'</div>';});
+ outfit.ac.forEach(function(ax){document.getElementById('outfitTips').innerHTML+='<div class="ot">✨ '+ax+'</div>';});}
+async function ss(q){sres.classList.remove('show');showLoading();
+ try{var r=await geocode(q);if(!r.length){showError('未找到地点');return}var b=r[0];var sn=b.name.split(',')[0].trim();locName.textContent=sn;saveLoc(b.lat,b.lon,sn);var w=await getWeather(b.lat,b.lon);renderWeather(w);}catch(e){showError('获取失败：'+e.message);}}
+searchBtn.onclick=function(){var q=searchInput.value.trim();if(q)ss(q);};
+locateBtn.onclick=function(){
+ if(!navigator.geolocation){showError('不支持定位');return}
+ navigator.geolocation.getCurrentPosition(function(pos){searchInput.value='';showLoading();
+  var lt=pos.coords.latitude,ln=pos.coords.longitude;
+  fetch('https://restapi.amap.com/v3/geocode/regeo?key='+AMAP_KEY+'&location='+ln+','+lt+'&output=json&radius=1000')
+   .then(function(r){return r.json()}).then(function(d){
+    var addr=d.regeocode?d.regeocode.addressComponent:{};
+    var nm=(addr.city||addr.province||addr.district||'我的位置');
+    locName.textContent=nm;saveLoc(lt,ln,nm);return getWeather(lt,ln);
+   }).then(renderWeather).catch(function(e){showError(e.message);});
+ },function(){showError('定位失败')},{enableHighAccuracy:true,timeout:10000});};
+searchInput.onkeydown=function(e){if(e.key==='Enter'){var q=searchInput.value.trim();if(q)ss(q);}};
+var st;
+searchInput.oninput=function(){clearTimeout(st);var q=searchInput.value.trim();
+ if(q.length<2){sres.classList.remove('show');return}
+ st=setTimeout(async function(){try{var r=await geocode(q);sres.innerHTML='';
+  r.forEach(function(b,i){var p=b.name.split(','),mm=p[0],rr=p.slice(1).join('，');
+   var el=document.createElement('div');el.className='i';el.innerHTML='<div style="font-weight:500">'+mm+'</div><div style="font-size:0.65rem;opacity:0.6">'+rr+'</div>';
+   el.onclick=function(){locName.textContent=mm;saveLoc(b.lat,b.lon,mm);showLoading();sres.classList.remove('show');searchInput.value=mm;getWeather(b.lat,b.lon).then(renderWeather).catch(function(e){showError(e.message);});};
+   sres.appendChild(el);});sres.classList.add('show');}catch(e){sres.classList.remove('show')}},400);};
+document.addEventListener('click',function(e){if(!e.target.closest('.sr')&&!e.target.closest('.sres'))sres.classList.remove('show');});
+(function(){
+ document.getElementById('dateDisp').textContent=(new Date().getMonth()+1)+'/'+(new Date().getDate());
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+ var saved=loadLoc();
+ if(saved){locName.textContent=saved.name;showLoading();getWeather(saved.lat,saved.lon).then(renderWeather).catch(function(){hideLoading();locName.textContent='选择位置';});}
+})();
 </script>
 </body>
 </html>
