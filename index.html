@@ -34,7 +34,7 @@ body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background
 .mtu{font-size:1rem;font-weight:300;opacity:.5}
 .md{font-size:.85rem;margin:4px 0 8px}
 .mi{font-size:2.5rem;opacity:.7}
-.is{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px}
+.is{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-top:10px}
 .is>div{text-align:center;padding:6px 4px;background:rgba(255,255,255,0.08);border-radius:10px;border:1px solid rgba(255,255,255,0.06)}
 .is .v{font-size:.75rem;font-weight:600}
 .is .l{font-size:.6rem;color:rgba(255,255,255,0.5);margin-top:1px}
@@ -80,7 +80,7 @@ body{font-family:-apple-system,system-ui,"Microsoft YaHei",sans-serif;background
 <div><div class="v" id="sunriseVal">--</div><div class="l">🌅 日出</div></div>
 <div><div class="v" id="sunsetVal">--</div><div class="l">🌇 日落</div></div>
 <div><div class="v" id="aqiVal">--</div><div class="l">🌬️ AQI</div></div>
-<div><div class="v" id="humidVal">--</div><div class="l">💦 湿度</div></div>
+<div><div class="v" id="humidVal">--</div><div class="l">💦 湿度</div></div><div><div class="v" id="uvVal">--</div><div class="l">☀️ 紫外线</div></div>
 </div>
 </div>
 <div class="card">
@@ -147,13 +147,15 @@ function renderWeather(data){
  var ss=d.sunset&&d.sunset[0]?d.sunset[0]:'--';
  document.getElementById('sunriseVal').textContent=sr;
  document.getElementById('sunsetVal').textContent=ss;
+ document.getElementById('uvVal').textContent=d.uv&&d.uv[0]&&d.uv[0]!=='-'?d.uv[0]:'--';
  if(data.aqi)document.getElementById('aqiVal').innerHTML=data.aqi.v+' <span style="font-size:0.6rem;opacity:0.6">'+data.aqi.l+'</span>';
  else document.getElementById('aqiVal').textContent='--';
  var outfit=getOutfit(t,fc,c.wind,c.hum);
  document.getElementById('outfitMain').textContent=outfit.main;
  var tipsDiv=document.getElementById('outfitTips');tipsDiv.innerHTML='';
- if(outfit.CL)tipsDiv.innerHTML+='<div class="ot">🌈 '+outfit.CL+'</div>';
+ if(outfit.CL)tipsDiv.innerHTML+='<div class="ot">🎨 '+outfit.CL+'</div>';
  if(outfit.FAB)tipsDiv.innerHTML+='<div class="ot">🧵 '+outfit.FAB+'</div>';
+ if(outfit.SHOES)tipsDiv.innerHTML+='<div class="ot">👡 '+outfit.SHOES+'</div>';
  if(outfit.SPF)tipsDiv.innerHTML+='<div class="ot">🧴 '+outfit.SPF+'</div>';
  outfit.tp.forEach(function(tx){tipsDiv.innerHTML+='<div class="ot">💡 '+tx+'</div>';});
  outfit.ac.forEach(function(ax){tipsDiv.innerHTML+='<div class="ot">✨ '+ax+'</div>';});
@@ -162,8 +164,8 @@ function renderWeather(data){
  for(var i=0;i<Math.min(7,d.time.length);i++){
   var mx=Math.round(d.max[i]),mn=Math.round(d.min[i]),cd=d.code[i];
   var pw=d.precip[i]||0,wd=Math.round((d.wind[i]||0)/3.6*10)/10,hm=d.hum[i]||0;
-  var sr2=d.sunrise?d.sunrise[i]:'',ss2=d.sunset?d.sunset[i]:'';
-  forecastDays.push({max:mx,min:mn,code:cd,precip:pw,wind:wd,hum:hm,sunrise:sr2,sunset:ss2});
+  var sr2=d.sunrise?d.sunrise[i]:'',ss2=d.sunset?d.sunset[i]:'',uv2=d.uv?d.uv[i]:'-';
+  forecastDays.push({max:mx,min:mn,code:cd,precip:pw,wind:wd,hum:hm,sunrise:sr2,sunset:ss2,uv:uv2});
   fcDiv.innerHTML+='<div class="fcc'+(i===0?' active':'')+'" data-idx="'+i+'" onclick="showFcDay('+i+')"><div class="fd">'+fmtDay(d.time[i])+'</div><div class="fi">'+wxe(cd)+'</div><div class="fh">'+mx+'° <span class="fl">'+mn+'°</span></div></div>';
  }
  todayData={temp:t,feels:c.feels,code:fc,wind:c.wind,hum:c.hum,precip:c.precip,hourly:data.hourly||[]};drawPrecipChart(data.hourly||[]);hideLoading();}
@@ -194,13 +196,16 @@ function showFcDay(idx){
  document.getElementById('wicon').textContent=wxe(day.code);
  document.getElementById('sunriseVal').textContent=day.sunrise||'--';
  document.getElementById('sunsetVal').textContent=day.sunset||'--';
+ document.getElementById('uvVal').textContent=day.uv||'--';
  document.getElementById('aqiVal').textContent=idx===0?'今日':'预估';
  document.getElementById('humidVal').textContent=day.hum+'%';
+ document.getElementById('uvVal').textContent='--';
  var outfit=getOutfit(at,day.code,day.wind,day.hum);
  document.getElementById('outfitMain').textContent=outfit.main;
  document.getElementById('outfitTips').innerHTML='';
- if(outfit.CL)document.getElementById('outfitTips').innerHTML+='<div class="ot">🌈 '+outfit.CL+'</div>';
+ if(outfit.CL)document.getElementById('outfitTips').innerHTML+='<div class="ot">🎨 '+outfit.CL+'</div>';
  if(outfit.FAB)document.getElementById('outfitTips').innerHTML+='<div class="ot">🧵 '+outfit.FAB+'</div>';
+ if(outfit.SHOES)document.getElementById('outfitTips').innerHTML+='<div class="ot">👡 '+outfit.SHOES+'</div>';
  if(outfit.SPF)document.getElementById('outfitTips').innerHTML+='<div class="ot">🧴 '+outfit.SPF+'</div>';
  outfit.tp.forEach(function(tx){document.getElementById('outfitTips').innerHTML+='<div class="ot">💡 '+tx+'</div>';});
  outfit.ac.forEach(function(ax){document.getElementById('outfitTips').innerHTML+='<div class="ot">✨ '+ax+'</div>';});if(todayData&&todayData.hourly)drawPrecipChart(todayData.hourly);}
