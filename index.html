@@ -189,9 +189,14 @@ if(selIdx!==0&&chartMode==='temp'){
     ctx.beginPath();ctx.strokeStyle='#FF9800';ctx.lineWidth=2.5;
     for(var h=0;h<=24;h++){
       var t;
-      if(h<=6)t=lowT+(highT-lowT)*h/12;
-      else if(h<=14)t=highT-(highT-lowT)*(h-6)/18;
-      else t=highT-(highT-lowT)*0.33-(highT-lowT)*(h-14)/30;
+      if(h<=6)t=lowT;
+      else if(h<=8)t=lowT+(highT-lowT)*0.3;
+      else if(h<=10)t=lowT+(highT-lowT)*0.55;
+      else if(h<=12)t=lowT+(highT-lowT)*0.8;
+      else if(h<=14)t=highT;
+      else if(h<=17)t=highT-(highT-lowT)*0.3;
+      else if(h<=20)t=lowT+(highT-lowT)*0.35;
+      else t=lowT+(highT-lowT)*0.1;
       var cx=pad.l+(cw/24)*h;
       var cy=pad.t+ch-((t-lowT)/rangeT)*ch;
       if(h===0)ctx.moveTo(cx,cy);else ctx.lineTo(cx,cy);
@@ -200,9 +205,14 @@ if(selIdx!==0&&chartMode==='temp'){
     var labelHours=[3,6,9,12,15,18,21];
     labelHours.forEach(function(h){
       var t;
-      if(h<=6)t=lowT+(highT-lowT)*h/12;
-      else if(h<=14)t=highT-(highT-lowT)*(h-6)/18;
-      else t=highT-(highT-lowT)*0.33-(highT-lowT)*(h-14)/30;
+      if(h<=6)t=lowT;
+      else if(h<=8)t=lowT+(highT-lowT)*0.3;
+      else if(h<=10)t=lowT+(highT-lowT)*0.55;
+      else if(h<=12)t=lowT+(highT-lowT)*0.8;
+      else if(h<=14)t=highT;
+      else if(h<=17)t=highT-(highT-lowT)*0.3;
+      else if(h<=20)t=lowT+(highT-lowT)*0.35;
+      else t=lowT+(highT-lowT)*0.1;
       var cx=pad.l+(cw/24)*h;
       var cy=pad.t+ch-((t-lowT)/rangeT)*ch;
       ctx.beginPath();ctx.arc(cx,cy,4,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();
