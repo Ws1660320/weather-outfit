@@ -227,7 +227,39 @@
       width: 120px;
       height: 174px;
     }
-    /* ===== 天气场景动画 ===== */
+    /* ===== Tab 布局 ===== */
+    .info-bar {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px;
+      margin: 8px 0 0; padding: 10px 12px; background: var(--card-bg);
+      border-radius: var(--radius); border: 1px solid var(--border); text-align: center;
+    }
+    .info-bar .ib-item { }
+    .info-bar .ib-val { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+    .info-bar .ib-label { font-size: 0.6rem; color: var(--text-muted); margin-top: 1px; }
+
+    .hero-area {
+      display: flex; gap: 12px; align-items: center; margin: 8px 0 0;
+      padding: 12px; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border);
+    }
+    .hero-area .hero-scene { flex: 1; height: 130px; border-radius: var(--radius-sm); overflow: hidden; }
+    .hero-area .hero-scene lottie-player { width: 100%; height: 100%; }
+    .hero-area .hero-char { width: 90px; height: 130px; flex-shrink: 0; }
+
+    .tab-bar {
+      display: flex; margin: 8px 0 0; background: var(--bg-secondary);
+      border-radius: var(--radius-sm); padding: 3px; border: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1; text-align: center; padding: 7px 6px; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); cursor: pointer;
+      transition: all 0.2s; border: none; background: none; font-family: inherit;
+    }
+    .tab-btn:active { transform: scale(0.95); }
+    .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(33,150,243,0.3); }
+    .tab-content { display: none; margin-top: 8px; }
+    .tab-content.active { display: block; }
+    .tab-content .outfit-card { margin: 0; }
+    .tab-content .forecast { margin: 0; }
     @keyframes rain-fall { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
     @keyframes snow-fall { 0% { transform: translateY(-10px) rotate(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(190px) rotate(360deg); opacity: 0; } }
     @keyframes cloud-drift { 0% { transform: translateX(-40px); } 100% { transform: translateX(40px); } }
@@ -548,62 +580,64 @@
     <!-- Error -->
     <div class="error-msg" id="errorMsg"></div>
 
-    <!-- Weather Card -->
-    <div class="weather-card" id="weatherCard" style="display:none">
-      <div class="weather-main">
-        <div>
-          <div class="weather-temp">
-            <span id="temp">--</span><span class="weather-unit">°C</span>
-            <span class="forecast-badge" id="forecastBadge" style="display:none"></span>
+    <!-- Info Bar -->
+    <div id="mainContent" style="display:none">
+      <div class="info-bar" id="infoBar">
+        <div><div class="ib-val"><span id="temp">--</span>°</div><div class="ib-label" id="weatherDescText">--</div></div>
+        <div><div class="ib-val"><span id="sunriseTime2">--</span></div><div class="ib-label">🌅 日出</div></div>
+        <div><div class="ib-val"><span id="sunsetTime2">--</span></div><div class="ib-label">🌇 日落</div></div>
+        <div><div class="ib-val" id="aqiDisplay">--</div><div class="ib-label">🌬️ AQI</div></div>
+      </div>
+
+      <!-- Hero: Scene + Character -->
+      <div class="hero-area" id="heroArea" style="display:none">
+        <div class="hero-scene" id="weatherScene"><div id="weatherAnimContainer"></div></div>
+        <div class="hero-char" id="girlContainer"></div>
+      </div>
+
+      <!-- Tab Bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="outfit" onclick="switchTab('outfit')">👗 穿搭</button>
+        <button class="tab-btn" data-tab="forecast" onclick="switchTab('forecast')">📅 预报</button>
+        <button class="tab-btn" data-tab="trend" onclick="switchTab('trend')">📈 趋势</button>
+        <button class="tab-btn" data-tab="index" onclick="switchTab('index')">📋 指数</button>
+      </div>
+
+      <!-- Tab: 穿搭 -->
+      <div class="tab-content active" id="tab-outfit">
+        <div class="weather-details" style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💧 降水 <strong id="detailRain">--</strong></span>
+          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💨 风力 <strong id="detailWind">--</strong></span>
+          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">💦 湿度 <strong id="detailHumidity">--</strong></span>
+          <span style="font-size:0.75rem;color:var(--text-sub);background:var(--bg-secondary);padding:2px 10px;border-radius:8px">🌡️ 体感 <strong id="detailFeels">--</strong></span>
+        </div>
+        <div class="outfit-card" id="outfitCard" style="display:none">
+          <div class="outfit-content" style="text-align:center;width:100%;padding:8px 0">
+            <div class="outfit-title" id="weatherDesc2" style="font-size:1rem;font-weight:600;margin-bottom:4px">--</div>
+            <div class="outfit-main" id="outfitMain" style="font-size:0.9rem;color:var(--text-primary);margin:6px 0"></div>
+            <div class="outfit-tips" id="outfitTips"></div>
+            <div class="daily-quote" id="dailyQuote" style="margin-top:10px"></div>
           </div>
-          <div class="weather-desc" id="weatherDesc">--</div>
-          <div class="weather-feels" id="weatherFeels">体感 --</div>
-        </div>
-        <div class="weather-icon" id="weatherIcon">--</div>
-      </div>
-      <div class="weather-details">
-        <div class="detail-item">
-          <div class="detail-label">💧 降水</div>
-          <div class="detail-value" id="detailRain">--</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">💨 风力</div>
-          <div class="detail-value" id="detailWind">--</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">💦 湿度</div>
-          <div class="detail-value" id="detailHumidity">--</div>
         </div>
       </div>
-      <div class="sunrise-sunset" id="sunriseSection" style="display:none">
-        <span>🌅 日出 <strong id="sunriseTime">--</strong></span>
-        <span>🌇 日落 <strong id="sunsetTime">--</strong></span>
-        <span id="aqiContainer"></span>
-      </div>
-    </div>
 
-    <!-- Weather Scene -->
-    <div class="weather-scene" id="weatherScene" style="display:none">
-      <div id="weatherAnimContainer"></div>
-    </div>
-
-    <!-- Outfit Card -->
-    <div class="outfit-card" id="outfitCard" style="display:none">
-      <div class="outfit-girl" id="girlContainer"></div>
-      <div class="outfit-content">
-        <div class="outfit-title">👗 今日穿搭推荐</div>
-        <div class="outfit-main" id="outfitMain">--</div>
-        <div class="outfit-tips" id="outfitTips"></div>
-        <div class="daily-quote" id="dailyQuote"></div>
+      <!-- Tab: 预报 -->
+      <div class="tab-content" id="tab-forecast">
+        <div class="forecast" id="forecast" style="display:flex"></div>
       </div>
-    </div>
 
-    <!-- 3-Day Forecast -->
-    <div class="forecast" id="forecast" style="display:none"></div>
-    <div class="indices-grid" id="indicesGrid" style="display:none"></div>
-    <div id="hourlySection" style="display:none;margin-top:12px">
-      <div style="font-size:0.8rem;font-weight:600;color:var(--text-sub);margin-bottom:4px">⏰ 24小时气温趋势</div>
-      <canvas class="hourly-chart" id="hourlyChart"></canvas>
+      <!-- Tab: 趋势 -->
+      <div class="tab-content" id="tab-trend">
+        <div id="hourlySection" style="display:none;margin-top:4px">
+          <div style="font-size:0.8rem;font-weight:600;color:var(--text-sub);margin-bottom:4px">⏰ 24小时气温趋势</div>
+          <canvas class="hourly-chart" id="hourlyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Tab: 指数 -->
+      <div class="tab-content" id="tab-index">
+        <div class="indices-grid" id="indicesGrid" style="display:none"></div>
+      </div>
     </div>
   </div>
 
@@ -618,9 +652,15 @@
     const locationName = document.getElementById('locationName');
     const loading = document.getElementById('loading');
     const errorMsg = document.getElementById('errorMsg');
-    const weatherCard = document.getElementById('weatherCard');
+    const weatherCard = document.getElementById('mainContent');
     const outfitCard = document.getElementById('outfitCard');
     const forecast = document.getElementById('forecast');
+
+    // Tab 切换
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.tab === name); });
+      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.toggle('active', c.id === 'tab-' + name); });
+    }
 
     // 预报数据存储
     var forecastDays = [];
@@ -936,7 +976,8 @@
     function showLoading() {
       loading.classList.add('show');
       errorMsg.classList.remove('show');
-      weatherCard.style.display = 'none';
+      document.getElementById("mainContent").style.display = "none";
+      document.getElementById("heroArea").style.display = "none";;
       outfitCard.style.display = 'none';
       forecast.style.display = 'none';
     }
@@ -1194,16 +1235,16 @@
       const weatherCode = c.weather_code;
 
       document.getElementById('temp').textContent = temp;
-      document.getElementById('weatherDesc').textContent = getWeatherDesc(weatherCode);
-      document.getElementById('weatherFeels').textContent = `体感 ${feelsLike > temp ? feelsLike : feelsLike}°C`;
-      document.getElementById('weatherIcon').textContent = getWeatherEmoji(weatherCode);
-      // 天气场景动画
+      var desc = getWeatherDesc(weatherCode);
+      document.getElementById('weatherDescText').textContent = desc;
+      document.getElementById('weatherDesc2').textContent = getWeatherEmoji(weatherCode) + ' ' + desc;
       updateWeatherScene(weatherCode);
-      document.getElementById('detailRain').textContent = precip > 0 ? `${precip.toFixed(1)} mm` : '无降水';
-      document.getElementById('detailWind').textContent = `${(windSpeed / 3.6).toFixed(1)} m/s`;
-      document.getElementById('detailHumidity').textContent = `${humidity}%`;
-
-      weatherCard.style.display = 'block';
+      document.getElementById('detailRain').textContent = precip > 0 ? precip.toFixed(1) + ' mm' : '无降水';
+      document.getElementById('detailWind').textContent = (windSpeed / 3.6).toFixed(1) + ' m/s';
+      document.getElementById('detailHumidity').textContent = humidity + '%';
+      document.getElementById('detailFeels').textContent = feelsLike + '°C';
+      document.getElementById('heroArea').style.display = 'flex';
+      document.getElementById('mainContent').style.display = 'block';
 
       // Outfit
       const outfit = getOutfit(temp, feelsLike, weatherCode, windSpeed, humidity);
@@ -1268,24 +1309,14 @@
       selectedForecastDay = 0;
       document.getElementById('forecastBadge').style.display = 'none';
 
-      // 日出日落
-      var sunSection = document.getElementById('sunriseSection');
-      if (data.daily && data.daily.sunrise && data.daily.sunrise[0]) {
-        sunSection.style.display = 'flex';
-        document.getElementById('sunriseTime').textContent = data.daily.sunrise[0].slice(11,16);
-        document.getElementById('sunsetTime').textContent = data.daily.sunset[0].slice(11,16);
-      } else { sunSection.style.display = 'none'; }
-
-      // AQI
-      var aqiCont = document.getElementById('aqiContainer');
+      // 日出日落 + AQI
+      document.getElementById('sunriseTime2').textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0].slice(11,16) : '--';
+      document.getElementById('sunsetTime2').textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0].slice(11,16) : '--';
       if (data.aqi) {
         var aqi = data.aqi;
-        var cls = 'good';
-        if (aqi.value > 200) cls = 'bad';
-        else if (aqi.value > 150) cls = 'unhealthy';
-        else if (aqi.value > 100) cls = 'moderate';
-        aqiCont.innerHTML = '<span class="aqi-card ' + cls + '">🌬️ AQI ' + aqi.value + ' ' + aqi.level + '</span>';
-      } else { aqiCont.innerHTML = ''; }
+        var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
+        document.getElementById('aqiDisplay').innerHTML = aqi.value + ' ' + aqi.level;
+      } else { document.getElementById('aqiDisplay').textContent = '--'; }
 
       // 生活指数
       var idxGrid = document.getElementById('indicesGrid');
@@ -1391,12 +1422,12 @@
       const emoji = getWeatherEmoji(weatherCode);
       const desc = getWeatherDesc(weatherCode);
       document.getElementById('temp').textContent = avgTemp;
-      document.getElementById('weatherDesc').textContent = desc;
-      document.getElementById('weatherIcon').textContent = emoji;
-      document.getElementById('weatherFeels').textContent = '预估温度 ' + day.min + '~' + day.max + '°C';
+      document.getElementById('weatherDescText').textContent = desc;
+      document.getElementById('weatherDesc2').textContent = emoji + ' ' + desc;
       document.getElementById('detailRain').textContent = (day.precip || 0) > 0 ? (day.precip || 0).toFixed(1) + ' mm' : '无降水';
       document.getElementById('detailWind').textContent = (day.wind || 0) > 0 ? (day.wind || 0).toFixed(1) + ' m/s' : '微风';
       document.getElementById('detailHumidity').textContent = (day.hum || 0) > 0 ? day.hum + '%' : '--';
+      document.getElementById('detailFeels').textContent = avgTemp + '°C（估）';
       const outfit = getOutfit(avgTemp, avgTemp, weatherCode, 10, 50);
       document.getElementById('outfitMain').textContent = outfit.main;
       const tipsDiv = document.getElementById('outfitTips');
@@ -1428,13 +1459,14 @@
       selectedForecastDay = 0;
       showForecastDay(0);
       const d = todayData;
+      var desc = getWeatherDesc(d.weatherCode);
       document.getElementById('temp').textContent = d.temp;
-      document.getElementById('weatherDesc').textContent = getWeatherDesc(d.weatherCode);
-      document.getElementById('weatherIcon').textContent = getWeatherEmoji(d.weatherCode);
-      document.getElementById('weatherFeels').textContent = '体感 ' + d.feelsLike + '°C';
+      document.getElementById('weatherDescText').textContent = desc;
+      document.getElementById('weatherDesc2').textContent = getWeatherEmoji(d.weatherCode) + ' ' + desc;
       document.getElementById('detailRain').textContent = d.precip > 0 ? d.precip.toFixed(1) + ' mm' : '无降水';
       document.getElementById('detailWind').textContent = (d.windSpeed / 3.6).toFixed(1) + ' m/s';
       document.getElementById('detailHumidity').textContent = d.humidity + '%';
+      document.getElementById('detailFeels').textContent = d.feelsLike + '°C';
       const outfit = getOutfit(d.temp, d.feelsLike, d.weatherCode, d.windSpeed, d.humidity);
       document.getElementById('outfitMain').textContent = outfit.main;
       const tipsDiv = document.getElementById('outfitTips');
