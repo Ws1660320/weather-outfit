@@ -1449,8 +1449,8 @@
       const girlState = getGirlOutfitState(avgTemp, weatherCode);
       renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
       updateWeatherScene(weatherCode);
-      const badge = document.getElementById('forecastBadge');
-      badge.textContent = '📅 ' + (idx === 0 ? '今天' : '第' + (idx + 1) + '天预报');
+      // badge removed
+      // badge removed '📅 ' + (idx === 0 ? '今天' : '第' + (idx + 1) + '天预报');
       badge.style.display = 'inline';
     }
 
