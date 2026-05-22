@@ -231,7 +231,7 @@ if(selIdx!==0&&chartMode==='temp'){
  maxV=Math.ceil(maxV/5)*5;if(maxV===0)maxV=5;
  for(var i=0;i<=3;i++){var y=pad.t+(ch/3)*i;ctx.strokeStyle="rgba(255,255,255,0.1)";ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="8px sans-serif";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(Math.round(maxV-(maxV/3)*i)+"mm",pad.l-4,y);}
  var barW=Math.max(3,cw/hourly.length-2);var x=pad.l;
- for(var i=0;i<hourly.length;i++){var hh=((vals[i]||0)/maxV)*ch;var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fillRect(x,yy,barW,1);x+=cw/hourly.length;}
+ for(var i=0;i<hourly.length;i++){var hh=Math.max(1,((vals[i]||0)/maxV)*ch);var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.strokeStyle="rgba(255,255,255,0.3)";ctx.strokeRect(x,yy,barW,1);x+=cw/hourly.length;}
  ctx.fillStyle="rgba(255,255,255,0.4)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("降水(mm)",W-pad.r,pad.t-2);
  }else{
  var temps=hourly.map(function(h){return h.temp||0});var minT=Math.floor(Math.min.apply(null,temps))-2;var maxT=Math.ceil(Math.max.apply(null,temps))+2;var range=maxT-minT||1;
