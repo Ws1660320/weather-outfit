@@ -839,6 +839,8 @@
           temperature_2m_min: d.map(day => parseFloat(day.tempMin)),
           weather_code: d.map(day => qweatherIconToWMO(day.iconDay)),
           precipitation_sum: d.map(day => parseFloat(day.precip || 0)),
+          wind_speed: d.map(day => parseFloat(day.windSpeedDay || 0)),
+          humidity: d.map(day => parseFloat(day.humidity || 0)),
         }
       };
     }
@@ -1164,7 +1166,10 @@
         const max = Math.round(day.temperature_2m_max[i]);
         const min = Math.round(day.temperature_2m_min[i]);
         const code = day.weather_code[i];
-        forecastDays.push({ max, min, code });
+        const precip = day.precipitation_sum[i] || 0;
+        const wind = Math.round((day.wind_speed[i] || 0) / 3.6 * 10) / 10;
+        const hum = day.humidity[i] || 0;
+        forecastDays.push({ max, min, code, precip, wind, hum });
         const isActive = i === 0 && !selectedForecastDay;
         forecastDiv.innerHTML += `
           <div class="forecast-card${isActive ? ' active' : ''}" data-idx="${i}" onclick="showForecastDay(${i})">
@@ -1206,9 +1211,9 @@
       document.getElementById('weatherDesc').textContent = desc;
       document.getElementById('weatherIcon').textContent = emoji;
       document.getElementById('weatherFeels').textContent = '预估温度 ' + day.min + '~' + day.max + '°C';
-      document.getElementById('detailRain').textContent = '--';
-      document.getElementById('detailWind').textContent = '--';
-      document.getElementById('detailHumidity').textContent = '--';
+      document.getElementById('detailRain').textContent = (day.precip || 0) > 0 ? (day.precip || 0).toFixed(1) + ' mm' : '无降水';
+      document.getElementById('detailWind').textContent = (day.wind || 0) > 0 ? (day.wind || 0).toFixed(1) + ' m/s' : '微风';
+      document.getElementById('detailHumidity').textContent = (day.hum || 0) > 0 ? day.hum + '%' : '--';
       const outfit = getOutfit(avgTemp, avgTemp, weatherCode, 10, 50);
       document.getElementById('outfitMain').textContent = outfit.main;
       const tipsDiv = document.getElementById('outfitTips');
