@@ -181,6 +181,22 @@ function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart
  canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+"px";canvas.style.height=H+"px";
  var ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
  var pad={t:10,b:16,l:28,r:8};var cw=W-pad.l-pad.r;var ch=H-pad.t-pad.b;
+ var selIdx=-1;document.querySelectorAll('.fcc.active').forEach(function(el){selIdx=parseInt(el.dataset.idx)||0;});
+if(selIdx!==0&&chartMode==='temp'){
+  var dd=forecastDays[selIdx];
+  if(dd){
+    var highT=dd.max,lowT=dd.min;
+    for(var i=0;i<=3;i++){var y=pad.t+(ch/3)*i;ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='8px sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(Math.round(highT-(highT-lowT)/3*i)+'°',pad.l-4,y);}
+    ctx.beginPath();ctx.strokeStyle='#FF9800';ctx.lineWidth=2.5;ctx.setLineDash([6,3]);
+    var pts=[{x:pad.l,y:pad.t+ch*0.15},{x:pad.l+cw*0.25,y:pad.t+ch*0.3},{x:pad.l+cw*0.5,y:pad.t+ch*0.55},{x:pad.l+cw*0.75,y:pad.t+ch*0.8},{x:pad.l+cw,y:pad.t+ch*0.85}];
+    pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});
+    ctx.stroke();ctx.setLineDash([]);
+    pts.forEach(function(p,i){ctx.beginPath();ctx.arc(p.x,p.y,5,0,2*Math.PI);ctx.fillStyle='#fff';ctx.fill();ctx.fillStyle='#FF9800';ctx.beginPath();ctx.arc(p.x,p.y,3,0,2*Math.PI);ctx.fill();});
+    ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(highT+'°',pts[0].x,pts[0].y-10);
+    ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(lowT+'°',pts[4].x,pts[4].y-10);
+    ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='italic 11px sans-serif';ctx.textAlign='center';ctx.fillText('📅 '+dd.min+'°~'+dd.max+'° 预估走势',W/2,pad.t+ch+20);
+  }
+}else{
  if(chartMode==="precip"){
  var vals=hourly.map(function(h){return h.precip||0});var maxV=Math.max.apply(null,vals)||1;
  maxV=Math.ceil(maxV/5)*5;if(maxV===0)maxV=5;
@@ -201,8 +217,7 @@ function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart
  var step=Math.max(1,Math.floor(hourly.length/6));
  for(var i=0;i<hourly.length;i+=step){var lx=pad.l+(cw/(hourly.length-1))*i;var tStr=hourly[i].time||"";ctx.fillText(tStr.length>11?tStr.slice(11,16):tStr,lx,pad.t+ch+4);}
  var selIdx=-1;document.querySelectorAll(".fcc.active").forEach(function(el){selIdx=parseInt(el.dataset.idx)||0});
- if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h"+(chartMode==="temp"?"逐时气温":"逐时降水"),W/2,10);}
- else{ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("",W/2,12);}
+ if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h"+(chartMode==="temp"?"逐时气温":"逐时降水"),W/2,10);}}
  document.getElementById("precipCard").style.display="block";}
 function showFcDay(idx){
  if(idx<0||idx>=forecastDays.length)return;
