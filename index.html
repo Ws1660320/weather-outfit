@@ -124,7 +124,7 @@ body {
 
   <!-- Search -->
   <div class="search-row">
-    <input class="glass-input" id="searchInput" placeholder="搜索城市..." autocomplete="off">
+    <input class="glass-input" id="searchInput" placeholder="搜索城市..." autocomplete="off" oninput="handleSearch(this.value)">
     <button class="glass-btn" id="searchBtn">🔍</button>
     <button class="glass-btn" id="locateBtn">📍</button>
   </div>
@@ -980,7 +980,7 @@ body {
             var main = parts[0];
             var rest = parts.slice(1).join("，");
             return '<div class="sr-item" data-index="' + i + '"><div style="font-weight:500">' + main + '</div><div style="font-size:0.65rem;opacity:0.6">' + rest + '</div></div>';
-          }).join("'");
+          }).join("");
           searchResults.classList.add("show");
           document.querySelectorAll(".sr-item").forEach(function(el) {
             el.addEventListener("click", function() {
