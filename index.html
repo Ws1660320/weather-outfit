@@ -977,10 +977,10 @@
         forecastDays.push({ max, min, code, precip, wind, hum });
         const isActive = i === 0 && !selectedForecastDay;
         forecastDiv.innerHTML += `
-          <div class="forecast-card${isActive ? ' active' : ''}" data-idx="${i}" onclick="showForecastDay(${i})">
-            <div class="forecast-day">${formatDay(day.time[i])}</div>
-            <div class="forecast-icon">${getWeatherEmoji(code)}</div>
-            <div class="forecast-temps">${max}° <span class="low">${min}°</span></div>
+          <div class="fc-card${isActive ? ' active' : ''}" data-idx="${i}" onclick="showForecastDay(${i})">
+            <div class="fd">${formatDay(day.time[i])}</div>
+            <div class="fi">${getWeatherEmoji(code)}</div>
+            <div class="fh">${max}° <span class="fl">${min}°</span></div>
           </div>
         `;
       }
@@ -1014,9 +1014,9 @@
       if (data.indices && data.indices.length > 0) {
         idxGrid.style.display = 'flex';
         idxGrid.innerHTML = data.indices.map(function(idx) {
-          return '<div class="index-card"><div class="index-icon">' +
+          return '<div class="index-card"><div class="ii">' +
             ({'1':'👗','2':'☀️','3':'🚗','5':'😊','8':'🏃','9':'🎣'}[idx.category] || '📋') +
-            '</div><div class="index-level">' + idx.level + '</div><div class="index-name">' + idx.name + '</div></div>';
+            '</div><div class="il">' + idx.level + '</div><div class="in">' + idx.name + '</div></div>';
         }).join('');
       } else { idxGrid.style.display = 'none'; }
 
@@ -1109,7 +1109,7 @@
       if (idx < 0 || idx >= forecastDays.length) return;
       selectedForecastDay = idx;
       const day = forecastDays[idx];
-      document.querySelectorAll('.forecast-card').forEach(el => {
+      document.querySelectorAll('.fc-card').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.idx) === idx);
       });
       const avgTemp = Math.round((day.max + day.min) / 2);
@@ -1194,7 +1194,7 @@
       const girlState = getGirlOutfitState(d.temp, d.weatherCode);
       renderGirlCharacter(girlState.outfit, girlState.isRain, girlState.isSnow);
       updateWeatherScene(d.weatherCode);
-      document.querySelectorAll('.forecast-card').forEach(el => {
+      document.querySelectorAll('.fc-card').forEach(el => {
         el.classList.toggle('active', parseInt(el.dataset.idx) === 0);
       });
       document.getElementById('forecastBadge').style.display = 'none';
