@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="穿搭助手">
+<meta name="apple-mobile-web-app-title" content="专属穿搭助手">
 <meta name="theme-color" content="#667eea">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon.png">
-<title>穿搭助手</title>
+<title>专属穿搭助手</title>
 <script src="lottie-player.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -183,8 +183,8 @@ function drawPrecipChart(hourly){var canvas=document.getElementById("precipChart
  var barW=Math.max(3,cw/hourly.length-2);var x=pad.l;
  for(var i=0;i<hourly.length;i++){var hh=((vals[i]||0)/maxV)*ch;var yy=pad.t+ch-hh;ctx.fillStyle="rgba(116,185,255,0.7)";ctx.fillRect(x,yy,barW,hh);ctx.fillStyle="rgba(255,255,255,0.3)";ctx.fillRect(x,yy,barW,1);x+=cw/hourly.length;}
  var selIdx=-1;document.querySelectorAll(".fcc.active").forEach(function(el){selIdx=parseInt(el.dataset.idx)||0});
- if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h逐时降水",W/2,H-2);}
- else{ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("仅展示接下来24h数据",W/2,H-2);}
+ if(selIdx===0){ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("选中: 今天 · 24h逐时降水",W/2,12);}
+ else{ctx.fillStyle="rgba(255,255,255,0.3)";ctx.font="10px sans-serif";ctx.textAlign="center";ctx.fillText("",W/2,12);}
  document.getElementById("precipCard").style.display="block";}
 function showFcDay(idx){
  if(idx<0||idx>=forecastDays.length)return;
