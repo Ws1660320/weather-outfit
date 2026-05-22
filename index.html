@@ -416,6 +416,35 @@
       padding: 2px 8px; border-radius: 10px; margin-left: 8px; vertical-align: middle;
     }
 
+    /* ===== 新增功能样式 ===== */
+    .sunrise-sunset {
+      display: flex; justify-content: space-around; margin-top: 4px; gap: 8px;
+    }
+    .sunrise-sunset span { font-size: 0.75rem; color: var(--text-sub); }
+    .sunrise-sunset strong { color: var(--text-primary); font-size: 0.85rem; }
+    .aqi-card {
+      display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px;
+      border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 4px;
+    }
+    .aqi-card.good { background: rgba(76,175,80,0.15); color: #4CAF50; }
+    .aqi-card.moderate { background: rgba(255,193,7,0.15); color: #FFC107; }
+    .aqi-card.unhealthy { background: rgba(255,152,0,0.15); color: #FF9800; }
+    .aqi-card.bad { background: rgba(244,67,54,0.15); color: #f44336; }
+
+    .indices-grid {
+      display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .index-card {
+      flex-shrink: 0; width: 90px; padding: 10px 8px; border-radius: 10px;
+      background: var(--bg-secondary); text-align: center; border: 1px solid var(--border);
+    }
+    .index-card .index-icon { font-size: 1.2rem; }
+    .index-card .index-name { font-size: 0.65rem; color: var(--text-sub); margin-top: 2px; }
+    .index-card .index-level { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); }
+
+    .hourly-chart { width: 100%; height: 130px; margin-top: 8px; border-radius: var(--radius-sm); }
+
     /* Search Results Dropdown */
     .search-results {
       background: var(--card-bg);
@@ -546,6 +575,11 @@
           <div class="detail-value" id="detailHumidity">--</div>
         </div>
       </div>
+      <div class="sunrise-sunset" id="sunriseSection" style="display:none">
+        <span>🌅 日出 <strong id="sunriseTime">--</strong></span>
+        <span>🌇 日落 <strong id="sunsetTime">--</strong></span>
+        <span id="aqiContainer"></span>
+      </div>
     </div>
 
     <!-- Weather Scene -->
@@ -566,6 +600,11 @@
 
     <!-- 3-Day Forecast -->
     <div class="forecast" id="forecast" style="display:none"></div>
+    <div class="indices-grid" id="indicesGrid" style="display:none"></div>
+    <div id="hourlySection" style="display:none;margin-top:12px">
+      <div style="font-size:0.8rem;font-weight:600;color:var(--text-sub);margin-bottom:4px">⏰ 24小时气温趋势</div>
+      <canvas class="hourly-chart" id="hourlyChart"></canvas>
+    </div>
   </div>
 
   <script>
@@ -805,11 +844,17 @@
       const baseHost = 'pf6vhgwgnj.re.qweatherapi.com';
       const nowUrl = `https://${baseHost}/v7/weather/now?location=${location}`;
       const forecastUrl = `https://${baseHost}/v7/weather/7d?location=${location}`;
+      const hourlyUrl = `https://${baseHost}/v7/weather/24h?location=${location}`;
+      const indicesUrl = `https://${baseHost}/v7/indices/1d?type=1,2,3,5,8,9&location=${location}`;
+      const airUrl = `https://${baseHost}/v7/air/now?location=${location}`;
       const headers = { 'X-QW-Api-Key': QWEATHER_KEY };
 
-      const [nowRes, forecastRes] = await Promise.all([
+      const [nowRes, forecastRes, hourlyRes, indicesRes, airRes] = await Promise.all([
         fetch(nowUrl, { headers }),
-        fetch(forecastUrl, { headers })
+        fetch(forecastUrl, { headers }),
+        fetch(hourlyUrl, { headers }).catch(() => ({ ok: false })),
+        fetch(indicesUrl, { headers }).catch(() => ({ ok: false })),
+        fetch(airUrl, { headers }).catch(() => ({ ok: false }))
       ]);
 
       if (!nowRes.ok || !forecastRes.ok) throw new Error('天气数据获取失败');
@@ -823,7 +868,35 @@
       const n = nowData.now;
       const d = forecastData.daily;
 
-      // 转换为与原结构兼容的格式
+      // 处理小时预报
+      var hourly = [];
+      if (hourlyRes && hourlyRes.ok) {
+        try { var hd = await hourlyRes.json();
+          if (hd.code === '200' && hd.hourly) {
+            hourly = hd.hourly.slice(0,24).map(function(h) { return {
+              time: h.fxTime, temp: parseFloat(h.temp), weather_code: qweatherIconToWMO(h.icon) };});
+          }
+        } catch(e) {} }
+
+      // 处理生活指数
+      var indices = [];
+      if (indicesRes && indicesRes.ok) {
+        try { var id = await indicesRes.json();
+          if (id.code === '200' && id.daily) {
+            indices = id.daily.map(function(d2) { return {
+              name: d2.name, level: d2.level, category: d2.category, text: d2.text };});
+          }
+        } catch(e) {} }
+
+      // 处理空气质量
+      var aqi = null;
+      if (airRes && airRes.ok) {
+        try { var ad = await airRes.json();
+          if (ad.code === '200' && ad.now) {
+            aqi = { value: parseInt(ad.now.aqi), level: ad.now.level, pm25: parseInt(ad.now.pm2p5), pm10: parseInt(ad.now.pm10) };
+          }
+        } catch(e) {} }
+
       return {
         current: {
           temperature_2m: parseFloat(n.temp),
@@ -834,14 +907,19 @@
           relative_humidity_2m: parseFloat(n.humidity),
         },
         daily: {
-          time: d.map(day => day.fxDate),
-          temperature_2m_max: d.map(day => parseFloat(day.tempMax)),
-          temperature_2m_min: d.map(day => parseFloat(day.tempMin)),
-          weather_code: d.map(day => qweatherIconToWMO(day.iconDay)),
-          precipitation_sum: d.map(day => parseFloat(day.precip || 0)),
-          wind_speed: d.map(day => parseFloat(day.windSpeedDay || 0)),
-          humidity: d.map(day => parseFloat(day.humidity || 0)),
-        }
+          time: d.map(function(day) { return day.fxDate; }),
+          temperature_2m_max: d.map(function(day) { return parseFloat(day.tempMax); }),
+          temperature_2m_min: d.map(function(day) { return parseFloat(day.tempMin); }),
+          weather_code: d.map(function(day) { return qweatherIconToWMO(day.iconDay); }),
+          precipitation_sum: d.map(function(day) { return parseFloat(day.precip || 0); }),
+          wind_speed: d.map(function(day) { return parseFloat(day.windSpeedDay || 0); }),
+          humidity: d.map(function(day) { return parseFloat(day.humidity || 0); }),
+          sunrise: d.map(function(day) { return day.sunrise || ''; }),
+          sunset: d.map(function(day) { return day.sunset || ''; }),
+        },
+        hourly: hourly,
+        indices: indices,
+        aqi: aqi,
       };
     }
 
@@ -1190,7 +1268,112 @@
       selectedForecastDay = 0;
       document.getElementById('forecastBadge').style.display = 'none';
 
+      // 日出日落
+      var sunSection = document.getElementById('sunriseSection');
+      if (data.daily && data.daily.sunrise && data.daily.sunrise[0]) {
+        sunSection.style.display = 'flex';
+        document.getElementById('sunriseTime').textContent = data.daily.sunrise[0].slice(11,16);
+        document.getElementById('sunsetTime').textContent = data.daily.sunset[0].slice(11,16);
+      } else { sunSection.style.display = 'none'; }
+
+      // AQI
+      var aqiCont = document.getElementById('aqiContainer');
+      if (data.aqi) {
+        var aqi = data.aqi;
+        var cls = 'good';
+        if (aqi.value > 200) cls = 'bad';
+        else if (aqi.value > 150) cls = 'unhealthy';
+        else if (aqi.value > 100) cls = 'moderate';
+        aqiCont.innerHTML = '<span class="aqi-card ' + cls + '">🌬️ AQI ' + aqi.value + ' ' + aqi.level + '</span>';
+      } else { aqiCont.innerHTML = ''; }
+
+      // 生活指数
+      var idxGrid = document.getElementById('indicesGrid');
+      if (data.indices && data.indices.length > 0) {
+        idxGrid.style.display = 'flex';
+        idxGrid.innerHTML = data.indices.map(function(idx) {
+          return '<div class="index-card"><div class="index-icon">' +
+            ({'1':'👗','2':'☀️','3':'🚗','5':'😊','8':'🏃','9':'🎣'}[idx.category] || '📋') +
+            '</div><div class="index-level">' + idx.level + '</div><div class="index-name">' + idx.name + '</div></div>';
+        }).join('');
+      } else { idxGrid.style.display = 'none'; }
+
+      // 小时预报图表
+      if (data.hourly && data.hourly.length > 0) {
+        document.getElementById('hourlySection').style.display = 'block';
+        drawHourlyChart(data.hourly);
+      } else { document.getElementById('hourlySection').style.display = 'none'; }
+
       hideLoading();
+    }
+
+    function drawHourlyChart(hourly) {
+      var canvas = document.getElementById('hourlyChart');
+      var container = canvas.parentElement;
+      var dpr = window.devicePixelRatio || 1;
+      var W = container.clientWidth || 320;
+      var H = 130;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      var ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      ctx.clearRect(0, 0, W, H);
+      var pad = { top: 15, bottom: 22, left: 28, right: 10 };
+      var cw = W - pad.left - pad.right;
+      var ch = H - pad.top - pad.bottom;
+      var temps = hourly.map(function(h) { return h.temp; });
+      var minT = Math.min.apply(null, temps);
+      var maxT = Math.max.apply(null, temps);
+      var range = (maxT - minT) || 1;
+      var padT = range * 0.15;
+
+      // Grid lines
+      ctx.strokeStyle = 'rgba(26,58,106,0.2)';
+      ctx.lineWidth = 0.5;
+      for (var i = 0; i <= 4; i++) {
+        var y = pad.top + (ch / 4) * i;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+        ctx.fillStyle = '#8a9bb5'; ctx.font = '9px sans-serif';
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(Math.round(maxT - (range / 4) * i), pad.left - 4, y);
+      }
+
+      // Line
+      ctx.beginPath();
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = 'rgba(59,130,246,0.3)';
+      ctx.shadowBlur = 3;
+      for (var i = 0; i < hourly.length; i++) {
+        var x = pad.left + (cw / (hourly.length - 1)) * i;
+        var y = pad.top + ch - ((temps[i] - minT + padT) / (range + padT*2)) * ch;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Dots
+      for (var i = 0; i < Math.min(hourly.length, 25); i++) {
+        var x = pad.left + (cw / (Math.min(hourly.length, 25) - 1)) * i;
+        var y = pad.top + ch - ((temps[i] - minT + padT) / (range + padT*2)) * ch;
+        ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2);
+        ctx.fillStyle = '#3b82f6'; ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI*2); ctx.fill();
+      }
+
+      // Time labels
+      ctx.fillStyle = '#8a9bb5';
+      ctx.font = '9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (var i = 0; i < hourly.length; i += 3) {
+        var x = pad.left + (cw / (hourly.length - 1)) * i;
+        var t = hourly[i].time || '';
+        ctx.fillText(t.length > 16 ? t.slice(11,16) : '--', x, H - pad.bottom + 4);
+      }
     }
 
     var selectedForecastDay = 0;
