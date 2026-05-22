@@ -906,6 +906,7 @@
       else if (outfit === 'freezing') c.classList.add('anim-freezing');
     }    // ==================== 渲染 ====================
     function renderWeather(data) {
+      try {
       const c = data.current;
       const temp = Math.round(c.temperature_2m);
       const feelsLike = Math.round(c.apparent_temperature);
@@ -1026,6 +1027,10 @@
       } else { document.getElementById('hourlySection').style.display = 'none'; }
 
       hideLoading();
+      } catch(e) {
+        console.error(e);
+        hideLoading();
+      }
     }
 
     function drawHourlyChart(hourly) {
