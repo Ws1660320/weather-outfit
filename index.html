@@ -40,6 +40,28 @@
   .top-bar .date { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
   .search-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); cursor: pointer; }
 
+  /* Search */
+  .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .glass-input { flex: 1; background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 16px; color: #fff; outline: none; font-size: 0.85rem; font-family: inherit; }
+  .glass-input::placeholder { color: rgba(255,255,255,0.4); }
+  .glass-btn { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 10px 14px; color: #fff; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; font-family: inherit; white-space: nowrap; }
+  .glass-btn:active { transform: scale(0.95); }
+
+  /* Search results */
+  .search-results { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden; margin-bottom: 10px; display: none; }
+  .search-results.show { display: block; }
+  .search-results .sr-item { padding: 10px 14px; color: #fff; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .search-results .sr-item:last-child { border-bottom: none; }
+  .search-results .sr-item:hover { background: rgba(255,255,255,0.1); }
+
+  /* Loading & Error */
+  .loading { display: none; justify-content: center; align-items: center; gap: 10px; padding: 20px 0; color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+  .loading.show { display: flex; }
+  .spinner { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.15); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-msg { display: none; padding: 14px; text-align: center; color: #ef4444; font-size: 0.8rem; background: rgba(239,68,68,0.1); border-radius: 12px; margin-bottom: 10px; }
+  .error-msg.show { display: block; }
+
   /* === 主信息区 === */
   .main-info {
     background: rgba(255,255,255,0.12);
@@ -178,9 +200,28 @@
 <div class="phone" id="phoneBg">
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="city">📍 上海市 <span>· 晴</span></div>
-    <div class="search-icon">🔍</div>
+    <div class="city">📍 <span id="locationName">选择位置</span></div>
+    <div class="date" id="dateDisplay"></div>
   </div>
+
+  <!-- Search -->
+  <div class="search-row">
+    <input class="glass-input" id="searchInput" placeholder="搜索城市..." autocomplete="off">
+    <button class="glass-btn" id="searchBtn">🔍</button>
+    <button class="glass-btn" id="locateBtn">📍</button>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results" id="searchResults"></div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span>获取天气中...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" id="errorMsg"></div>
 
   <!-- Main Info -->
   <div class="main-info">
@@ -211,88 +252,15 @@
     <div class="outfit-quote">💬 穿对衣服，心情自然好</div>
   </div>
 
-  <!-- Tab Bar -->
-  <div class="tab-bar">
-    <div class="active">📅 天气预报</div>
-    <div>📈 温度趋势</div>
-    <div>📋 生活指数</div>
-  </div>
-
   <!-- Forecast Section -->
   <div class="forecast-section">
     <div class="section-title">📅 7天预报 · 点击查看每日穿搭</div>
-    <div class="forecast-scroll" id="forecastScroll">
-      <div class="fc-card active" data-idx="0" onclick="selectDay(0)">
-        <div class="day">今天</div>
-        <div class="icon">☀️</div>
-        <div class="high">25°</div>
-        <div class="low">19°</div>
-      </div>
-      <div class="fc-card" data-idx="1" onclick="selectDay(1)">
-        <div class="day">周四</div>
-        <div class="icon">⛅</div>
-        <div class="high">24°</div>
-        <div class="low">18°</div>
-      </div>
-      <div class="fc-card" data-idx="2" onclick="selectDay(2)">
-        <div class="day">周五</div>
-        <div class="icon">🌧️</div>
-        <div class="high">19°</div>
-        <div class="low">14°</div>
-      </div>
-      <div class="fc-card" data-idx="3" onclick="selectDay(3)">
-        <div class="day">周六</div>
-        <div class="icon">🌧️</div>
-        <div class="high">16°</div>
-        <div class="low">12°</div>
-      </div>
-      <div class="fc-card" data-idx="4" onclick="selectDay(4)">
-        <div class="day">周日</div>
-        <div class="icon">☁️</div>
-        <div class="high">18°</div>
-        <div class="low">13°</div>
-      </div>
-      <div class="fc-card" data-idx="5" onclick="selectDay(5)">
-        <div class="day">周一</div>
-        <div class="icon">☀️</div>
-        <div class="high">22°</div>
-        <div class="low">15°</div>
-      </div>
-      <div class="fc-card" data-idx="6" onclick="selectDay(6)">
-        <div class="day">周二</div>
-        <div class="icon">⛅</div>
-        <div class="high">23°</div>
-        <div class="low">17°</div>
-      </div>
-    </div>
+    <div class="forecast" id="forecast"></div>
     <!-- Selected Day Detail -->
     <div class="day-detail" id="dayDetail">
-      <div class="dd-row">
-        <div>
-          <div style="color:rgba(255,255,255,0.5);font-size:0.7rem">今天 · 5月22日</div>
-          <div class="dd-temp">25°<span style="font-size:0.8rem;font-weight:400;color:rgba(255,255,255,0.4)">/19°</span></div>
-        </div>
-        <div style="text-align:right">
-          <div class="dd-desc">☀️ 晴</div>
-        </div>
-      </div>
-      <div class="dd-outfit">👗 <span id="ddOutfitText">短袖T恤 + 薄长裤，浅色系搭配</span></div>
-      <div class="dd-info">
-        <span>💧 无降水</span>
-        <span>💨 3.2m/s</span>
-        <span>💦 65%</span>
-      </div>
+      <div class="day-detail-placeholder">← 点击日期查看穿搭</div>
     </div>
-    <!-- Demo click buttons -->
-    <div class="demo-controls">
-      <span class="active-demo" data-demo="0" onclick="demoSelect(0)">今天 25°</span>
-      <span data-demo="1" onclick="demoSelect(1)">周四 24°</span>
-      <span data-demo="2" onclick="demoSelect(2)">周五 19°🌧️</span>
-      <span data-demo="3" onclick="demoSelect(3)">周六 16°🌧️</span>
-      <span data-demo="4" onclick="demoSelect(4)">周日 18°☁️</span>
-      <span data-demo="5" onclick="demoSelect(5)">周一 22°</span>
-      <span data-demo="6" onclick="demoSelect(6)">周二 23°</span>
-    </div>
+    
   </div>
 
   <!-- Bottom Nav -->
@@ -349,7 +317,7 @@
   }
 </script>
 
-<div style="display:none"><input id="searchInput"><button id="searchBtn"></button><button id="locateBtn"></button><div id="searchResults"></div><span id="locationName"></span><div id="loading"></div><div id="errorMsg"></div><div id="mainContent"></div><div id="outfitCard"></div><div id="forecast"></div><span id="temp"></span><span id="weatherDescText"></span><span id="weatherDesc2"></span><span id="weatherIcon"></span><span id="detailRain"></span><span id="detailWind"></span><span id="detailHumidity"></span><span id="detailFeels"></span><span id="outfitMain"></span><span id="outfitTips"></span><span id="dailyQuote"></span><span id="sunriseTime"></span><span id="sunsetTime"></span><span id="aqiValue"></span><div id="indicesGrid"></div><canvas id="hourlyChart"></canvas><span id="dateDisplay"></span><span id="forecastBadge"></span><span id="hourlySection"></span><span id="heroArea"></span><div id="weatherScene"><div id="weatherAnimContainer"></div></div><div id="girlContainer"></div></div>
+</div><div id="girlContainer"></div></div>
 </body>
 <script>
 
