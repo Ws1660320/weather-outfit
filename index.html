@@ -965,6 +965,19 @@
       // Daily quote
       document.getElementById('dailyQuote').textContent = '💬 ' + getTodayQuote();
 
+      // 日出日落 + AQI
+      document.getElementById("sunriseVal").textContent = (data.daily && data.daily.sunrise && data.daily.sunrise[0]) ? data.daily.sunrise[0] : '--';
+      document.getElementById("sunsetVal").textContent = (data.daily && data.daily.sunset && data.daily.sunset[0]) ? data.daily.sunset[0] : '--';
+      if (data.aqi) {
+        var aqi = data.aqi;
+        var cls = aqi.value > 200 ? 'bad' : aqi.value > 150 ? 'unhealthy' : aqi.value > 100 ? 'moderate' : 'good';
+        document.getElementById("aqiVal").innerHTML = aqi.value + ' ' + aqi.level;
+      } else { document.getElementById("aqiVal").textContent = '--'; }
+      if (typeof data !== 'undefined' && data.aqi) {
+        var aqi = data.aqi;
+        document.getElementById('aqiVal').innerHTML = aqi.value + ' ' + aqi.level;
+      }
+
       // Forecast
       const forecastDiv = document.getElementById('forecast');
       forecastDiv.innerHTML = '';
